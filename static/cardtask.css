@@ -1,0 +1,43 @@
+
+body {
+    /* background: #999; */
+    background: black; /* #808090; */
+    color: white;
+    text-align: center;
+    font-family: Verdana, Helvetica, sans-serif;
+    width: 680px;
+    margin: 0 auto;
+}
+
+#holder {
+    /* border: 2px solid white; */
+}
+
+#cardcanvas {
+    margin: 20px auto;
+}
+
+#testcanvas {
+    margin: 20px auto;
+}
+
+#timercanvas {
+    margin: 0 auto;
+}
+
+#instructions {
+    text-align: center;
+    width: 550px;
+    margin: 0 auto;
+}
+
+#stim {
+    margin: 20px auto;
+}
+
+input {
+    margin: 20px 50px;
+    width: 100px;
+    height: 50px;
+    font-size: 22pt;
+}
