@@ -127,13 +127,17 @@ function appendtobody( tag, id, contents ) {
 
 // AJAX post function.
 var postback = function(destination, tosend) {
-	$.ajax("submit.py", {
+	return $.ajax(destination, {
 		type: "POST",
 		async: false,
-		data: tosend
+		data: tosend,
+		dataType: 'json',
+		success: function(data) { console.warn(data); }
 		// error: function(jqXHR,textStatus,errorThrown) { setTimeout( $.ajax(this), 1000 ); }
 	});
 };
+
+function testajax() { postback( 'submitdata', { variable: 300 } ); }
 
 
 /********************
@@ -449,6 +453,7 @@ var TestPhase = function() {
 	    lock,
 	    stimimage,
 	    testcardsleft = new Array();
+	
 	this.ret = {
 		hits: new Array()
 	};
@@ -575,4 +580,5 @@ $(window).load( function(){
 });
 
 
-// vi: set et! ts=4 sw=4
+
+// vi: et! ts=4 sw=4

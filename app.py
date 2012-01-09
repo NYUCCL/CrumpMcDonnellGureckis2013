@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, jsonify
 from string import split
 import os
 import time
@@ -15,6 +15,13 @@ app = Flask(__name__)
 #@requires_auth
 def indexroute():
     return render_template('index.html')
+
+@app.route('/submitdata', methods=['POST'])
+def submitdata():
+    print request.form
+    return jsonify({
+        "reply": "So long and thanks for all the fish!",
+        "otherfield": "more info" } )
 
 
 @app.route('/<pagename>.html')
