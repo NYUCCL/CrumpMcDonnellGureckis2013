@@ -125,19 +125,19 @@ function appendtobody( tag, id, contents ) {
 	return el;
 }
 
-// AJAX post function.
-var postback = function(destination, tosend) {
-	return $.ajax(destination, {
-		type: "POST",
-		async: false,
-		data: tosend,
-		dataType: 'json',
-		success: function(data) { console.warn(data); }
-		// error: function(jqXHR,textStatus,errorThrown) { setTimeout( $.ajax(this), 1000 ); }
+// Data submission
+function debrief() { alert( "Successfully submitted. TODO: Debriefing here." ); }
+function posterror() { alert( "There was an error. TODO: Prompt to resubmit here." ); }
+function submitdata() {
+	$.ajax(destination, {
+			type: "POST",
+			async: false,
+			data: datastring,
+			//dataType: 'json',
+			success: debrief,
+			error: posterror
 	});
-};
-
-function testajax() { postback( 'submitdata', { variable: 300 } ); }
+}
 
 
 /********************
@@ -145,6 +145,8 @@ function testajax() { postback( 'submitdata', { variable: 300 } ); }
 ********************/
 
 // Globals defined initially.
+
+// Stimulus info
 ncards = 8;
 var cardnames = [
 	"static/images/STIM00.PNG",
@@ -163,26 +165,26 @@ var cardnames = [
 	"static/images/STIM13.PNG",
 	"static/images/STIM14.PNG",
 	"static/images/STIM15.PNG"];
-
-
 var categorynames= [ "A", "B" ];
 
-var cardh = 180, cardw = 140, upper = 0, left = 0,
-    imgh = 100, imgw = 100,
-    subjid = 0,
-    lastperfect = false,
-    trainobject,
-    testobject;
+// Interface variables
+var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 
-// Condition and counterbalance code.
-condition = {
+
+// Task objects
+var trainobject, testobject;
+
+// Subject info, including condition and counterbalance codes.
+// TODO: fill this in using hidden forms or something
+var subjid = 0;
+var condition = {
 	traintype: randrange(0,2) , // 0=active, 1=passive
 	rule: randrange(0,6), // type I-VI -> 0-5.
 	dimorder: randrange(0,24), // 0-23; which order to order the dimensions
 	dimvals: randrange(0,16)  // 0-16 whether a '0' means 0 or 1 in terms of the stim.
 };
 
-// Task functions
+// Tasks
 catfuns = [
 	function (num) {
 		// Shepard type I
@@ -218,6 +220,7 @@ catfuns = [
 ];
 var catfun = catfuns[condition.rule];
 
+// Stimulus counterbalancer
 getstim = function(theorystim) {
 	console.assert( theorystim < 8, "Stim >=8 ("+theorystim+")");
 	console.assert( theorystim >= 0, "Stim less than 0 ("+theorystim+")");
@@ -240,9 +243,24 @@ getstim = function(theorystim) {
 };
 
 // Mutable global variables
-var responsedata = [];
-var currentblock = 0;
+var responsedata = [],
+    currentblock = 0,
+    currenttrial = 0,
+    datastring = "",
+    lastperfect = false;
 
+// Data handling functions
+// TODO: consider not recording the first five columns every trial. 
+function recordtraintrial (theorystim, actualstim, category, loc, rt ) {
+	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, rt];
+	datastring = datastring.concat( trialvals, "\n" );
+	currenttrial++;
+}
+function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
+	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TEST", theorystim, actualstim, correct, resp, hit, rt];
+	datastring = datastring.concat( trialvals, "\n" );
+	currenttrial++;
+}
 
 /********************
 * CODE FOR TRAINING *
@@ -251,17 +269,15 @@ var currentblock = 0;
 var TrainingPhase = function() {
 	var i; // just initializing the iterator dummy
 	var that = this; // make 'this' accessble by privileged methods
+	var cardattributes = {};
 	
-	var sampleunits = 16;
+	var sampleunits = 2;
 	
 	// Mutables
 	var lock = false;
 	var animating = false;
 	var cards = new Array();
-	
-	this.ret = {
-		searchchoices: []
-	};
+	var shuffletimestamp;
 	
 	// View variables
 	var ncardswide = 4, ncardstall = 2;
@@ -295,7 +311,6 @@ var TrainingPhase = function() {
 	var presentations = [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7];
 	shuffle(presentations);
 	this.next = presentations.pop();
-	
 	
 	var textsize = 42;
 	var timerects = timerpaper.set();
@@ -357,10 +372,6 @@ var TrainingPhase = function() {
 			}
 			lock = true;
 			cards[cardid][2].show();
-			timestamp = new Date().getTime();
-			that.ret.searchchoices.push( { card:cardid, time: timestamp } );
-			that.lastcards.splice(0,1);
-			that.lastcards.push( cardid );
 			setTimeout(
 				function(){
 					cards[cardid][2].hide();
@@ -382,10 +393,19 @@ var TrainingPhase = function() {
 						}
 						else setTimeout( function(){ lock=false; }, 400); 
 					};
+					shuffletimestamp  = new Date().getTime();
 					shufflecards( callback, that.lastcards );
 					return true;
 				},
 				1500);
+			var actualstim = cardattributes[cardid].actualstim,
+			    theorystim = cardattributes[cardid].theorystim,
+			    catnum = cardattributes[cardid].catnum,
+			    loc = cardattributes[cardid].getlocation();
+			rt = new Date().getTime() - shuffletimestamp;
+			recordtraintrial(theorystim, actualstim, catnum, loc, rt);
+			that.lastcards.splice(0,1);
+			that.lastcards.push( cardid );
 			return true;
 		};
 	};
@@ -412,13 +432,35 @@ var TrainingPhase = function() {
 		var thisleft = coords.x, thistop = coords.y;
 		var imgoffset = (cardw-imgw)/2;
 		
-		cards[i].catnum = catfun( i );
-		cards[i].push( cardpaper.rect( thisleft + (imgoffset/2),
-					thistop+(imgoffset/2), imgw+(imgoffset),
-					cardh-imgoffset).attr(
-						{stroke: "red", "stroke-width": "5px", "stroke-opacity": 0}));
-		cards[i].push( cardpaper.image( cardnames[getstim(i)], thisleft + imgoffset, thistop+imgoffset, imgw, imgh) );
-		cards[i].push( cardpaper.text( thisleft + cardw/2, (thistop+imgoffset + thistop+(imgoffset/2) + cardh-imgoffset + imgh)/2, categorynames[cards[i].catnum] ).attr({ fill: "white", "font-size":36 }).hide() );
+		cardattributes[i] = {
+			"theorystim": i,
+			"actualstim": getstim(i),
+			"catnum": catfun(i),
+			"getlocation": function(){ return that.cardlocs[ this.theorystim ]; }
+		};
+		// Add outside rectangle ('card')
+		cards[i].push(
+			cardpaper.rect( 
+				thisleft + (imgoffset/2),
+				thistop + (imgoffset/2),
+				imgw + imgoffset,
+				cardh - imgoffset).attr(
+					{stroke: "red", "stroke-width": "5px", "stroke-opacity": 0}
+				));
+		// Add actual stim
+		cards[i].push(
+			cardpaper.image(
+				cardnames[cardattributes[i].actualstim], 
+				thisleft + imgoffset, 
+				thistop+imgoffset, 
+				imgw, imgh));
+		// Add label (hidden initially)
+		cards[i].push(
+				cardpaper.text(
+					thisleft + cardw/2,
+					(thistop+imgoffset + thistop+(imgoffset/2) + cardh-imgoffset + imgh)/2,
+					categorynames[cardattributes[i].catnum]).attr(
+						{ fill: "white", "font-size":36 }).hide());
 		
 		cards[i].click( this.cardclick(i) );
 	}
@@ -436,6 +478,7 @@ var TrainingPhase = function() {
 		return true;
 	};
 	
+	shuffletimestamp  = new Date().getTime();
 	if ( condition.traintype===1 ) { this.indicateCard(this.next); }
 	
 	// Usually this would be a dictionary of public methods but 
@@ -452,11 +495,10 @@ var TestPhase = function() {
 	    that = this, // make 'this' accessble by privileged methods
 	    lock,
 	    stimimage,
+	    buttonson,
 	    testcardsleft = new Array();
 	
-	this.ret = {
-		hits: new Array()
-	};
+	this.hits = new Array();
 	
 	htmlpage ='<h1>Test Phase</h1>\
 			<div id="instructions">Choose a membership for the following object.</div>\
@@ -471,6 +513,7 @@ var TestPhase = function() {
 	$('body').html( htmlpage );
 	
 	var addbuttons = function() {
+		buttonson = new Date().getTime();
 		$('#query').html( query );
 		$('input').click( function(){catresponse(this.value);} );
 		$('#query').show();
@@ -478,12 +521,14 @@ var TestPhase = function() {
 	
 	catresponse = function (buttonid){
 		if (lock) { return false; }
-		var selectedcard = categorynames.indexOf(buttonid); // should be "A" or "B"
-		if (selectedcard === catfun(prescard)) { that.ret.hits.push(true); }
-		else that.ret.hits.push(false);
+		var rt = new Date().getTime() - buttonson,
+		    washit,
+		    resp = categorynames.indexOf(buttonid), // should be "A" or "B"
+		    actual = catfun(prescard); // should be "A" or "B"
+		washit = resp === actual;
 		lock = true;
 		$('#query').html(acknowledgment);
-		setTimeout( function() { 
+		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
 			}, 
@@ -492,6 +537,7 @@ var TestPhase = function() {
 				nextcard();
 			},
 			1000);
+		recordtesttrial (prescard, getstim(prescard), actual, resp, washit, rt );
 		return false;
 	};
 	
@@ -517,7 +563,7 @@ var TestPhase = function() {
 	var finishblock = function() {
 		currentblock++;
 		adddata();
-		if ( boolpercent(that.ret.hits)==100 ) {
+		if ( boolpercent(that.hits)==100 ) {
 			if ( lastperfect ) done = true;
 			lastperfect = true;
 		}
@@ -525,8 +571,8 @@ var TestPhase = function() {
 		if (done) givequestionnaire();
 		else finishblock();
 		$('body').html('<h1>Test phase Complete</h1>\
-			<p>Training phase complete! You got ' + boolpercent(that.ret.hits) + '% correct.</p>' +
-			((boolpercent(that.ret.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : "") +
+			<p>Test phase complete! You got ' + boolpercent(that.hits) + '% correct.</p>' +
+			((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : "") +
 			'<p>Press "Continue" to move on to the next training block.</p>\
 			<input type="button" id="continue" value="Continue"></input>');
 		$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
