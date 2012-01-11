@@ -41,3 +41,68 @@ input {
     height: 50px;
     font-size: 22pt;
 }
+
+#questionnaire {
+    font-size: 80%;
+    text-align: left;
+}
+#questionnaire h1 {
+    text-align: center;
+}
+#questionnaire .questiontext {
+    float: left;
+    width: 300px;
+    color: #bbbbff;
+    margin: 0;
+}
+#questionnaire .question {
+    position: relative;
+    width: 100%;
+    clear: both;
+    height: 150px;
+    margin: 20px;
+}
+#questionnaire textarea {
+    display: inline
+    float: left
+    width: 100%;
+    height: 130px;
+}
+#questionnaire form {
+    text-align: right;
+}
+
+
+#debriefingtext {
+    margin: 0 auto;
+    padding: 10px 20px;
+    width: 540px;
+    font-size: .8em;
+    text-align: justify;
+    border: 1px solid white;
+}
+#affirmationbox {
+    position: relative;
+    display: inline-block;
+    border: 1px dotted white; 
+    height: auto;
+    width: 540px;
+    padding: 10px 20px;
+    vertical-align: middle;
+}
+#affirmation {
+    display: inline-block;
+    float: left;
+    margin-left: 20px;
+    margin-right: -40px;
+}
+#debriefing blockquote {
+    display: inline-block;
+    font-style: italic;
+    float: left;
+    text-align: justify;
+    width: 430px;
+    margin: auto 0;
+}
+
+

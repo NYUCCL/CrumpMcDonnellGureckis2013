@@ -126,7 +126,6 @@ function appendtobody( tag, id, contents ) {
 }
 
 // Data submission
-function thanks() { alert( "Successfully submitted. TODO: Thank-you here." ); }
 function posterror() { alert( "There was an error. TODO: Prompt to resubmit here." ); }
 function submitdata() {
 	$.ajax("submit", {
@@ -267,15 +266,29 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 ********************/
 var postquiz,
     testpage,
+    debriefingbody,
+    thanksbody,
     activetaskbody,
     passivetaskbody;
 $( function() {
     $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
+    $.get( "debriefing.html", "html", function(page) { debriefingbody=page; } );
+    $.get( "thanks.html", "html", function(page) { thanksbody=page; } );
     $.get( "test.html", "html", function(page) { testpage=page; } );
     $.get( "active.html", "html", function(page) { activetaskbody=page; } );
     $.get( "passive.html", "html", function(page) { passivetaskbody=page; } );
+});
+
+/********************
+* (relatively) static pages
+********************/
+function debriefing () {
+	// TODO: make sure the forms are filled out.
+	$('body').html( debriefingbody );
 }
-);
+function thanks() {
+	$('body').html( thanksbody );
+}
 
 /********************
 * CODE FOR TRAINING *
@@ -597,8 +610,8 @@ var TestPhase = function() {
 	shuffle(testcardsleft);
 	$("#stim").attr("width", imgw);
 	$('#query').hide();
+	givequestionnaire();
 	nextcard();
-	
 	return this;
 };
 
@@ -617,7 +630,8 @@ $(window).load( function(){
     $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
     $.get( "test.html", "html", function(page) { testpage=page; } );
     $.get( "active.html", "html", function(page) { activetaskbody=page; } );
-    $.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TrainingPhase();} );
+    //$.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TrainingPhase();} );
+    $.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TestPhase();} );
 });
 
 
