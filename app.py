@@ -8,7 +8,6 @@ import sys
 from sqlalchemy import *
 from functools import wraps
 
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -16,13 +15,10 @@ app = Flask(__name__)
 def indexroute():
     return render_template('index.html')
 
-@app.route('/submitdata', methods=['POST'])
+@app.route('/submit', methods=['POST'])
 def submitdata():
     print request.form
-    return jsonify({
-        "reply": "So long and thanks for all the fish!",
-        "otherfield": "more info" } )
-
+    return "success"
 
 @app.route('/<pagename>.html')
 #@requires_auth
@@ -31,7 +27,6 @@ def regularpage(pagename=None):
         print "error"
     else:
         return render_template(pagename+'.html')
-
 
 ###########################################################
 # let's start
@@ -47,4 +42,3 @@ if __name__ == '__main__':
             print "starting webserver"
             # by default just launch webserver
             app.run(debug=False, port=5001)
-            

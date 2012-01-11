@@ -126,15 +126,15 @@ function appendtobody( tag, id, contents ) {
 }
 
 // Data submission
-function debrief() { alert( "Successfully submitted. TODO: Debriefing here." ); }
+function thanks() { alert( "Successfully submitted. TODO: Thank-you here." ); }
 function posterror() { alert( "There was an error. TODO: Prompt to resubmit here." ); }
 function submitdata() {
-	$.ajax(destination, {
+	$.ajax("submit", {
 			type: "POST",
 			async: false,
-			data: datastring,
-			//dataType: 'json',
-			success: debrief,
+			data: {datastring: datastring},
+			// dataType: 'text',
+			success: thanks,
 			error: posterror
 	});
 }
@@ -263,6 +263,21 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 }
 
 /********************
+* HTML snippets
+********************/
+var postquiz,
+    testpage,
+    activetaskbody,
+    passivetaskbody;
+$( function() {
+    $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
+    $.get( "test.html", "html", function(page) { testpage=page; } );
+    $.get( "active.html", "html", function(page) { activetaskbody=page; } );
+    $.get( "passive.html", "html", function(page) { passivetaskbody=page; } );
+}
+);
+
+/********************
 * CODE FOR TRAINING *
 ********************/
 
@@ -271,7 +286,7 @@ var TrainingPhase = function() {
 	var that = this; // make 'this' accessble by privileged methods
 	var cardattributes = {};
 	
-	var sampleunits = 2;
+	var sampleunits = 16;
 	
 	// Mutables
 	var lock = false;
@@ -284,22 +299,15 @@ var TrainingPhase = function() {
 	
 	// Rewrite html
 	if ( condition.traintype===0 ) {
-		$('body').html('<h1>Category task: Active</h1>\
-			<div id="instructions">Click a card to see its category. You can only do this 16 times, as reflected in the timer marks below. Be sure to look at each card at least once.</div>\
-			<div id="cardcanvas"> </div>\
-			<div id="timercanvas"> </div>\
-			<div id="testcanvas"> </div>');
+		$('body').html(activetaskbody);
 	}
 	else{
-		$('body').html( '<h1>Category task: Passive</h1>\
-			<div id="instructions">Click on the card indicated by the red border to see its category.</div>\
-			<div id="cardcanvas"> </div>\
-			<div id="timercanvas"> </div>\
-			<div id="testcanvas"> </div>');
+		$('body').html(passivetaskbody);
 	}
 	
 	// Canvas for the cards.
 	var nowX, nowY, w = ncardswide*cardw, h = ncardstall*cardh, r=30;
+	//var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
 	var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
 	
 	// Canvas for the timer.
@@ -500,21 +508,17 @@ var TestPhase = function() {
 	
 	this.hits = new Array();
 	
-	htmlpage ='<h1>Test Phase</h1>\
-			<div id="instructions">Choose a membership for the following object.</div>\
-			<img src="" id="stim">\
-			<div id="query"></div>';
-	query = '<p id="prompt">Which category does the object belong to?\
-			<div id="inputs">\
+	acknowledgment = '<p>Thanks for your response!</p>';
+	buttons = '<p id="prompt">Which category does the object belong to?\
+		<div id="inputs">\
 				<input type="button" id="CategoryA" value="A">\
 				<input type="button" id="CategoryB" value="B">\
-			</div>';
-	acknowledgment = '<p>Thanks for your response!';
-	$('body').html( htmlpage );
+		</div>';
+	$('body').html( testpage );
 	
 	var addbuttons = function() {
 		buttonson = new Date().getTime();
-		$('#query').html( query );
+		$('#query').html( buttons );
 		$('input').click( function(){catresponse(this.value);} );
 		$('#query').show();
 	};
@@ -533,27 +537,14 @@ var TestPhase = function() {
 				$("#query").hide();
 			}, 
 			500);
-		setTimeout( function(){
-				nextcard();
-			},
-			1000);
+		setTimeout( nextcard, 1000);
+		that.hits.push( washit );
 		recordtesttrial (prescard, getstim(prescard), actual, resp, washit, rt );
 		return false;
 	};
 	
-	var addata = function() {
-		traindata = trainobject.resps;
-		ret = $.extend(traindata, testobject.resps );
-		ret.block = currentblock;
-		responsedata.append( ret );
-	};
-	
 	var givequestionnaire = function() {
-		$('body').html('<h1>Task Complete</h1>\
-			<p>Congratulations, you had two perfect two perfect test phases in\
-			a row! This means you have successfully learned the category distinction.\
-			<p>Before you go, we\'d like you to answer a few questions for us.</p>\
-			<input type="button" id="continue" value="Continue"></input>');
+		$('body').html(postquiz);
 		// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
 		$('#continue').attr('style', 'width: auto;');
 		$("p").attr("style", "font-size: 150%");
@@ -562,23 +553,24 @@ var TestPhase = function() {
 	
 	var finishblock = function() {
 		currentblock++;
-		adddata();
+		done = false;
 		if ( boolpercent(that.hits)==100 ) {
 			if ( lastperfect ) done = true;
 			lastperfect = true;
 		}
 		else lastperfect=false;
 		if (done) givequestionnaire();
-		else finishblock();
-		$('body').html('<h1>Test phase Complete</h1>\
-			<p>Test phase complete! You got ' + boolpercent(that.hits) + '% correct.</p>' +
-			((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : "") +
-			'<p>Press "Continue" to move on to the next training block.</p>\
-			<input type="button" id="continue" value="Continue"></input>');
-		$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
-		$('#continue').attr('style', 'width: auto;');
-		$("p").attr("style", "font-size: 150%");
-		// postback();
+		else {
+			$('body').html('<h1>Test phase Complete</h1>\
+				<p>Test phase complete! You got ' + boolpercent(that.hits) + '% correct.</p>' +
+				((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : "") +
+				'<p>Press "Continue" to move on to the next training block.</p>\
+				<input type="button" id="continue" value="Continue"></input>');
+			$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
+			$('#continue').attr('style', 'width: auto;');
+			$("p").attr("style", "font-size: 150%");
+			// postback();
+		}
 	};
 	
 	var nextcard = function () {
@@ -621,8 +613,11 @@ var TestPhase = function() {
 //	return ("Are you sure you want to leave the experiment?");
 //});
 $(window).load( function(){
-	trainobject = new TrainingPhase();
-	//testobject = new TestPhase();
+    // Load resources then run the exp
+    $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
+    $.get( "test.html", "html", function(page) { testpage=page; } );
+    $.get( "active.html", "html", function(page) { activetaskbody=page; } );
+    $.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TrainingPhase();} );
 });
 
 
