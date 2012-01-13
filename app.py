@@ -10,10 +10,20 @@ from functools import wraps
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 #@requires_auth
 def indexroute():
-    return render_template('index.html')
+    if request.method == 'GET':
+        #print request.args
+        #print request.args.has_key('hitId')
+        #print request.args.has_key('assignmentId')
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+            hitID = request.args['hitId']
+            assignmentID = request.args['assignmentId']
+            #print hitID, assignmentID
+            return render_template('index.html')
+        else:
+            return render_template('error.html')
 
 @app.route('/submit', methods=['POST'])
 def submitdata():
@@ -41,4 +51,4 @@ if __name__ == '__main__':
         elif sys.argv[1]=='server':
             print "starting webserver"
             # by default just launch webserver
-            app.run(debug=False, port=5001)
+            app.run(debug=False, host='0.0.0.0', port=5001)
