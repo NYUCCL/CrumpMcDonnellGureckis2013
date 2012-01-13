@@ -12,7 +12,7 @@ mtc = MTurkConnection(host=HOST)
 # TODO: what did we tell the IRB? Payment, etc.
 
 # Configure portal
-experimentPortalURL = "http://iceberg.psych.nyu.edu/mturk"
+experimentPortalURL = "http://0.0.0.0:5001/mturk"
 frameheight = 600
 mturkQuestion = ExternalQuestion( experimentPortalURL, 600 )
 

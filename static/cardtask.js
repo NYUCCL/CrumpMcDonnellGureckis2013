@@ -264,7 +264,10 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 /********************
 * HTML snippets
 ********************/
-var postquiz,
+var consentpage,
+    instruct1,
+    instruct2,
+    instruct3,
     testpage,
     debriefingbody,
     thanksbody,
@@ -289,6 +292,26 @@ function debriefing () {
 function thanks() {
 	$('body').html( thanksbody );
 }
+
+/************************
+* CODE FOR INSTRUCTIONS *
+************************/
+var Instructions = function() {
+	var that = this;
+	screens = [consent, instruct1, instruct2, instruct3].reverse();
+	
+	this.nextForm = function () {
+		next = screens.pop();
+		$('body').html( next );
+        if ( screens.length === 0 ) $('.continue').click( that.startTraining );
+        else $('.continue').click( that.nextForm );
+	}
+	this.startTraining = function() {
+		trainobject = new TrainingPhase();
+	}
+	this.nextForm();
+}
+
 
 /********************
 * CODE FOR TRAINING *
@@ -447,7 +470,7 @@ var TrainingPhase = function() {
 		};
 	};
 	
-	for ( i=0; i < ncards; i ++){
+	for ( i=0; i < ncards; i ++) {
 		cards[i] = cardpaper.set();
 		coords = loc_coords( this.cardlocs[i] );
 		var thisleft = coords.x, thistop = coords.y;
@@ -457,7 +480,7 @@ var TrainingPhase = function() {
 			"theorystim": i,
 			"actualstim": getstim(i),
 			"catnum": catfun(i),
-			"getlocation": function(){ return that.cardlocs[ this.theorystim ]; }
+			"getlocation": function() { return that.cardlocs[ this.theorystim ]; }
 		};
 		// Add outside rectangle ('card')
 		cards[i].push(
@@ -627,11 +650,14 @@ var TestPhase = function() {
 //});
 $(window).load( function(){
     // Load resources then run the exp
+    $.get( "consent.html", "html", function(page) { consent=page; } );
+    $.get( "activeInstruct1.html", "html", function(page) { instruct1=page; } );
+    $.get( "activeInstruct2.html", "html", function(page) { instruct2=page; } );
+    $.get( "activeInstruct3.html", "html", function(page) { instruct3=page; } );
     $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
     $.get( "test.html", "html", function(page) { testpage=page; } );
     $.get( "active.html", "html", function(page) { activetaskbody=page; } );
-    //$.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TrainingPhase();} );
-    $.get( "passive.html", "html", function(page) { passivetaskbody=page; trainobject = new TestPhase();} );
+    $.get( "passive.html", "html", function(page) { passivetaskbody=page; instructobject = new Instructions();} );
 });
 
 

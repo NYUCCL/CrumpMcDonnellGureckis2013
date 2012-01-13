@@ -4,12 +4,11 @@ body {
     background: black;
     color: white;
     text-align: center;
-    font-family: Verdana, Helvetica, sans;
+    font-family: Verdana, Helvetica, sans-serif;
+    width: 680px;
+    margin: 0 auto;
 }
 
-h1 {
-    color: #FFFFFF;
-}
 
 p {
     text-align: justify;

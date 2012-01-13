@@ -9,6 +9,57 @@ body {
     margin: 0 auto;
 }
 
+a {
+    color: #FFCC90;
+}
+
+.warm {
+    color: #FFCC90;
+}
+
+/* Instruction styles */
+#main {
+    margin: 0 auto;
+    width: 680px;
+    font-size: 14px;
+}
+
+.instruct p {
+    text-align: justify;
+}
+
+.instruct input {
+    margin: 20px 20px;
+    width: 120px;
+    height: 40px;
+    font-size: 13pt;
+}
+
+.instruct .legal {
+    font-size: 13px;
+}
+
+.instruct .header {
+    text-align: justify;
+    font-style: italic;
+}
+
+.instruct .instructions {
+    text-align: center;
+    font-style: italic;
+    font-size: 18px;
+    margin: 0 auto;
+    width: 500px;
+}
+
+.instruct .subbox {
+    width: 500px;
+    margin: 20px auto;
+    padding: 5px 20px;
+    border: 1px solid white;
+}
+
+/* Experiment styles */
 #holder {
     /* border: 2px solid white; */
 }
