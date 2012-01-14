@@ -614,11 +614,14 @@ var TestPhase = function() {
 	var finishblock = function() {
 		currentblock++;
 		done = false;
-		if ( boolpercent(that.hits)==100 ) {
-			if ( lastperfect ) done = true;
-			lastperfect = true;
+		if (currentblock >=20) done = true;
+		else {
+			if ( boolpercent(that.hits)==100 ) {
+				if ( lastperfect ) done = true;
+				lastperfect = true;
+			}
+			else lastperfect=false;
 		}
-		else lastperfect=false;
 		if (done) givequestionnaire();
 		else {
 			$('body').html('<h1>Test phase Complete</h1>\
