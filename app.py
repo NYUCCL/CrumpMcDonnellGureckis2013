@@ -107,6 +107,13 @@ def start_exp():
         else:
             return render_template('error.html')
 
+@app.route('/complete', methods=['POST'])
+def submitdata():
+    # TODO: Record in the database
+    subjid = request.form['subjid']
+    data =  request.form['data']
+    # TODO: return page with a form that will let them submit to mechanical turk.
+    return "success"
 
 
 @app.route('/list')

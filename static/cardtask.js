@@ -19,6 +19,15 @@ function assert(exp, message) {
 	}
 }
 
+function insert_hidden_into_form(findex, name, value ) {
+    var form = document.forms[findex];
+    var hiddenField = document.createElement('input');
+    hiddenField.setAttribute('type', 'hidden');
+    hiddenField.setAttribute('name', name);
+    hiddenField.setAttribute('value', value );
+    form.appendChild( hiddenField );
+}
+
 
 // Preload images
 function imagepreload(src) 
@@ -241,8 +250,8 @@ var responsedata = [],
 
 // Data handling functions
 // TODO: consider not recording the first five columns every trial. 
-function recordtraintrial (theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateReal, rt ) {
-	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateReal, rt];
+function recordtraintrial (theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt ) {
+	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
@@ -594,13 +603,6 @@ var TestPhase = function() {
 		return false;
 	};
 	
-	var givequestionnaire = function() {
-		$('body').html(postquiz);
-		// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
-		$('#continue').attr('style', 'width: auto;');
-		$("p").attr("style", "font-size: 150%");
-		// postback();
-	};
 	
 	var finishblock = function() {
 		currentblock++;
@@ -654,6 +656,24 @@ var TestPhase = function() {
 	givequestionnaire();
 	nextcard();
 	return this;
+};
+
+/*************
+* Finish up  *
+*************/
+var givequestionnaire = function() {
+	$('body').html(postquiz);
+	// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
+	// postback();
+};
+var submitquestionnaire = function() {
+	$('textarea').each( function(i, val) {
+		console.warn( subjid, this.id, this.value );
+		datastring = datastring.concat( "\n", this.id, ":",  this.value);
+	});
+    insert_hidden_into_form(0, "subjid", subjid );
+    insert_hidden_into_form(0, "data", datastring );
+	$('form').submit();
 };
 
 

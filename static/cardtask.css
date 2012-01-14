@@ -24,6 +24,10 @@ a {
     font-size: 14px;
 }
 
+.continue  {
+    width: auto;
+}
+
 .instruct p {
     text-align: justify;
 }
@@ -57,6 +61,16 @@ a {
     margin: 20px auto;
     padding: 5px 20px;
     border: 1px solid white;
+}
+
+/* Questionnaire style */
+
+#questionnaire p {
+    font-size: 150%;
+}
+
+.questiontext em {
+    font-size: 80%;
 }
 
 /* Experiment styles */

@@ -3,20 +3,20 @@
     <p>Congratulations, you had two perfect two perfect test phases in
     a row! This means you have successfully learned the category distinction.
     <p>Before you go, we'd like you to answer a few questions for us.</p>
-    <form id="postquiz">
-        <div class="question">
-            <p class="questiontext">
-            Did you use any particular strategy to figure out the categories?
-                </p>
-            <textarea id="strategy" cols=50 rows=3 />
-        </div>
-        <div class="question">
-            <p class="questiontext">
-            Did you use any physical aids such as pencil or paper to perform the experiment?</h2>
+    <div class="question">
+        <p class="questiontext">
+        Did you use any particular strategy to figure out the categories?
+            </p>
+        <textarea id="strategy" cols=50 rows=3 />
+    </div>
+    <div class="question">
+        <p class="questiontext">
+        Did you use any physical aids such as pencil or paper to perform the experiment?<br>
         <em>(Your response here will not affect your compensation)</em>
-                </p>
-            <textarea id="physicalaids" cols=50 rows=3 />
-        </div>
-        <input type="button" id="continue" value="Continue" onClick="debriefing()"></input>
+            </p>
+        <textarea id="physicalaids" cols=50 rows=3 />
+    </div>
+    <form id="postquiz" action="complete" method="post">
+        <input type="button" class="continue" id="continue" value="Continue" onClick="submitquestionnaire()"></input>
     </form>
 </div>
