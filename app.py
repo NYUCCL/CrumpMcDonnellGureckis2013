@@ -59,15 +59,15 @@ def get_people(conn, s):
         i+=1
     return [people, i]
 
-@app.route('/', methods=['GET','POST'])
-def indexroute():
+@app.route('/mturk', methods=['GET','POST'])
+def mturkroute():
     # this just is a way-stop along the way to the experiment code
     if request.method == 'GET':
         if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             print hitID, assignmentID
-            return render_template('index.html', hitid = hitID, assignmentid = assignmentID)
+            return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
         else:
             return render_template('error.html')
 
