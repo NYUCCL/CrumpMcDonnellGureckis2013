@@ -173,15 +173,6 @@ var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 // Task objects
 var trainobject, testobject;
 
-// Subject info, including condition and counterbalance codes.
-// TODO: fill this in using hidden forms or something
-var subjid = 0;
-var condition = {
-	traintype: randrange(0,2) , // 0=active, 1=passive
-	rule: randrange(0,6), // type I-VI -> 0-5.
-	dimorder: randrange(0,24), // 0-23; which order to order the dimensions
-	dimvals: randrange(0,16)  // 0-16 whether a '0' means 0 or 1 in terms of the stim.
-};
 
 // Tasks
 catfuns = [

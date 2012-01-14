@@ -6,6 +6,22 @@
         <meta charset="utf-8">
         <script src="static/raphael-min.js" type="text/javascript"> </script>
         <script src="static/jquery-min.js" type="text/javascript"> </script>
+        
+        <script language="JavaScript">
+        <!-- Hide the script from old browsers --
+        
+        // Subject info, including condition and counterbalance codes.
+        // TODO: fill this in using hidden forms or something
+        var subjid = {{ subj_num }};
+        var condition = {
+        	traintype: {{ traintype }}, // 0=active, 1=passive
+        	rule: {{ rule }}, // type I-VI -> 0-5.
+        	dimorder: {{ dimorder }}, // 0-23; which order to order the dimensions
+        	dimvals: {{ dimvals }}  // 0-16 whether a '0' means 0 or 1 in terms of the stim.
+        };
+        //-->
+        </script>
+                
         <script src="static/cardtask.js" type="text/javascript"> </script>
         <link rel=stylesheet href="static/cardtask.css" type="text/css" media="screen">
     </head>

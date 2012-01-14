@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>NYU Psychology Grad Admissions 2012</title>
+    <meta name="generator" content="TextMate http://macromates.com/">
+    <meta name="author" content="Todd Gureckis">
+    <link rel="stylesheet" href="/static/stylelist.css">
+    <script src="/static/jquery-min.js" type="text/javascript"></script>
+    <script src="/static/jquery-jeditable-min.js" type="text/javascript"></script>
+    <script language="JavaScript">
+    <!-- Hide the script from old browsers --
+    
+    $(document).ready(function() {
+        $(".editable_select_status").editable("/updatestatus/", { 
+          indicator : "<img src='/static/images/indicator.gif'>",
+          data   : "{1:'STARTED', 2:'COMPLETED', 3:'CREDITED'}",
+          type   : "select",
+          submit : "OK",
+          style  : "inherit",
+          callback: function(value, settings) {
+              window.location.reload();
+          }
+        });
+    });
+    
+    //-->
+    </script>
+    <!-- Date: 2011-12-13 -->
+</head>
+<body>
+	<!--
+    <p align="right">
+    <a href="http://www.google.com/search?q=beer&start=10&hl=en&client=safari&sa=N&rls=en&prmd=imvnslbr&tbm=isch&tbo=u&source=univ&ei=oIzpTuO3MdHmggfh7-DdCA&ved=0CEwQsAQ4Cg&biw=1087&bih=802">Tips</a> are still accepted - t.g.
+    </p>
+    -->
+    <h1><font face="helvetica">Active Category Learning Mechanical Turk Participants</font></h1>
+	<br>
+	<small>{{ nrecords }} found</small>
+	<table class="sofT" cellspacing="0">
+	<tr>
+		<td class="helpHed"><b>Subj #</b></td>
+		<td class="helpHed"><b>HitID</b></td>
+		<td class="helpHed"><b>AssignmentID</b></td>
+		<td class="helpHed"><b>Condition</b></td>
+		<td class="helpHed" width="25%"><b>Begin Hit</b></td>
+		<td class="helpHed" width="25%"><b>End Hit</b></td>
+		<td class="helpHed" width="15%"><b>Status</b></td>
+		<td class="helpHed" width="40%"><b>DataFile</b></td>
+	</tr>
+	{% for rec in records.keys() %}
+	<tr>
+		<td valign="top" {{ loop.cycle('', 'class=even') }}>
+		    <font size="+2" color="#aaa" face="helvetica">{{ records[rec]['participants_subjid'] }}</font></td>
+		<td {{ loop.cycle('', 'class=even') }}>
+		    {{ records[rec]['participants_hitid'] }}
+		</td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['participants_assignmentid'] }}
+		</td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['participants_condition'] }}
+        </td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['participants_beginhit'] }}
+        </td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['participants_endhit'] }}
+        </td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            <small class="editable_select_status" id="applicants_status_{{ records[rec]['participants_subjid'] }}">
+		      {% if records[rec]['participants_status'] == 1 %}
+		        STARTED
+		      {% elif records[rec]['participants_status'] == 2 %}
+		        COMPLETED
+		      {% elif records[rec]['participants_status'] == 3 %}
+		        CREDITED
+		      {% else %}
+		        ERROR
+		      {% endif %}
+		    </small>
+        </td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['participants_datafile'] }}
+        </td>
+	</tr>
+	{% endfor %}	
+	</table>
+</body>
+</html>
