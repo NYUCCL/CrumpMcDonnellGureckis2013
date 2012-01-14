@@ -250,8 +250,8 @@ var responsedata = [],
 
 // Data handling functions
 // TODO: consider not recording the first five columns every trial. 
-function recordtraintrial (theorystim, actualstim, category, loc, rt ) {
-	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, rt];
+function recordtraintrial (theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateReal, rt ) {
+	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateReal, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
@@ -305,12 +305,12 @@ var Instructions = function() {
 		$('body').html( next );
         if ( screens.length === 0 ) $('.continue').click( that.startTraining );
         else $('.continue').click( that.nextForm );
-	}
+	};
 	this.startTraining = function() {
 		trainobject = new TrainingPhase();
-	}
+	};
 	this.nextForm();
-}
+};
 
 
 /********************
@@ -320,7 +320,7 @@ var Instructions = function() {
 var TrainingPhase = function() {
 	var i; // just initializing the iterator dummy
 	var that = this; // make 'this' accessble by privileged methods
-	var cardattributes = {};
+	var cardattributes = new Array(8);
 	
 	var sampleunits = 16;
 	
@@ -447,7 +447,8 @@ var TrainingPhase = function() {
 			    catnum = cardattributes[cardid].catnum,
 			    loc = cardattributes[cardid].getlocation();
 			rt = new Date().getTime() - shuffletimestamp;
-			recordtraintrial(theorystim, actualstim, catnum, loc, rt);
+			shufflestate = getShuffleState();
+			recordtraintrial(theorystim, actualstim, catnum, loc, shufflestate[0], shufflestate[1], rt);
 			that.lastcards.splice(0,1);
 			that.lastcards.push( cardid );
 			return true;
@@ -508,6 +509,29 @@ var TrainingPhase = function() {
 		
 		cards[i].click( this.cardclick(i) );
 	}
+	var getShuffleState = function() {
+        var actual = new Array(8),
+			theory = new Array(8);
+        cardattributes.map( function(item) {
+            loc = item.getlocation();
+            theory[loc] = item.theorystim;
+            actual[loc] = item.actualstim;
+			console.warn( loc, i );
+        });
+        var encode = function(num) {
+			return num.toString( 32 );
+            // if (num < 10) return '0'+num;
+            // else return num.toString();
+        };
+        var concatlist = function( list ) {
+            return list.reduce( function(rest, next) {
+				return rest.concat(next);
+			}, '');
+        };
+		console.warn( theory );
+		return [concatlist(theory.map(encode)),
+			   concatlist(actual.map(encode))];
+	};
 	
 	var shufflecards = function(callback, exceptions) {
 		swap( that.cardlocs, exceptions );
