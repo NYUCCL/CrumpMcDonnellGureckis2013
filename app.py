@@ -12,14 +12,18 @@ from functools import wraps
 # constants
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 NUMCONDS = 12
-STARTED = 1
-COMPLETED = 2
-CREDITED = 3
-# open this up no matter if running in server or initdb mode
+ALLOCATED = 1
+STARTED = 2
+COMPLETED = 3
+CREDITED = 4
+
 
 app = Flask(__name__)
 
 
+#----------------------------------------------
+# function for authentication
+#----------------------------------------------
 def wrapper(func, args):
     return func(*args)
 
@@ -45,20 +49,27 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+#----------------------------------------------
+# general utilities
+#----------------------------------------------
 def get_people(conn, s):
     people={}
     i=0
     for row in conn.execute(s):
-        print row
         person = {}
         for field in ['participants_subjid', 'participants_hitid', 'participants_assignmentid', 
-                        'participants_condition', 'participants_beginhit', 'participants_endhit',
+                        'participants_condition',  'participants_beginhit', 'participants_endhit',
                         'participants_status', 'participants_datafile']:
             person[field] = row[field]
         people[i] = person
         i+=1
     return [people, i]
 
+
+
+#----------------------------------------------
+# routes
+#----------------------------------------------
 @app.route('/mturk', methods=['GET','POST'])
 def mturkroute():
     # this just is a way-stop along the way to the experiment code
@@ -79,43 +90,58 @@ def start_exp():
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             print hitID, assignmentID
+            
             conn = engine.connect()
             
-            # get a histogram of completed conditions
-            s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+            # check first to see if this hitID or assignmentID exists.  if so check to see if inExp is set
+            s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.status], from_obj=[participantsdb])
             result = conn.execute(s)
-            counts = [0]*NUMCONDS            
-            for row in result:
-                counts[row[0]]+=1
-            
-            # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
-            indicies = [i for i, x in enumerate(counts) if x == min(counts)]
-            subj_cond = choice(indicies)
-            
-            # set condition here and insert into database
-            result = conn.execute(participantsdb.insert(),
-                hitid = hitID,
-                assignmentid = assignmentID,
-                condition = subj_cond,
-                status = STARTED,
-                beginhit = datetime.datetime.now()
-            )
-            myid = result.inserted_primary_key[0]
-            
+            matches = [row for row in result]
+            numrecs = len(matches)
+            if numrecs == 0:
+                # doesn't exist, get a histogram of completed conditions
+                s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+                result = conn.execute(s)
+                counts = [0]*NUMCONDS
+                for row in result:
+                    counts[row[0]]+=1
+                
+                # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
+                indicies = [i for i, x in enumerate(counts) if x == min(counts)]
+                subj_cond = choice(indicies)
+                
+                # set condition here and insert into database
+                result = conn.execute(participantsdb.insert(),
+                    hitid = hitID,
+                    assignmentid = assignmentID,
+                    condition = subj_cond,
+                    status = ALLOCATED,
+                    beginhit = datetime.datetime.now()
+                )
+                myid = result.inserted_primary_key[0]
+            elif numrecs==1:
+                myid, subj_cond, status = matches[0]
+                if status>=STARTED: # in experiment can't restart
+                    print "already in experiment or finish"
+                    return render_template('error.html')
+            else:
+                print "Error, hit/assignment appears in database more than once (serious problem)"
+                exit()
+                
             conn.close()
             return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
         else:
             return render_template('error.html')
 
-@app.route('/complete', methods=['POST'])
-def submitdata():
-    # TODO: Record in the database
-    subjid = request.form['subjid']
-    data =  request.form['data']
-    # TODO: return page with a form that will let them submit to mechanical turk.
-    return "success"
-
-
+@app.route('/inexp', methods=['POST'])
+def enterexp():
+    if request.method == 'POST':
+        subid = request.args['subjId']
+        conn = engine.connect()
+        results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED))
+        conn.close()
+    return 1
+    
 @app.route('/list')
 @requires_auth
 def viewdata():
@@ -145,7 +171,7 @@ def updatestatus():
         return value
 
 
-@app.route('/save', methods=['POST'])
+@app.route('/complete', methods=['POST'])
 def savedata():
     pass
     # if request.method == 'POST':
@@ -196,7 +222,6 @@ def createdatabase(engine, metadata):
 
 
 def loaddatabase(engine, metadata):
-
     # try to load tables from a file, if that fails create new tables
     try:
         participants = Table('participants', metadata, autoload=True)
@@ -216,7 +241,7 @@ if __name__ == '__main__':
         metadata = MetaData()
         metadata.bind = engine
         if sys.argv[1]=='initdb':
-            print "initializing database TBD"
+            print "initializing database"
             createdatabase(engine, metadata)
             pass
         elif sys.argv[1]=='server':
