@@ -1,19 +1,28 @@
 <div class="instruct" id="main">
     <h1>Instructions</h1>
-    <p>After using all of your credits, you will be tested on <b>each</b>
-    of the eight items you have seen.</p>
-    <p>You will try your best to respond with the category label that you
-    have seen previously. To give a response, you would click 'A' button
-    for a square whose label is A. You would click the 'B' button if the
-    square was originally labeled 'B'. </p>
-    <p>After giving eight responses, you will recieve feedback on how you
-    responded and loop back to learning the same squares you have seen
-    previously again. In order to finish the experiment, you must
-    succesfully complete two test phases at 100% accuracy. (E.g., the best
-    possible performance would be two blocks of label phases and test
-    phases). The experiment will loop until you can get two test phases
-    completely right in a row.</p>
-    <img src="static/images/testexample.png">
-    <br>
+    <p>After using all of your credits, you will be tested on each of the eight
+    items you have seen. The screen will look like this:</p>
+    <div id="testexample">
+        <img id="stim" width="100" src="static/images/STIM10.PNG">
+        <div id="query">
+            <p id="prompt">Which category does the object belong to?</p>
+            <div id="inputs">
+                <input type="button" value="A" id="CategoryA" onClick="alert('You have chosen category A! In the real experiment, we would continue on to the next square.')" />
+                <input type="button" value="B" id="CategoryB" onClick="alert('You have chosen category B! In the real experiment, we would continue on to the next square.')"  />
+            </div>
+        </div>
+    </div>
+    <p>In the test phase, try your best to respond with the category label that you
+    have seen previously. To give a response, you would click the button
+    corresponding to the label you think is associated with the square.
+    
+    <p>After labeling each of the eight stimuli, you will recieve feedback on
+    how you responded and go back to the training session to refresh your
+    memory. </p>
+    
+    <p>In order to finish the experiment, <strong>you must succesfully complete
+        two test phases at 100% accuracy</strong>. The experiment will loop
+    until you can get two test phases completely right in a row.</p>
+    <div class="instructions">When you feel you understand what you will be doing in the test phase, press <strong>Next</strong> to continue.</div>
     <input type="button" class="continue" id="Next" value="Next">
 </div>

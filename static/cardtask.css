@@ -14,14 +14,19 @@ a {
 }
 
 .warm {
-    color: #FFCC90;
+    color: #DDAA90;
+}
+
+strong {
+    font-weight: bold;
+    color: #DDAA90;
 }
 
 /* Instruction styles */
 #main {
     margin: 0 auto;
     width: 680px;
-    font-size: 14px;
+    font-size: 110%;
 }
 
 .continue  {
@@ -32,11 +37,12 @@ a {
     text-align: justify;
 }
 
-.instruct input {
+.instruct .continue {
     margin: 20px 20px;
     width: 120px;
     height: 40px;
     font-size: 13pt;
+    float: right;
 }
 
 .instruct .legal {
@@ -61,6 +67,32 @@ a {
     margin: 20px auto;
     padding: 5px 20px;
     border: 1px solid white;
+}
+
+.instruct table {
+    margin: 0 0 10px;
+}
+
+.instruct .outerbox {
+    border: 1px dashed #A54;
+    border: 1px solid gray;
+}
+
+.instruct hr {
+    border: .5px solid gray;
+}
+
+#testexample {
+    overflow: hidden;
+    margin: 10px;
+    text-align: center;
+}
+
+#prompt  {
+    text-align: center;
+}
+#inputs  {
+    text-align: center;
 }
 
 /* Questionnaire style */
@@ -95,6 +127,7 @@ a {
     width: 550px;
     margin: 0 auto;
 }
+
 
 #stim {
     margin: 20px auto;

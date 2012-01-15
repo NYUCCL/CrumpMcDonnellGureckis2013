@@ -29,7 +29,7 @@ function insert_hidden_into_form(findex, name, value ) {
 }
 
 
-// Preload images
+// Preload images (not currently in use)
 function imagepreload(src) 
 {
 	heavyImage = new Image(); 
@@ -135,6 +135,7 @@ function appendtobody( tag, id, contents ) {
 }
 
 // Data submission
+// NOTE: Ended up not using this.
 function posterror() { alert( "There was an error. TODO: Prompt to resubmit here." ); }
 function submitdata() {
 	$.ajax("submit", {
@@ -217,7 +218,7 @@ catfuns = [
 		else { return (num&2)^((num&4)/2) ? 0:1; }
 	}
 ];
-var catfun = catfuns[condition.rule];
+var catfun;
 
 // Stimulus counterbalancer
 getstim = function(theorystim) {
@@ -264,19 +265,17 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 /********************
 * HTML snippets
 ********************/
-var consentpage,
-    instruct1,
+var instruct1,
+    instruct1b,
     instruct2,
     instruct3,
     testpage,
     debriefingbody,
-    thanksbody,
     activetaskbody,
     passivetaskbody;
 $( function() {
     $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
     $.get( "debriefing.html", "html", function(page) { debriefingbody=page; } );
-    $.get( "thanks.html", "html", function(page) { thanksbody=page; } );
     $.get( "test.html", "html", function(page) { testpage=page; } );
     $.get( "active.html", "html", function(page) { activetaskbody=page; } );
     $.get( "passive.html", "html", function(page) { passivetaskbody=page; } );
@@ -289,19 +288,22 @@ function debriefing () {
 	// TODO: make sure the forms are filled out.
 	$('body').html( debriefingbody );
 }
-function thanks() {
-	$('body').html( thanksbody );
-}
 
 /************************
 * CODE FOR INSTRUCTIONS *
 ************************/
 var Instructions = function() {
 	var that = this;
-	screens = [consent, instruct1, instruct2, instruct3].reverse();
+	// TODO: set this up to show different instructions depending
+	if (condition.traintype === 0) {
+		screens = [instruct1, instruct1b, instruct2, instruct3];
+	}
+	else {
+		screens = [instruct1, instruct1b, instruct2, instruct3];
+	}
 	
 	this.nextForm = function () {
-		next = screens.pop();
+		next = screens.splice(0, 1)[0];
 		$('body').html( next );
         if ( screens.length === 0 ) $('.continue').click( that.startTraining );
         else $('.continue').click( that.nextForm );
@@ -311,6 +313,179 @@ var Instructions = function() {
 	};
 	this.nextForm();
 };
+
+function exampleTrain() {
+	var ncards = 8,
+	    ncardswide = 4,
+	    ncardstall = 2,
+	    sampleunits = 16,
+	    lock = false,
+	    cards = new Array(),
+	    cardattributes = [],
+	    that = this;
+	
+	this.lastcards = [undefined,undefined];
+	
+	// Canvas for the cards.
+	var nowX, nowY, w = ncardswide*cardw, h = ncardstall*cardh, r=30;
+	//var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
+	var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
+	
+	this.cardlocs = new Array();
+	for ( var i=0; i < ncards; i ++ ){ 
+		this.cardlocs.push( i ); 
+	}
+	shuffle( this.cardlocs );
+	
+	// Canvas for the timer.
+	var timertotalw = w*2/3;
+	var timertotalh = 50;
+	var w2 = timertotalw, h2 = timertotalh;
+	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
+	
+	var loc_coords = function ( loci ) {
+		var x = cardw * (loci % 4) + left;
+		var y = cardh*Math.floor(loci/4) + upper;
+		var imgoffset = (cardw-imgw)/2;
+		return {
+			x: x,
+			y: y,
+			outerx: x + (imgoffset/2),
+			outery: y + (imgoffset/2),
+			cardx: x + imgoffset,
+			cardy: y + imgoffset,
+			labelx: x + cardw/2,
+			labely: (y+imgoffset + y+(imgoffset/2) + cardh-imgoffset + imgh)/2
+		};
+	};
+	
+	var turnon = function(cardid){
+		return function() {
+			cards[cardid][0].attr({"stroke-opacity": 100});
+		};
+	};
+	var turnoff = function(cardid){
+		return function() {
+			cards[cardid][0].attr({"stroke-opacity": 0});
+		};
+	};
+	this.indicateCard = function(cardid) {
+		that.lock = true;
+		turnon();
+		setTimeout(turnoff(cardid), 100);
+		setTimeout(turnon(cardid), 200);
+		setTimeout(turnoff(cardid), 300);
+		setTimeout(turnon(cardid), 400);
+		setTimeout(function(){ lock=false; }, 400);
+	};
+	
+	var shufflecards = function(callback, exceptions) {
+		swap( that.cardlocs, exceptions );
+		that.animating = true;
+		for ( var i=0; i < ncards; i ++){
+			coords = loc_coords( that.cardlocs[i] );
+			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
+			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
+			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
+			// outerrect = cards[i][0];
+		}
+		return true;
+	};
+	
+	this.cardclick = function (cardid) {
+		return function() {
+			$('.hidden').fadeIn(500);
+			if (condition.traintype===1) {
+				if ( that.next != cardid ) { return false; }
+			}
+			if ( ! timerects.length ) { return false; }
+			if ( lock ) {  return false; }
+			if (condition.traintype===0) {
+				turnon(cardid)();
+			}
+			else {
+				that.next = presentations.pop();
+			}
+			lock = true;
+			cards[cardid][2].show();
+			setTimeout(
+				function(){
+					cards[cardid][2].hide();
+					turnoff(cardid)();
+					timerects.pop().attr({fill: "gray"});
+					timetext.attr({text:timerects.length});
+					if ( timerects.length===0 ) {
+						alert( "You have used up all of your training examples." );
+						return true;
+					}
+					var callback = function () {
+						if (condition.traintype===1) {
+							that.indicateCard( that.next );
+						}
+						else setTimeout( function(){ lock=false; }, 400); 
+					};
+					shuffletimestamp  = new Date().getTime();
+					shufflecards( callback, that.lastcards );
+					return true;
+				},
+				1500);
+			that.lastcards.splice(0,1);
+			that.lastcards.push( cardid );
+			return true;
+		};
+	};
+	
+	var textsize = 42;
+	var timerects = timerpaper.set();
+	timerectw = timertotalw / (sampleunits*2-2+10);
+	var timetext = timerpaper.text( textsize/2, h2/2, sampleunits ).attr({fill:"white","font-size":textsize});
+	for ( i=0; i < sampleunits; i ++) {
+		timerects.push(
+			timerpaper.rect(
+				timerectw * i * 2 + textsize*1.5,
+				0,
+				timerectw, timertotalh, [5]).attr({fill:"red" }));
+	}
+	
+	for ( i=0; i < ncards; i++) {
+		cards[i] = cardpaper.set();
+		coords = loc_coords( this.cardlocs[i] );
+		var thisleft = coords.x, thistop = coords.y;
+		var imgoffset = (cardw-imgw)/2;
+		
+		cardattributes[i] = {
+			"theorystim": i,
+			"actualstim": getstim(i),
+			"catnum": catfun(i),
+			"getlocation": function() { return that.cardlocs[ this.theorystim ]; }
+		};
+		// Add outside rectangle ('card')
+		cards[i].push(
+			cardpaper.rect( 
+				thisleft + (imgoffset/2),
+				thistop + (imgoffset/2),
+				imgw + imgoffset,
+				cardh - imgoffset).attr(
+					{stroke: "red", "stroke-width": "5px", "stroke-opacity": 0}
+				));
+		// Add actual stim
+		cards[i].push(
+			cardpaper.image(
+				cardnames[cardattributes[i].actualstim], 
+				thisleft + imgoffset, 
+				thistop+imgoffset, 
+				imgw, imgh));
+		// Add label (hidden initially)
+		cards[i].push(
+				cardpaper.text(
+					thisleft + cardw/2,
+					(thistop+imgoffset + thistop+(imgoffset/2) + cardh-imgoffset + imgh)/2,
+					["X","Y"][randrange(0, 2)]).attr(
+						{ fill: "white", "font-size":36 }).hide());
+		
+		cards[i].click( this.cardclick(i) );
+	}
+}
 
 
 /********************
@@ -399,6 +574,18 @@ var TrainingPhase = function() {
 		setTimeout(turnoff(cardid), 300);
 		setTimeout(turnon(cardid), 400);
 		setTimeout(function(){ lock=false; }, 400);
+	};
+	var shufflecards = function(callback, exceptions) {
+		swap( that.cardlocs, exceptions );
+		that.animating = true;
+		for ( var i=0; i < ncards; i ++){
+			coords = loc_coords( that.cardlocs[i] );
+			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
+			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
+			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
+			// outerrect = cards[i][0];
+		}
+		return true;
 	};
 	
 	this.cardclick = function (cardid) {
@@ -516,7 +703,6 @@ var TrainingPhase = function() {
             loc = item.getlocation();
             theory[loc] = item.theorystim;
             actual[loc] = item.actualstim;
-			console.warn( loc, i );
         });
         var encode = function(num) {
 			return num.toString( 32 );
@@ -528,22 +714,8 @@ var TrainingPhase = function() {
 				return rest.concat(next);
 			}, '');
         };
-		console.warn( theory );
 		return [concatlist(theory.map(encode)),
 			   concatlist(actual.map(encode))];
-	};
-	
-	var shufflecards = function(callback, exceptions) {
-		swap( that.cardlocs, exceptions );
-		that.animating = true;
-		for ( var i=0; i < ncards; i ++){
-			coords = loc_coords( that.cardlocs[i] );
-			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
-			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
-			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
-			// outerrect = cards[i][0];
-		}
-		return true;
 	};
 	
 	shuffletimestamp  = new Date().getTime();
@@ -653,7 +825,6 @@ var TestPhase = function() {
 	shuffle(testcardsleft);
 	$("#stim").attr("width", imgw);
 	$('#query').hide();
-	givequestionnaire();
 	nextcard();
 	return this;
 };
@@ -668,7 +839,6 @@ var givequestionnaire = function() {
 };
 var submitquestionnaire = function() {
 	$('textarea').each( function(i, val) {
-		console.warn( subjid, this.id, this.value );
 		datastring = datastring.concat( "\n", this.id, ":",  this.value);
 	});
     insert_hidden_into_form(0, "subjid", subjid );
@@ -677,27 +847,18 @@ var submitquestionnaire = function() {
 };
 
 
-/*********************
-* Get things started *
-********************/
-
-// Provide opt-out 
-//$(window).bind('beforeunload', function(){
-//	alert( "By leaving this page, you opt out of the experiment. Please confirm that this is what you meant to do." );
-//	return ("Are you sure you want to leave the experiment?");
-//});
-$(window).load( function(){
-    // Load resources then run the exp
-    $.get( "consent.html", "html", function(page) { consent=page; } );
-    $.get( "activeInstruct1.html", "html", function(page) { instruct1=page; } );
-    $.get( "activeInstruct2.html", "html", function(page) { instruct2=page; } );
-    $.get( "activeInstruct3.html", "html", function(page) { instruct3=page; } );
-    $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
-    $.get( "test.html", "html", function(page) { testpage=page; } );
-    $.get( "active.html", "html", function(page) { activetaskbody=page; } );
-    $.get( "passive.html", "html", function(page) { passivetaskbody=page; instructobject = new Instructions();} );
-});
-
-
+var startTask = function () {
+	// TODO: Update for Todd's routing
+	$.ajax("FlaskRoute", {
+			type: "POST",
+			async: true,
+			data: {"subjid": subjid}
+	});
+	// Provide opt-out 
+	$(window).bind('beforeunload', function(){
+		alert( "By leaving this page, you opt out of the experiment. Please confirm that this is what you meant to do." );
+		return ("Are you sure you want to leave the experiment?");
+	});
+};
 
 // vi: et! ts=4 sw=4

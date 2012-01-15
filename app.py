@@ -65,8 +65,6 @@ def get_people(conn, s):
         i+=1
     return [people, i]
 
-
-
 #----------------------------------------------
 # routes
 #----------------------------------------------
@@ -129,8 +127,12 @@ def start_exp():
                 exit()
                 
             conn.close()
+            print "Subject number", subj_num
             return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
         else:
+            myid = 0;
+            subj_cond = 0;
+            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
             return render_template('error.html')
 
 @app.route('/inexp', methods=['POST'])
