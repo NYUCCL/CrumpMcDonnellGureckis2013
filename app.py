@@ -130,10 +130,38 @@ def start_exp():
             print "Subject number", subj_num
             return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
         else:
-            myid = 0;
-            subj_cond = 0;
-            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
             return render_template('error.html')
+
+@app.route('/debug', methods=['GET','POST'])
+def start_exp_debug():
+    # this serves up the experiment applet in debug mode
+    if request.method == 'GET':
+        if "cond" in request.args.keys():
+            subj_cond = int( request.args['cond'] );
+        else:
+            subj_cond = 0;
+        if "counter" in request.args.keys():
+            myid = int( request.args['counter'] );
+        else:
+            myid = 0;
+        print render_template('exp.html', 
+                               subj_num = -1, 
+                               traintype = 0 if subj_cond<6 else 1, 
+                               rule = subj_cond%6, 
+                               dimorder = myid%24, 
+                               dimvals = myid%16,
+                               skipto = request.args['skipto']
+                              )
+        return render_template('exp.html', 
+                               subj_num = -1, 
+                               traintype = 0 if subj_cond<6 else 1, 
+                               rule = subj_cond%6, 
+                               dimorder = myid%24, 
+                               dimvals = myid%16,
+                               skipto = request.args['skipto']
+                              )
+    else:
+        return render_template('error.html')
 
 @app.route('/inexp', methods=['POST'])
 def enterexp():

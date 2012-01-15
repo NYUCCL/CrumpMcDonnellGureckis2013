@@ -6,3 +6,10 @@
 <div id="timercanvas"> </div>
 <div id="testcanvas"> </div>
 
+{% if debug %}
+<ul>
+    <li onClick="javascript:trainobject = new TrainingPhase()">Jump to training phase.</li>
+    <li onClick="javascript:testobject = new TestPhase()">Jump to test phase.</li>
+    <li onClick="javascript:givequestionnaire()">Jump to questionnaire.</li>
+</ul
+{% endif %}

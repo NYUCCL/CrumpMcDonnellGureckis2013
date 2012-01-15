@@ -24,6 +24,20 @@
 
 		$(window).load( function(){
 			catfun = catfuns[condition.rule];
+			runfun = function() {
+			    {% if skipto %}
+				{% if skipto=="questionnaire" %}
+				givequestionnaire();
+				{% elif skipto=="test" %}
+				testobject = new TestPhase();
+				{% elif skipto=="train" %}
+				trainobject = new TrainingPhase();
+				{% endif %}
+			    {% else %}
+				instructobject = new Instructions();
+			    {% endif %}
+			}
+
 			// Load resources then run the exp
 			$.get( "consent.html", "html", function(page) { consent=page; } );
 			$.get( "activeInstruct1.html", "html", function(page) { instruct1=page; } );
@@ -33,7 +47,7 @@
 			$.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
 			$.get( "test.html", "html", function(page) { testpage=page; } );
 			$.get( "active.html", "html", function(page) { activetaskbody=page; } );
-			$.get( "passive.html", "html", function(page) { passivetaskbody=page; instructobject = new Instructions();} );
+			$.get( "passive.html", "html", function(page) { passivetaskbody=page; runfun();} );
 		});
 		//-->
 		</script>
