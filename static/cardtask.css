@@ -62,9 +62,32 @@ strong {
     width: 500px;
 }
 
+#featuretable {
+    margin: 0 auto;
+}
+
+.instruct table .cell {
+    width: 140px;
+}
+
+.instruct table img {
+    display: inline-block;
+}
+.instruct table h3 {
+    margin: 0;
+    margin-top: 6px;
+}
+.instruct table h4 {
+    margin: 0;
+    margin-top: 6px;
+}
+
 .instruct .subbox {
+    text-align: justify;
     width: 500px;
     margin: 20px auto;
+}
+.instruct .subbox p {
     padding: 5px 20px;
     border: 1px solid white;
 }
