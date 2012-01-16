@@ -128,6 +128,7 @@ def start_exp():
                 
             conn.close()
             print "Subject number", subj_num
+            # TODO: myid is doing double-dut here.
             return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
         else:
             return render_template('error.html')
@@ -139,26 +140,20 @@ def start_exp_debug():
         if "cond" in request.args.keys():
             subj_cond = int( request.args['cond'] );
         else:
-            subj_cond = 0;
+            import random
+            subj_cond = random.randrange(12);
         if "counter" in request.args.keys():
             myid = int( request.args['counter'] );
         else:
-            myid = 0;
-        print render_template('exp.html', 
-                               subj_num = -1, 
-                               traintype = 0 if subj_cond<6 else 1, 
-                               rule = subj_cond%6, 
-                               dimorder = myid%24, 
-                               dimvals = myid%16,
-                               skipto = request.args['skipto']
-                              )
+            import random
+            myid = random.randrange(24);
         return render_template('exp.html', 
                                subj_num = -1, 
                                traintype = 0 if subj_cond<6 else 1, 
                                rule = subj_cond%6, 
                                dimorder = myid%24, 
                                dimvals = myid%16,
-                               skipto = request.args['skipto']
+                               skipto = request.args['skipto'] if 'skipto' in request.args else ''
                               )
     else:
         return render_template('error.html')
