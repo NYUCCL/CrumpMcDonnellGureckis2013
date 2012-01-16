@@ -1,0 +1,33 @@
+<style type="text/css">
+    #holder {
+        margin: 10px auto;
+    }
+    #holder svg {
+        margin: 0 auto;
+    }
+</style>
+
+<script>
+    <!--
+    var paper = Raphael( "holder" );
+    $("#holder").width( imgw*2.5 + 20 );
+    $("#holder").height( imgh*2.5 + 20 );
+    paper.image( cardnames[0], 10, 10, imgw, imgh  );
+    paper.image( cardnames[4], 10 + imgw*1.5, 10, imgw, imgh  );
+    paper.image( cardnames[8], 10, 10 + imgh*1.5, imgw, imgh  );
+    paper.image( cardnames[12], 10 + imgw*1.5, 10 + imgh*1.5, imgw, imgh  );
+    paper.rect( 2, 2, imgw+18, 2.5*imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
+    paper.rect( imgw*1.5, 2, imgw+18, 2.5*imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
+    -->
+</script>
+
+<div class="instruct" id="main">
+	<h1>Instructions</h1>
+	<p>But we could also categorize them by whether they have a stripe or not.</p>
+	<div id="holder"></div>
+	<p>The labels of the items you receive will have a pattern too, but it may be
+	much more complex than either of these pattens. Be on the look out!</p>
+
+	<div class="instructions">To continue, press <strong>Next</strong>.</div>
+	<input type="button" class="continue" id="Next" value="Next">
+</div>

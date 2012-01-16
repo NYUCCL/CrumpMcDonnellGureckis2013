@@ -26,7 +26,7 @@ strong {
 #main {
     margin: 0 auto;
     width: 680px;
-    font-size: 110%;
+    font-size: 100%;
 }
 
 .continue  {
@@ -57,8 +57,9 @@ strong {
 .instruct .instructions {
     text-align: center;
     font-style: italic;
-    font-size: 18px;
+    font-size: 100%;
     margin: 0 auto;
+    margin-top: 30px;
     width: 500px;
 }
 
@@ -99,6 +100,7 @@ strong {
 .instruct .outerbox {
     border: 1px dashed #A54;
     border: 1px solid gray;
+    border: 2px solid #ddd;
 }
 
 .instruct hr {

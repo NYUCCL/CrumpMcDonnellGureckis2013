@@ -39,16 +39,24 @@
 			}
 
 			// Load resources then run the exp
-			$.get( "consent.html", "html", function(page) { consent=page; } );
-			$.get( "activeInstruct1.html", "html", function(page) { instruct1=page; } );
-			$.get( "activeInstruct1b.html", "html", function(page) { instruct1b=page; } );
-			$.get( "activeInstruct1c.html", "html", function(page) { instruct1b=page; } );
-			$.get( "activeInstruct2.html", "html", function(page) { instruct2=page; } );
-			$.get( "activeInstruct3.html", "html", function(page) { instruct3=page; } );
-			$.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
-			$.get( "test.html", "html", function(page) { testpage=page; } );
-			$.get( "active.html", "html", function(page) { activetaskbody=page; } );
-			$.get( "passive.html", "html", function(page) { passivetaskbody=page; runfun();} );
+			$.get( "instruct1.html", function(page) { instruct1=page; } );
+			$.get( "instructCatExample.html", function(page) { instructCatexample=page; } );
+			$.get( "instructCatColor.html", function(page) { instructCatcolor=page; } );
+			$.get( "instructCatStripe.html", function(page) { instructCatstripe=page; } );
+			$.get( "instructDemoActiveIntro.html", function(page) { instructDemoIntro=page; } );
+			$.get( "instructDemoActive.html", function(page) { instructDemo=page; } );
+			$.get( "instructTest.html", function(page) { instructTest=page; } );
+			$.get( "instructTest2.html", function(page) { instructTest2=page; } );
+			$.get( "instructDimColor.html", function(page) { instructDimColor = page; } );
+			$.get( "instructDimBorder.html", function(page) { instructDimBorder = page; } );
+			$.get( "instructDimDots.html", function(page) { instructDimDots = page; } );
+			$.get( "instructDimStripe.html", function(page) { instructDimStripe = page; } );
+			$.get( "instructDimAll.html", function(page) { instructDimAll=page; } );
+			$.get( "instructFinal.html", function(page) { instructFinal=page; } );
+			$.get( "postquestionnaire.html", function(page) { postquiz=page; } );
+			$.get( "test.html", function(page) { testpage=page; } );
+			$.get( "active.html", function(page) { activetaskbody=page; } );
+			$.get( "passive.html", function(page) { passivetaskbody=page; runfun();} );
 		});
 		//-->
 		</script>

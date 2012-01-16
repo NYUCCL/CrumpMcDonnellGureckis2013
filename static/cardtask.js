@@ -266,19 +266,29 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 * HTML snippets
 ********************/
 var instruct1,
-    instruct1b,
-    instruct2,
-    instruct3,
+	instructCatexample,
+	instructCatcolor,
+	instructCatstripe,
+	instructDemoIntro,
+    instructDemo,
+    instructDimColor,
+	instructDimBorder,
+	instructDimStripe,
+	instructDimDots,
+    instructDimAll,
+    instructTest,
+    instructTest2,
+	instructFinal,
     testpage,
     debriefingbody,
     activetaskbody,
     passivetaskbody;
 $( function() {
-    $.get( "postquestionnaire.html", "html", function(page) { postquiz=page; } );
-    $.get( "debriefing.html", "html", function(page) { debriefingbody=page; } );
-    $.get( "test.html", "html", function(page) { testpage=page; } );
-    $.get( "active.html", "html", function(page) { activetaskbody=page; } );
-    $.get( "passive.html", "html", function(page) { passivetaskbody=page; } );
+    $.get( "postquestionnaire.html", function(page) { postquiz=page; } );
+    $.get( "debriefing.html", function(page) { debriefingbody=page; } );
+    $.get( "test.html", function(page) { testpage=page; } );
+    $.get( "active.html", function(page) { activetaskbody=page; } );
+    $.get( "passive.html", function(page) { passivetaskbody=page; } );
 });
 
 /********************
@@ -295,12 +305,22 @@ function debriefing () {
 var Instructions = function() {
 	var that = this;
 	// TODO: set this up to show different instructions depending
-	if (condition.traintype === 0) {
-		screens = [instruct1, instruct1b, instruct2, instruct3];
-	}
-	else {
-		screens = [instruct1, instruct1b, instruct2, instruct3];
-	}
+	screens = [
+		instruct1,
+		instructCatexample,
+		instructCatcolor,
+		instructCatstripe,
+		instructDemoIntro,
+		instructDemo,
+		instructTest,
+		instructTest2,
+		instructDimColor,
+		instructDimBorder,
+		instructDimDots,
+		instructDimStripe,
+		instructDimAll,
+		instructFinal
+		];
 	
 	this.nextForm = function () {
 		next = screens.splice(0, 1)[0];
@@ -394,7 +414,9 @@ function exampleTrain() {
 	
 	this.cardclick = function (cardid) {
 		return function() {
-			$('.hidden').fadeIn(500);
+			$('#tryit').fadeOut(500, function(){
+				$('.hidden').fadeIn(500);
+			});
 			if (condition.traintype===1) {
 				if ( that.next != cardid ) { return false; }
 			}
