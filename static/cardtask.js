@@ -362,6 +362,11 @@ function exampleTrain() {
 	var timertotalh = 50;
 	var w2 = timertotalw, h2 = timertotalh;
 	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
+    
+    // Presentations for passive condition.
+    var presentations = [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7];
+    shuffle(presentations);
+    this.next = presentations.pop();
 	
 	var loc_coords = function ( loci ) {
 		var x = cardw * (loci % 4) + left;
@@ -414,9 +419,6 @@ function exampleTrain() {
 	
 	this.cardclick = function (cardid) {
 		return function() {
-			$('#tryit').fadeOut(500, function(){
-				$('.hidden').fadeIn(500);
-			});
 			if (condition.traintype===1) {
 				if ( that.next != cardid ) { return false; }
 			}
@@ -428,6 +430,9 @@ function exampleTrain() {
 			else {
 				that.next = presentations.pop();
 			}
+			$('#tryit').fadeOut(500, function(){
+				$('.hidden').fadeIn(500);
+			});
 			lock = true;
 			cards[cardid][2].show();
 			setTimeout(
@@ -507,6 +512,12 @@ function exampleTrain() {
 		
 		cards[i].click( this.cardclick(i) );
 	}
+    
+	if ( condition.traintype===1 ) { this.indicateCard(this.next); }
+	
+	// Usually this would be a dictionary of public methods but 
+	// I'm exporting the whole thing, which will make everything accessible.
+	return this;
 }
 
 
