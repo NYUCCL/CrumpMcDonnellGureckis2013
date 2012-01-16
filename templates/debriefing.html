@@ -28,7 +28,7 @@
 	todd.gureckis@nyu.edu.<p>
 	</div>
 
-	<form> 
+	<form id="debrief" action="complete" method="post"> 
 		<p style="color: #ccccff">Check the box to affirm the following statement:</p>
 		<div id="affirmationbox">
 			<input type="checkbox" id="affirmation" value="Affirm" onClick="$('#continue').toggle()"></input>
@@ -37,6 +37,6 @@
 				research to me, and I feel that any questions I have asked were
 				satisfactorily answered.</blockquote></p>
 		</div>
-		<input type="button" id="continue" value="Continue" onClick="submitdata()" style="display:none"></input>
+		<input type="button" id="continue" value="Continue" onClick="submitdebrief();" style="display:none"></input>
 	</form>
 </div>

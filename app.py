@@ -148,6 +148,7 @@ def start_exp():
                     condition = subj_cond,
                     counterbalance = subj_counter,
                     status = ALLOCATED,
+                    debriefed=False,
                     beginhit = datetime.datetime.now()
                 )
                 myid = result.inserted_primary_key[0]
@@ -175,13 +176,13 @@ def start_exp_debug():
         else:
             import random
             subj_cond = random.randrange(12);
-        if "counter" in request.args.keys():
-            myid = int( request.args['counter'] );
+        if "subjid" in request.args.keys():
+            myid = int( request.args['subjid'] );
         else:
             import random
             myid = random.randrange(24);
         return render_template('exp.html', 
-                               subj_num = -1, 
+                               subj_num = myid, 
                                traintype = 0 if subj_cond<6 else 1, 
                                rule = subj_cond%6, 
                                dimorder = myid%24, 
@@ -200,6 +201,39 @@ def enterexp():
         conn.close()
     return 1
     
+
+@app.route('/debrief', methods=['POST'])
+def savedata():
+    if request.method == 'POST':
+        print request.form.keys()
+        if request.form.has_key('subjid') and request.form.has_key('data'):
+            conn = engine.connect()
+            subj_id = int(request.form['subjid'])
+            datafile = request.form['data']
+            print subj_id, datafile
+            s = participantsdb.update()
+            s = s.where(participantsdb.c.subjid==subj_id)
+            s = s.values(status=COMPLETED, datafile=datafile, endhit=datetime.datetime.now())
+            conn.execute(s)
+            return render_template('debriefing.html')
+    return render_template('error.html')
+
+@app.route('/complete', methods=['POST'])
+def completed():
+    if request.method == 'POST':
+        if request.form.has_key('subjid') and request.form.has_key('agree'):
+            subj_id = request.args['subjid']
+            agreed = request.args['agree']            
+            conn = engine.connect()
+            if agreed=="CHECKED":
+                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=True))
+            conn.close()
+            return render_template('thanks.html')
+    return render_template('error.html')
+
+#----------------------------------------------
+# routes for displaying the database/editing it in html
+#----------------------------------------------
 @app.route('/list')
 @requires_auth
 def viewdata():
@@ -229,24 +263,9 @@ def updatestatus():
         return value
 
 
-@app.route('/complete', methods=['POST'])
-def savedata():
-    pass
-    # if request.method == 'POST':
-    #     conn = engine.connect()
-    #     field = request.form['id']
-    #     value = request.form['value']
-    #     print field, value
-    #     [tmp, field, id] = split(field,'_')
-    #     id = int(id)
-    #     s = participantsdb.update()
-    #     s = s.where(participantsdb.c.subjid==id)
-    #     if field=='status':
-    #         s = s.values(status=value)
-    #     conn.execute(s)
-    #     return value
-
-
+#----------------------------------------------
+# generic route
+#----------------------------------------------
 @app.route('/<pagename>')
 #@requires_auth
 def regularpage(pagename=None):
@@ -256,6 +275,9 @@ def regularpage(pagename=None):
         return render_template(pagename)
 
 
+#----------------------------------------------
+# database management
+#----------------------------------------------
 def createdatabase(engine, metadata):
 
     # try to load tables from a file, if that fails create new tables
@@ -273,6 +295,7 @@ def createdatabase(engine, metadata):
             Column('beginhit', DateTime(), nullable=True),
             Column('endhit', DateTime(), nullable=True),
             Column('status', Integer, default = 1),
+            Column('debriefed', Boolean),
             Column('datafile', Text, nullable=True),  #the data from the exp
         )
         participants.create()
