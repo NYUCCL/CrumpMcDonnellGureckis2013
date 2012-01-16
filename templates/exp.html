@@ -43,8 +43,14 @@
 			$.get( "instructCatExample.html", function(page) { instructCatexample=page; } );
 			$.get( "instructCatColor.html", function(page) { instructCatcolor=page; } );
 			$.get( "instructCatStripe.html", function(page) { instructCatstripe=page; } );
-			$.get( "instructDemoActiveIntro.html", function(page) { instructDemoIntro=page; } );
-			$.get( "instructDemoActive.html", function(page) { instructDemo=page; } );
+			if (condition.traintype===0) {
+			    $.get( "instructDemoActiveIntro.html", function(page) { instructDemoIntro=page; } );
+			    $.get( "instructDemoActive.html", function(page) { instructDemo=page; } );
+			}
+			else {
+			    $.get( "instructDemoPassiveIntro.html", function(page) { instructDemoIntro=page; } );
+			    $.get( "instructDemoPassive.html", function(page) { instructDemo=page; } );
+			}
 			$.get( "instructTest.html", function(page) { instructTest=page; } );
 			$.get( "instructTest2.html", function(page) { instructTest2=page; } );
 			$.get( "instructDimColor.html", function(page) { instructDimColor = page; } );
