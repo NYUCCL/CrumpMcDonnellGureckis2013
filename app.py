@@ -4,7 +4,7 @@ import os
 import time
 import datetime
 import os.path
-from random import choice
+from random import choice, shuffle, seed
 import sys
 from sqlalchemy import *
 from functools import wraps
@@ -12,6 +12,7 @@ from functools import wraps
 # constants
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 NUMCONDS = 12
+NUMCOUNTERS = 24*16
 ALLOCATED = 1
 STARTED = 2
 COMPLETED = 3
@@ -20,6 +21,18 @@ CREDITED = 4
 
 app = Flask(__name__)
 
+#----------------------------------------------
+# based counterbalancing code
+#----------------------------------------------
+seed(500)  # use the same order each time the program is launched
+counterbalanceconds = []
+dimorders = range(24)
+dimvals = range(16)
+shuffle(dimorders)
+shuffle(dimvals)
+for i in dimorders:
+    for j in dimvals:
+        counterbalanceconds.append((i,j))
 
 #----------------------------------------------
 # function for authentication
@@ -58,7 +71,7 @@ def get_people(conn, s):
     for row in conn.execute(s):
         person = {}
         for field in ['participants_subjid', 'participants_hitid', 'participants_assignmentid', 
-                        'participants_condition',  'participants_beginhit', 'participants_endhit',
+                        'participants_condition', 'participants_counterbalance', 'participants_beginhit', 'participants_endhit',
                         'participants_status', 'participants_datafile']:
             person[field] = row[field]
         people[i] = person
@@ -80,7 +93,31 @@ def mturkroute():
         else:
             return render_template('error.html')
 
-@app.route('/exp', methods=['GET','POST'])
+def get_random_condition(conn):
+    s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+    result = conn.execute(s)
+    counts = [0]*NUMCONDS
+    for row in result:
+        counts[row[0]]+=1
+    
+    # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
+    indicies = [i for i, x in enumerate(counts) if x == min(counts)]
+    subj_cond = choice(indicies)
+    return subj_cond
+
+def get_random_counterbalance(conn):
+    s = select([participantsdb.c.counterbalance], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+    result = conn.execute(s)
+    counts = [0]*NUMCOUNTERS
+    for row in result:
+        counts[row[0]]+=1
+    
+    # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
+    indicies = [i for i, x in enumerate(counts) if x == min(counts)]
+    subj_counter = choice(indicies)
+    return subj_counter
+
+@app.route('/exp', methods=['GET'])
 def start_exp():
     # this serves up the experiment applet
     if request.method == 'GET':
@@ -92,44 +129,40 @@ def start_exp():
             conn = engine.connect()
             
             # check first to see if this hitID or assignmentID exists.  if so check to see if inExp is set
-            s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.status], from_obj=[participantsdb])
+            s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.counterbalance, participantsdb.c.status], from_obj=[participantsdb])
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
             if numrecs == 0:
-                # doesn't exist, get a histogram of completed conditions
-                s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
-                result = conn.execute(s)
-                counts = [0]*NUMCONDS
-                for row in result:
-                    counts[row[0]]+=1
                 
-                # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
-                indicies = [i for i, x in enumerate(counts) if x == min(counts)]
-                subj_cond = choice(indicies)
+                # doesn't exist, get a histogram of completed conditions and choose a under-used condition
+                subj_cond = get_random_condition(conn)
+                
+                # doesn't exist, get a histogram of completed counterbalanced, and choose a under-used one
+                subj_counter = get_random_counterbalance(conn)
                 
                 # set condition here and insert into database
                 result = conn.execute(participantsdb.insert(),
                     hitid = hitID,
                     assignmentid = assignmentID,
                     condition = subj_cond,
+                    counterbalance = subj_counter,
                     status = ALLOCATED,
                     beginhit = datetime.datetime.now()
                 )
                 myid = result.inserted_primary_key[0]
+            
             elif numrecs==1:
-                myid, subj_cond, status = matches[0]
-                if status>=STARTED: # in experiment can't restart
-                    print "already in experiment or finish"
+                myid, subj_cond, subj_counter, status = matches[0]
+                if status>=STARTED: # in experiment (or later) can't restart at this point
                     return render_template('error.html')
             else:
                 print "Error, hit/assignment appears in database more than once (serious problem)"
                 exit()
-                
+            
             conn.close()
-            print "Subject number", subj_num
-            # TODO: myid is doing double-dut here.
-            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = myid%24, dimvals = myid%16)
+            dimo, dimv = counterbalanceconds[subj_counter]
+            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv)
         else:
             return render_template('error.html')
 
@@ -236,6 +269,7 @@ def createdatabase(engine, metadata):
             Column('hitid', String(128)),
             Column('assignmentid', String(128)),
             Column('condition', Integer),
+            Column('counterbalance', Integer),
             Column('beginhit', DateTime(), nullable=True),
             Column('endhit', DateTime(), nullable=True),
             Column('status', Integer, default = 1),
