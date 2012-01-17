@@ -27,8 +27,9 @@
 	<body>
 		<img id="logo" src="https://files.nyu.edu/jbm388/public/logo.jpg" />
 		{% if assignmentid != "ASSIGNMENT_ID_NOT_AVAILABLE" %}
+		<h1>Thank you for accepting this HIT!</h1>
 		<p>By clicking the following URL link, you will be taken to the experiment,
-		including complete instructions and an informed consent.</p>
+		including complete instructions and an informed consent agreement.</p>
 
 		<p><a href="#" onClick="javscript:window.open('/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=780,height=800,top=23')">Link to the experiment.</a></p>
 
