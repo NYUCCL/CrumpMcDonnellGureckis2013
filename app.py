@@ -143,7 +143,7 @@ def start_exp():
             
             # check first to see if this hitID or assignmentID exists.  if so check to see if inExp is set
             s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.counterbalance, participantsdb.c.status], from_obj=[participantsdb])
-            s = s.where(and_(participantsdb.c.hitid==hitId,participantsdb.c.assignmentid==assignmentID))
+            s = s.where(and_(participantsdb.c.hitid==hitID,participantsdb.c.assignmentid==assignmentID))
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
