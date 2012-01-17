@@ -117,6 +117,19 @@ def get_random_counterbalance(conn):
     subj_counter = choice(indicies)
     return subj_counter
 
+@app.route('/consent', methods=['GET'])
+def give_consent():
+    # this serves up the experiment applet
+    if request.method == 'GET':
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+            hitID = request.args['hitId']
+            assignmentID = request.args['assignmentId']
+            print hitID, assignmentID
+            
+            return render_template('consent.html', hitid = hitID, assignmentid=assignmentID)
+        else:
+            return render_template('error.html')
+
 @app.route('/exp', methods=['GET'])
 def start_exp():
     # this serves up the experiment applet
