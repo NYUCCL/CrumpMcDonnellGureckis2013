@@ -3,8 +3,30 @@
 <html>
 	<head>
 		<title>CompCog Psychology Experiment</title>
+		<style type="text/css">
+			body {
+				margin: 20px;
+				width: 600px;
+				font-family: verdana, helvetica, sans-serif;
+				background-color: black;
+				color: white;
+			}
+			p {
+				width: 450px;;
+				text-align: left;
+			}
+			#logo {
+				float: right;
+				width: 120px;
+			}
+			a {
+				color: purple;
+			}
+		</style>
 	</head>
 	<body>
+		<img id="logo" src="https://files.nyu.edu/jbm388/public/logo.jpg" />
+		<h1> Call for participants</h1>
 		<p>The Cognition and Computation Lab at New York University (NYU) is looking
 		for online participants for a brief experiment in cognitive psychology. The
 		experiment can be run right at your desk. The only formal requirements are that
@@ -15,7 +37,7 @@
 		<p>By clicking the following URL link, you will be taken to the experiment,
 		including complete instructions and an informed consent.</p>
 
-		<p><a onClick="javscriptwindow.open('/exp?hitId={{ hitid }}&assignmentId={{ assignmentid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=780,height=800,top=23')">Link to the experiment</a></p>
+		<p><a href="#" onClick="javscript:window.open('/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=780,height=800,top=23')">Link to the experiment.</a></p>
 
 		<p>If you have any questions, you may e-mail the principal investigator, Todd
 		Gureckis, via <a href="mailto:todd.gureckis@nyu.edu">email</a>.</p>
