@@ -143,6 +143,7 @@ def start_exp():
             
             # check first to see if this hitID or assignmentID exists.  if so check to see if inExp is set
             s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.counterbalance, participantsdb.c.status], from_obj=[participantsdb])
+            s = s.where(and_(participantsdb.c.hitid==hitId,participantsdb.c.assignmentid==assignmentID))
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
@@ -307,7 +308,7 @@ def createdatabase(engine, metadata):
             Column('counterbalance', Integer),
             Column('beginhit', DateTime(), nullable=True),
             Column('endhit', DateTime(), nullable=True),
-            Column('status', Integer, default = 1),
+            Column('status', Integer, default = ALLOCATED),
             Column('debriefed', Boolean),
             Column('datafile', Text, nullable=True),  #the data from the exp
         )
