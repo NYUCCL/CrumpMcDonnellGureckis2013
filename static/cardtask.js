@@ -184,7 +184,7 @@ var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 var trainobject, testobject;
 
 
-// Tasks
+// Tasks,   TODD - what is going on here?
 catfuns = [
 	function (num) {
 		// Shepard type I
@@ -766,7 +766,7 @@ var TestPhase = function() {
 	this.hits = new Array();
 	
 	acknowledgment = '<p>Thanks for your response!</p>';
-	buttons = '<p id="prompt">Which category does the object belong to?\
+	buttons = '<p id="prompt">Which group does the object belong to?\
 		<div id="inputs">\
 				<input type="button" id="CategoryA" value="A">\
 				<input type="button" id="CategoryB" value="B">\
@@ -881,7 +881,7 @@ var startTask = function () {
 	$.ajax("inexp", {
 			type: "POST",
 			async: true,
-			data: {"subjid": subjid}
+			data: {"subjId": subjid}
 	});
 	// Provide opt-out 
 	window.onbeforeunload = function(){
