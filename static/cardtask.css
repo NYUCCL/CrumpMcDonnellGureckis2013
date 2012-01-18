@@ -103,6 +103,13 @@ strong {
     border: 2px solid #ddd;
 }
 
+.instruct .innerbox {
+    width: 250px;
+}
+.instruct .innerbox img {
+    margin: 0 10px;
+}
+
 .instruct hr {
     border: .5px solid gray;
 }
