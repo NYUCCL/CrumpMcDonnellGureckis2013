@@ -2,6 +2,7 @@ import datetime
 
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import ExternalQuestion
+from boto.mturk.qualification import LocaleRequirement, PercentAssignmentsApprovedRequirement
 
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
 
@@ -20,6 +21,12 @@ mtc = MTurkConnection(
 experimentPortalURL = "http://smash.psych.nyu.edu:5001/mturk"
 frameheight = 600
 mturkQuestion = ExternalQuestion( experimentPortalURL, 600 )
+
+# Qualification:
+#qualifications = [
+#    PercentAssignmentsApprovedRequirement(),
+#    LocaleRequirement
+#]
 
 # Specify all the HIT parameters
 paramdict = dict(
