@@ -251,13 +251,17 @@ var responsedata = [],
 
 // Data handling functions
 // TODO: consider not recording the first five columns every trial. 
+function recordinstructtrial (instructname, rt ) {
+	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructname, rt];
+	datastring = datastring.concat( trialvals, "\n" );
+}
 function recordtraintrial (theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt ) {
-	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt];
+	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, currentblock, currenttrial, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
 function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
-	trialvals = [subjid, currentblock, currenttrial, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "TEST", theorystim, actualstim, correct, resp, hit, rt];
+	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, currentblock, currenttrial,  "TEST", theorystim, actualstim, correct, resp, hit, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
@@ -265,28 +269,57 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 /********************
 * HTML snippets
 ********************/
-var instruct1,
-	instructCatexample,
-	instructCatcolor,
-	instructCatstripe,
-	instructDemoIntro,
-    instructDemo,
-    instructDimColor,
-	instructDimBorder,
-	instructDimStripe,
-	instructDimDots,
-    instructDimAll,
-    instructTest,
-    instructTest2,
-	instructFinal,
-    testpage,
-    activetaskbody,
-    passivetaskbody;
-$( function() {
-    $.get( "postquestionnaire.html", function(page) { postquiz=page; } );
-    $.get( "test.html", function(page) { testpage=page; } );
-    $.get( "active.html", function(page) { activetaskbody=page; } );
-    $.get( "passive.html", function(page) { passivetaskbody=page; } );
+var pages = {};
+
+var showpage = function(pagename) {
+	$('body').html( pages[pagename] );
+};
+
+var pagenames = [
+	"postquestionnaire",
+	"test",
+	"instruct1",
+	"instructCatExample",
+	"instructCatColor",
+	"instructCatStripe",
+	"instructTest",
+	"instructTest2",
+	"instructDimColor",
+	"instructDimBorder",
+	"instructDimDots",
+	"instructDimStripe",
+	"instructDimAll",
+	"instructFinal"
+];
+
+
+$( function($) {
+    $.ajaxSetup({cache: false});
+    pagenames.map( function (pagename){
+		$.ajax({ 
+			url: pagename + ".html",
+			success: function(page){
+                pages[pagename] = page; 
+            },
+			async: true
+		});
+	});
+	if (condition.traintype===0) {
+		$.ajax( {url:"active.html", success:function(page) { pages["train"]=page;
+		}, async: true });
+		$.ajax( {url:"instructDemoActiveIntro.html", sucess:function(page) {
+			pages["instructDemoIntro"]=page; }, async: true } );
+		$.ajax( {url:"instructDemoActive.html", success:function(page) {
+			pages["instructDemo"]=page; }, async: true } );
+	}
+	else {
+		$.ajax( {url: "passive.html", success: function(page) {
+			pages["train"]=page; }, async: true }  );
+		$.ajax( {url: "instructDemoPassiveIntro.html", success: function(page) {
+			pages["instructDemoIntro"]=page; }, async: true }  );
+		$.ajax( {url: "instructDemoPassive.html", success: function(page) {
+			pages["instructDemo"]=page; }, async: true }  );
+	}
 });
 
 
@@ -295,29 +328,42 @@ $( function() {
 ************************/
 var Instructions = function() {
 	var that = this;
-	// TODO: set this up to show different instructions depending
-	screens = [
-		instruct1,
-		instructCatexample,
-		instructCatcolor,
-		instructCatstripe,
-		instructDemoIntro,
-		instructDemo,
-		instructTest,
-		instructTest2,
-		instructDimColor,
-		instructDimBorder,
-		instructDimDots,
-		instructDimStripe,
-		instructDimAll,
-		instructFinal
-		];
+	var screens = [
+			"instruct1",
+			"instructCatExample",
+			"instructCatColor",
+			"instructCatStripe",
+			"instructDemoIntro",
+			"instructDemo",
+			"instructTest",
+			"instructTest2",
+			"instructDimColor",
+			"instructDimBorder",
+			"instructDimDots",
+			"instructDimStripe",
+			"instructDimAll",
+			"instructFinal"
+		],
+		currentscreen = "",
+		timestamp;
+
+	this.recordtrial = function() {
+		rt = (new Date().getTime()) - timestamp;
+		recordinstructtrial( currentscreen, rt  );
+	};
 	
 	this.nextForm = function () {
 		next = screens.splice(0, 1)[0];
-		$('body').html( next );
-        if ( screens.length === 0 ) $('.continue').click( that.startTraining );
-        else $('.continue').click( that.nextForm );
+        showpage( next );
+		timestamp = new Date().getTime();
+		if ( screens.length === 0 ) $('.continue').click(function() {
+			that.recordtrial();
+			that.startTraining();
+		});
+		else $('.continue').click( function() {
+			that.recordtrial();
+			that.nextForm();
+		});
 	};
 	this.startTraining = function() {
 		startTask();
@@ -533,13 +579,8 @@ var TrainingPhase = function() {
 	// View variables
 	var ncardswide = 4, ncardstall = 2;
 	
-	// Rewrite html
-	if ( condition.traintype===0 ) {
-		$('body').html(activetaskbody);
-	}
-	else{
-		$('body').html(passivetaskbody);
-	}
+	// Write out training html 
+	showpage('train');
 	
 	// Canvas for the cards.
 	var nowX, nowY, w = ncardswide*cardw, h = ncardstall*cardh, r=30;
@@ -771,7 +812,7 @@ var TestPhase = function() {
 				<input type="button" id="CategoryA" value="A">\
 				<input type="button" id="CategoryB" value="B">\
 		</div>';
-	$('body').html( testpage );
+	showpage( 'test' );
 	
 	var addbuttons = function() {
 		buttonson = new Date().getTime();
@@ -858,7 +899,7 @@ var TestPhase = function() {
 * Finish up  *
 *************/
 var givequestionnaire = function() {
-	$('body').html(postquiz);
+	showpage('postquestionnaire');
     $("#continue").click(function () {
         finish();
         submitquestionnaire();
@@ -875,9 +916,7 @@ var submitquestionnaire = function() {
 	$('form').submit();
 };
 
-
 var startTask = function () {
-	// TODO: Update for Todd's routing
 	$.ajax("inexp", {
 			type: "POST",
 			async: true,
@@ -889,6 +928,7 @@ var startTask = function () {
 		return "Are you sure you want to leave the experiment?";
 	};
 };
+
 var finish = function () {
 	window.onbeforeunload = function(){ };
 };
