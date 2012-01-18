@@ -920,7 +920,7 @@ var startTask = function () {
 	$.ajax("inexp", {
 			type: "POST",
 			async: true,
-			data: {"subjId": subjid}
+			data: {subjId: subjid}
 	});
 	// Provide opt-out 
 	window.onbeforeunload = function(){

@@ -226,7 +226,7 @@ def enterexp():
             conn = engine.connect()
             results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED))
             conn.close()
-    return 1
+    return render_template('error.html')
 
 
 @app.route('/debrief', methods=['POST'])
