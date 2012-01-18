@@ -202,37 +202,47 @@ input {
     text-align: right;
 }
 
+#debriefing {
+    width: 640px;
+}
 
 #debriefingtext {
     margin: 0 auto;
     padding: 10px 20px;
-    width: 540px;
-    font-size: .8em;
+    font-size: 80%;
     text-align: justify;
     border: 1px solid white;
 }
 #affirmationbox {
     position: relative;
-    display: inline-block;
+    margin:  0 auto;
     border: 1px dotted white; 
-    height: auto;
-    width: 540px;
     padding: 10px 20px;
     vertical-align: middle;
 }
-#affirmation {
-    display: inline-block;
-    float: left;
-    margin-left: 20px;
-    margin-right: -40px;
-}
-#debriefing blockquote {
-    display: inline-block;
+#affirmationbox p {
+    text-align: left;
     font-style: italic;
-    float: left;
-    text-align: justify;
-    width: 430px;
-    margin: auto 0;
+    margin-bottom: 0;
 }
-
-
+#affirmationbox  table {
+    border-spacing: 20px;
+}
+#affirmationbox  td {
+    vertical-align: middle;
+    font-size: 100%;
+    color: black;
+    height: 50px;
+    cursor: pointer;
+}
+#affirmative {
+    background: white;
+    overflow: hidden;
+    font-weight: bold;
+    width: 10em;
+}
+#negative {
+    background: white;
+    font-size: 100%;
+    width: 25em;
+}
