@@ -242,16 +242,17 @@ def savedata():
             s = s.where(participantsdb.c.subjid==subj_id)
             s = s.values(status=COMPLETED, datafile=datafile, endhit=datetime.datetime.now())
             conn.execute(s)
-            return render_template('debriefing.html')
+            return render_template('debriefing.html', subjid=subj_id)
     return render_template('error.html')
 
 
 @app.route('/complete', methods=['POST'])
 def completed():
     if request.method == 'POST':
+        print request.form.keys()
         if request.form.has_key('subjid') and request.form.has_key('agree'):
-            subj_id = request.args['subjid']
-            agreed = request.args['agree']            
+            subj_id = request.form['subjid']
+            agreed = request.form['agree']            
             conn = engine.connect()
             if agreed=="CHECKED":
                 results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=True))
