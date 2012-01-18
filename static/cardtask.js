@@ -900,7 +900,9 @@ var TestPhase = function() {
 * Finish up  *
 *************/
 var givequestionnaire = function() {
+	timestamp = new Date().getTime();
 	showpage('postquestionnaire');
+	recordinstructtrial( "postquestoinnaire", (new Date().getTime())-timestamp );
     $("#continue").click(function () {
         finish();
         submitquestionnaire();
