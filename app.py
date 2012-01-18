@@ -34,11 +34,13 @@ for i in dimorders:
     for j in dimvals:
         counterbalanceconds.append((i,j))
 
+
 #----------------------------------------------
 # function for authentication
 #----------------------------------------------
 def wrapper(func, args):
     return func(*args)
+
 
 def check_auth(username, password):
     """This function is called to check if a username /
@@ -46,12 +48,14 @@ def check_auth(username, password):
     """
     return username == 'gureckislab' and password == '2research'
 
+
 def authenticate():
     """Sends a 401 response that enables basic auth"""
     return Response(
     'Could not verify your access level for that URL.\n'
     'You have to login with proper credentials', 401,
     {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
 
 def requires_auth(f):
     @wraps(f)
@@ -61,6 +65,7 @@ def requires_auth(f):
             return authenticate()
         return f(*args, **kwargs)
     return decorated
+
 
 #----------------------------------------------
 # general utilities
@@ -93,6 +98,7 @@ def mturkroute():
         else:
             return render_template('error.html')
 
+
 def get_random_condition(conn):
     s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
     result = conn.execute(s)
@@ -104,6 +110,7 @@ def get_random_condition(conn):
     indicies = [i for i, x in enumerate(counts) if x == min(counts)]
     subj_cond = choice(indicies)
     return subj_cond
+
 
 def get_random_counterbalance(conn):
     s = select([participantsdb.c.counterbalance], participantsdb.c.endhit!=null, from_obj=[participantsdb])
@@ -117,6 +124,7 @@ def get_random_counterbalance(conn):
     subj_counter = choice(indicies)
     return subj_counter
 
+
 @app.route('/consent', methods=['GET'])
 def give_consent():
     # this serves up the experiment applet
@@ -129,6 +137,7 @@ def give_consent():
             return render_template('consent.html', hitid = hitID, assignmentid=assignmentID)
         else:
             return render_template('error.html')
+
 
 @app.route('/exp', methods=['GET'])
 def start_exp():
@@ -181,6 +190,7 @@ def start_exp():
         else:
             return render_template('error.html')
 
+
 @app.route('/debug', methods=['GET','POST'])
 def start_exp_debug():
     # this serves up the experiment applet in debug mode
@@ -206,15 +216,18 @@ def start_exp_debug():
     else:
         return render_template('error.html')
 
+
 @app.route('/inexp', methods=['POST'])
 def enterexp():
+    print "accessing /inexp"
     if request.method == 'POST':
-        subid = request.args['subjId']
-        conn = engine.connect()
-        results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED))
-        conn.close()
+        if request.form.has_key('subjId'):
+            subid = request.form['subjId']
+            conn = engine.connect()
+            results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED))
+            conn.close()
     return 1
-    
+
 
 @app.route('/debrief', methods=['POST'])
 def savedata():
@@ -232,6 +245,7 @@ def savedata():
             return render_template('debriefing.html')
     return render_template('error.html')
 
+
 @app.route('/complete', methods=['POST'])
 def completed():
     if request.method == 'POST':
@@ -244,6 +258,7 @@ def completed():
             conn.close()
             return render_template('thanks.html')
     return render_template('error.html')
+
 
 #----------------------------------------------
 # routes for displaying the database/editing it in html
@@ -325,6 +340,7 @@ def loaddatabase(engine, metadata):
         print "Error, participants table doesn't exist"
         exit()
     return participants
+
 
 ###########################################################
 # let's start
