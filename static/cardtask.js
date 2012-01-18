@@ -354,6 +354,7 @@ var Instructions = function() {
 	
 	this.nextForm = function () {
 		next = screens.splice(0, 1)[0];
+		currentscreen = next;
         showpage( next );
 		timestamp = new Date().getTime();
 		if ( screens.length === 0 ) $('.continue').click(function() {
