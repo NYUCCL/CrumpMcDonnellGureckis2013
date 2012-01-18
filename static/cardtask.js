@@ -306,6 +306,7 @@ var Instructions = function() {
 	var that = this;
 	// TODO: set this up to show different instructions depending
 	screens = [
+		instructFinal,
 		instruct1,
 		instructCatexample,
 		instructCatcolor,

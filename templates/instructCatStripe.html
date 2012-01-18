@@ -1,30 +1,56 @@
 <style type="text/css">
-    #holder {
-        margin: 10px auto;
-    }
-    #holder svg {
-        margin: 0 auto;
-    }
+	#stimtable {
+		position: relative;
+		margin: 0 auto;
+		width: 280px;
+	}
+	#stimtable img {
+		width: 100px;
+	}
+	#stimtable table {
+	}
+	#stimtable td {
+		padding: 20px;
+	}
+	#leftrect {
+		position: absolute;
+		left: 152px; top: 10px;
+		height: 265px; width: 120px;
+		border: 3px solid orange;
+	}
+	#rightrect {
+		position: absolute;
+		left: 10px; top: 10px;
+		height: 265px; width: 120px;
+		border: 3px solid orange;
+	}
 </style>
-
-<script>
-    <!--
-    var paper = Raphael( "holder" );
-    $("#holder").width( imgw*2.5 + 20 );
-    $("#holder").height( imgh*2.5 + 20 );
-    paper.image( cardnames[0], 10, 10, imgw, imgh  );
-    paper.image( cardnames[4], 10 + imgw*1.5, 10, imgw, imgh  );
-    paper.image( cardnames[8], 10, 10 + imgh*1.5, imgw, imgh  );
-    paper.image( cardnames[12], 10 + imgw*1.5, 10 + imgh*1.5, imgw, imgh  );
-    paper.rect( 2, 2, imgw+18, 2.5*imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
-    paper.rect( imgw*1.5, 2, imgw+18, 2.5*imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
-    -->
-</script>
 
 <div class="instruct" id="main">
 	<h1>Instructions</h1>
-	<p>However, these same items might alternatively group based on the presence of absence of the diagonal stripe:</p>
-	<div id="holder"></div>
+	<div id="stimtable">
+		<table>
+			<div id="leftrect"></div>
+			<div id="rightrect"></div>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM00.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM04.PNG">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM08.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM12.PNG">
+				</td>
+			</tr>
+		</table>
+	</div>
+	<p>However, these same items might alternatively group based on the presence of absence of the diagonal stripe, as depicted here.</p>
 	<p>The groups you will be learning about may be more complex than either of these two example patterns and will involve
 		more objects.</p>
 

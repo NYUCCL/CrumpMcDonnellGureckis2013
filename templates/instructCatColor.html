@@ -1,30 +1,63 @@
+<!doctype html>
+
+<link rel=stylesheet href="static/cardtask.css" type="text/css" media="screen">
+
 <style type="text/css">
-    #holder {
-        margin: 10px auto;
-    }
-    #holder svg {
-        margin: 0 auto;
-    }
+	#stimtable {
+		position: relative;
+		margin: 0 auto;
+		width: 280px;
+	}
+	#stimtable img {
+		width: 100px;
+	}
+	#stimtable table {
+	}
+	#stimtable td {
+		padding: 20px;
+	}
+	#toprect {
+		position: absolute;
+		top: 155px; left: 10px;
+		width: 260px;
+		height: 120px;
+		border: 3px solid orange;
+	}
+	#bottomrect {
+		position: absolute;
+		top: 10px; left: 10px;
+		width: 260px;
+		height: 120px;
+		border: 3px solid orange;
+	}
 </style>
 
-<script>
-    <!--
-    var paper = Raphael( "holder" );
-    $("#holder").width( imgw*2.5 + 20 );
-    $("#holder").height( imgh*2.5 + 20 );
-    paper.image( cardnames[0], 10, 10, imgw, imgh  );
-    paper.image( cardnames[4], 10 + imgw*1.5, 10, imgw, imgh  );
-    paper.image( cardnames[8], 10, 10 + imgh*1.5, imgw, imgh  );
-    paper.image( cardnames[12], 10 + imgw*1.5, 10 + imgh*1.5, imgw, imgh  );
-    paper.rect( 2, 2, 2.5*imgw+18, imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
-    paper.rect( 2, imgw*1.5, 2.5*imgw+18, imgh+18 ).attr({stroke: "orange", "stroke-width": 3});
-    -->
-</script>
 
 <div class="instruct" id="main">
 	<h1>Instructions</h1>
+	<div id="stimtable">
+		<table>
+			<div id="toprect"></div>
+			<div id="bottomrect"></div>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM00.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM04.PNG">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM08.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM12.PNG">
+				</td>
+			</tr>
+		</table>
+	</div>
 	<p>For example, they might group by color with the mostly purple items in one group (say, <strong>A</strong>) and the mostly blue items in the other group (<strong>B</strong>):</p>
-	<div id="holder"></div>
 	
 	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
 	<input type="button" class="continue" id="Next" value="Next">

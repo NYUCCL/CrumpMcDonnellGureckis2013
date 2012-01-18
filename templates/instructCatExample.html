@@ -1,28 +1,42 @@
 <style type="text/css">
-    #holder {
-        margin: 10px auto;
-    }
-    #holder svg {
-        margin: 0 auto;
-    }
+	#stimtable {
+		position: relative;
+		margin: 0 auto;
+		width: 280px;
+	}
+	#stimtable img {
+		width: 100px;
+	}
+	#stimtable table {
+	}
+	#stimtable td {
+		padding: 20px;
+	}
 </style>
-
-<script>
-    <!--
-    var paper = Raphael( "holder" );
-    $("#holder").width( imgw*2.5 + 20 );
-    $("#holder").height( imgh*2.5 + 20 );
-    paper.image( cardnames[0], 10, 10, imgw, imgh  );
-    paper.image( cardnames[4], 10 + imgw*1.5, 10, imgw, imgh  );
-    paper.image( cardnames[8], 10, 10 + imgh*1.5, imgw, imgh  );
-    paper.image( cardnames[12], 10 + imgw*1.5, 10 + imgh*1.5, imgw, imgh  );
-    -->
-</script>
 
 <div class="instruct" id="main">
 	<h1>Instructions</h1>
+	<div id="stimtable">
+		<table>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM00.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM04.PNG">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<img alt="" src="static/images/STIM08.PNG">
+				</td>
+				<td>
+					<img alt="" src="static/images/STIM12.PNG">
+				</td>
+			</tr>
+		</table>
+	</div>
 	<p>The way that the labels are assigned to the squares will follow a pattern which could be quite simple. For example, if you saw the following four squares, there are some sensible ways in which you could group them.</p>
-	<div id="holder"></div>
 	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
 
 	<input type="button" class="continue" id="Next" value="Next">
