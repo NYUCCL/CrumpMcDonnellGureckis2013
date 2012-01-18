@@ -902,7 +902,7 @@ var TestPhase = function() {
 var givequestionnaire = function() {
 	timestamp = new Date().getTime();
 	showpage('postquestionnaire');
-	recordinstructtrial( "postquestoinnaire", (new Date().getTime())-timestamp );
+	recordinstructtrial( "postquestionnaire", (new Date().getTime())-timestamp );
 	$("#continue").click(function () {
 		finish();
 		submitquestionnaire();
