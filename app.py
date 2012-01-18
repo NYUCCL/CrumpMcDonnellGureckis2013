@@ -256,8 +256,15 @@ def completed():
             conn = engine.connect()
             if agreed=="CHECKED":
                 results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=True))
+            s = select([participantsdb.c.assignmentid])
+            s = s.where(and_(participantsdb.c.subjid==subj_id))
+            result = conn.execute(s)
+            numrecs = len( result )
+            if numrecs > 1:
+                print "Serious error! Multiple records found for subject ID:", subj_id
+            assignid = result[0][0] #TODO: Todd, I don't know what I'm doing in SQLalchemy so you probably want to check this.
             conn.close()
-            return render_template('thanks.html')
+            return render_template('thanks.html', assignmentId=assignid)
     return render_template('error.html')
 
 
