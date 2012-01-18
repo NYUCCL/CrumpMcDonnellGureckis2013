@@ -4,7 +4,7 @@ import os
 import time
 import datetime
 import os.path
-from random import choice, shuffle, seed
+from random import choice, shuffle, seed, getstate, setstate
 import sys
 from sqlalchemy import *
 from functools import wraps
@@ -108,7 +108,10 @@ def get_random_condition(conn):
     
     # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
     indicies = [i for i, x in enumerate(counts) if x == min(counts)]
+    rstate = getstate()
+    seed()
     subj_cond = choice(indicies)
+    setstate(rstate)
     return subj_cond
 
 
@@ -121,7 +124,10 @@ def get_random_counterbalance(conn):
     
     # choose randomly from the ones that have the least in them (so will tend to fill in evenly)
     indicies = [i for i, x in enumerate(counts) if x == min(counts)]
-    subj_counter = choice(indicies)
+    rstate = getstate()
+    seed()
+    subj_cond = choice(indicies)
+    setstate(rstate)
     return subj_counter
 
 
