@@ -280,24 +280,15 @@ var instruct1,
     instructTest2,
 	instructFinal,
     testpage,
-    debriefingbody,
     activetaskbody,
     passivetaskbody;
 $( function() {
     $.get( "postquestionnaire.html", function(page) { postquiz=page; } );
-    $.get( "debriefing.html", function(page) { debriefingbody=page; } );
     $.get( "test.html", function(page) { testpage=page; } );
     $.get( "active.html", function(page) { activetaskbody=page; } );
     $.get( "passive.html", function(page) { passivetaskbody=page; } );
 });
 
-/********************
-* (relatively) static pages
-********************/
-function debriefing () {
-	// TODO: make sure the forms are filled out.
-	$('body').html( debriefingbody );
-}
 
 /************************
 * CODE FOR INSTRUCTIONS *
@@ -306,7 +297,6 @@ var Instructions = function() {
 	var that = this;
 	// TODO: set this up to show different instructions depending
 	screens = [
-		instructFinal,
 		instruct1,
 		instructCatexample,
 		instructCatcolor,
@@ -330,6 +320,7 @@ var Instructions = function() {
         else $('.continue').click( that.nextForm );
 	};
 	this.startTraining = function() {
+		startTask();
 		trainobject = new TrainingPhase();
 	};
 	this.nextForm();
@@ -868,6 +859,10 @@ var TestPhase = function() {
 *************/
 var givequestionnaire = function() {
 	$('body').html(postquiz);
+    $("#continue").click(function () {
+        finish();
+        submitquestionnaire();
+    });
 	// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
 	// postback();
 };
@@ -883,16 +878,19 @@ var submitquestionnaire = function() {
 
 var startTask = function () {
 	// TODO: Update for Todd's routing
-	$.ajax("FlaskRoute", {
+	$.ajax("inexp", {
 			type: "POST",
 			async: true,
 			data: {"subjid": subjid}
 	});
 	// Provide opt-out 
-	$(window).bind('beforeunload', function(){
+	window.onbeforeunload = function(){
 		alert( "By leaving this page, you opt out of the experiment. Please confirm that this is what you meant to do." );
-		return ("Are you sure you want to leave the experiment?");
-	});
+		return "Are you sure you want to leave the experiment?";
+	};
+};
+var finish = function () {
+	window.onbeforeunload = function(){ };
 };
 
 // vi: et! ts=4 sw=4
