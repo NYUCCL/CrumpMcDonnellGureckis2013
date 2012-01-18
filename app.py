@@ -248,11 +248,13 @@ def savedata():
 
 @app.route('/complete', methods=['POST'])
 def completed():
+    print "ACCESSING the /complete route"
     if request.method == 'POST':
         print request.form.keys()
         if request.form.has_key('subjid') and request.form.has_key('agree'):
             subj_id = request.form['subjid']
-            agreed = request.form['agree']            
+            agreed = request.form['agree']  
+            print subj_id, agreed
             conn = engine.connect()
             if agreed=="CHECKED":
                 results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=True))
