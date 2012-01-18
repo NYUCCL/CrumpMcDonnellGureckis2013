@@ -260,11 +260,18 @@ def completed():
                 results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(status=True))
             else:
                 results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(status=False))
-            s = select([participantsdb.c.assignmentid])
+            s = select([participantsdb.c.hitid, participantsdb.c.assignmentid])
             s = s.where(and_(participantsdb.c.subjid==subj_id))
             result = conn.execute(s)
+            matches = [row for row in result]
+            numrecs = len(matches)
+            if numrecs == 1:
+                hitid, assignid = matches[0]
+            else:
+                print "Error, more than one subject matches"
+                return render_template('error.html')
             conn.close()
-            return render_template('thanks.html', assignmentId=assignid)
+            return render_template('thanks.html', hitId=hitid, assignmentId=assignid)
     return render_template('error.html')
 
 
