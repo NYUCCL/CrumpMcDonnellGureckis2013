@@ -257,9 +257,9 @@ def completed():
             print subj_id, agreed
             conn = engine.connect()
             if agreed=="true":
-                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=True))
+                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(status=True))
             else:
-                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=False))
+                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(status=False))
             s = select([participantsdb.c.assignmentid])
             s = s.where(and_(participantsdb.c.subjid==subj_id))
             result = conn.execute(s)
