@@ -32,7 +32,7 @@ function insert_hidden_into_form(findex, name, value ) {
 // Preload images (not currently in use)
 function imagepreload(src) 
 {
-	heavyImage = new Image(); 
+	var heavyImage = new Image(); 
 	heavyImage.src = src;
 }
 
@@ -63,6 +63,10 @@ function randrange ( lower, upperbound ) {
 // can be stored and which can easily replicate a given stimulus order.
 function changeorder( arr, ordernum ) {
 	var thisorder = ordernum;
+	var shufflelocations = new Array();
+	for (var i=0; i<arr.length; i++) {
+		shufflelocations.push(i);
+	}
 	for (i=arr.length-1; i>=0; --i) {
 		var loci = shufflelocations[i];
 		var locj = shufflelocations[thisorder%(i+1)];
@@ -80,10 +84,10 @@ function changeorder( arr, ordernum ) {
 // TODO: make sure this works okay.
 function shuffle( arr, exceptions ) {
 	var i;
-	exceptions = exceptions || [];
-	shufflelocations = new Array();
+	var except = exceptions || [];
+	var shufflelocations = new Array();
 	for (i=0; i<arr.length; i++) {
-		if (exceptions.indexOf(i)==-1) { shufflelocations.push(i); }
+		if (except.indexOf(i)==-1) { shufflelocations.push(i); } // TODO are exceptions being handled appropriately?
 	}
 	for (i=shufflelocations.length-1; i>=0; --i) {
 		var loci = shufflelocations[i];
@@ -100,10 +104,10 @@ function shuffle( arr, exceptions ) {
 // the exceptions list.
 function swap( arr, exceptions ) {
 	var i;
-	exceptions = exceptions ? exceptions : [];
-	shufflelocations = new Array();
+	var except = exceptions ? exceptions : [];
+	var shufflelocations = new Array();
 	for (i=0; i<arr.length; i++) {
-		if (exceptions.indexOf(i)==-1) { shufflelocations.push(i); }
+		if (except.indexOf(i)==-1) { shufflelocations.push(i); }
 	}
 	var loc1 = shufflelocations.splice(
 			randrange(0, shufflelocations.length), 1);
@@ -119,8 +123,8 @@ function swap( arr, exceptions ) {
 
 // Mean of booleans (true==1; false==0)
 function boolpercent(arr) {
-	count = 0;
-	for (i=0; i<arr.length; i++) {
+	var count = 0;
+	for (var i=0; i<arr.length; i++) {
 		if (arr[i]) { count++; } 
 	}
 	return 100* count / arr.length;
@@ -128,7 +132,7 @@ function boolpercent(arr) {
 
 // View functions
 function appendtobody( tag, id, contents ) {
-	el = document.createElement( tag );
+	var el = document.createElement( tag );
 	el.id = id;
 	el.innerHTML = contents;
 	return el;
@@ -156,8 +160,8 @@ function submitdata() {
 // Globals defined initially.
 
 // Stimulus info
-ncards = 8;
-var cardnames = [
+var ncards = 8,
+    cardnames = [
 	"static/images/STIM00.PNG",
 	"static/images/STIM01.PNG",
 	"static/images/STIM02.PNG",
@@ -173,8 +177,8 @@ var cardnames = [
 	"static/images/STIM12.PNG",
 	"static/images/STIM13.PNG",
 	"static/images/STIM14.PNG",
-	"static/images/STIM15.PNG"];
-var categorynames= [ "A", "B" ];
+	"static/images/STIM15.PNG"],
+    categorynames= [ "A", "B" ];
 
 // Interface variables
 var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
@@ -183,25 +187,59 @@ var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 // Task objects
 var trainobject, testobject;
 
-
-// Tasks,   TODD - what is going on here?
+// Tasks
 catfuns = [
 	function (num) {
 		// Shepard type I
+		//0  0 0 0 - 0
+		//1  0 0 1 - 1
+		//2  0 1 0 - 0
+		//3  0 1 1 - 1
+		//4  1 0 0 - 0
+		//5  1 0 1 - 1
+		//6  1 1 0 - 0
+		//7  1 1 1 - 1
+		
 		return num % 2;
 	},
 	function (num) {
 		// Shepard type II
+		//0  0 0 0 - 0
+		//1  0 0 1 - 1
+		//2  0 1 0 - 1
+		//3  0 1 1 - 0
+		//4  1 0 0 - 0
+		//5  1 0 1 - 1
+		//6  1 1 0 - 1
+		//7  1 1 1 - 0
+
 		return ((num&2)/2)^(num&1);
 	},
 	function (num) {
 		// Shepard type III
-		if (num & 1) { return ((num%8)===1) ? 0 : 1; }
-		else { return (num % 8)===2 ? 1 : 0; }
+		//0  0 0 0 - 0 1
+		//1  0 0 1 - 0 0
+		//2  0 1 0 - 1 1
+		//3  0 1 1 - 1 0
+		//4  1 0 0 - 0 1
+		//5  1 0 1 - 1 1
+		//6  1 1 0 - 0 0
+		//7  1 1 1 - 1 0
+
+		if (num & 1) { return ((num%8)===5) ? 1 : 0; }
+		else { return (num % 8)===6 ? 0 : 1; }
 	},
 	function (num) {
 		// Shepard type IV
-		score = 0; // prototypicality score
+		//0  0 0 0 - 1
+		//1  0 0 1 - 1
+		//2  0 1 0 - 1
+		//3  0 1 1 - 0
+		//4  1 0 0 - 1
+		//5  1 0 1 - 0
+		//6  1 1 0 - 0
+		//7  1 1 1 - 0
+		var score = 0; // prototypicality score
 		if ( num & 1 ) { score++; }
 		if ( num & 2 ) { score++; }
 		if ( num & 4 ) { score++; }
@@ -209,11 +247,29 @@ catfuns = [
 	},
 	function (num) {
 		// Shepard type V
+		//0  0 0 0 - 1
+		//1  0 0 1 - 0
+		//2  0 1 0 - 1
+		//3  0 1 1 - 0
+		//4  1 0 0 - 1
+		//5  1 0 1 - 0
+		//6  1 1 0 - 0
+		//7  1 1 1 - 1
+		
 		if (num & 1) { return (num%8 === 7) ? 1 : 0; }
 		else { return (num%8 === 6) ? 0 : 1; }
 	},
 	function (num) {
 		// Shepard type VI
+		//0  0 0 0 - 1
+		//1  0 0 1 - 0
+		//2  0 1 0 - 0
+		//3  0 1 1 - 1
+		//4  1 0 0 - 0
+		//5  1 0 1 - 1
+		//6  1 1 0 - 1
+		//7  1 1 1 - 0
+		
 		if (num & 1) { return (num&2)^((num&4)/2) ? 1:0; }
 		else { return (num&2)^((num&4)/2) ? 0:1; }
 	}
@@ -224,19 +280,17 @@ var catfun;
 getstim = function(theorystim) {
 	console.assert( theorystim < 8, "Stim >=8 ("+theorystim+")");
 	console.assert( theorystim >= 0, "Stim less than 0 ("+theorystim+")");
-	flippedstim = theorystim^condition.dimvals;
-	bits = new Array();
-	oldbits = new Array();
-	for (i=0; i<4; i++) {
+	var flippedstim = theorystim^condition.dimvals;
+	var bits = new Array();
+	for (var i=0; i<4; i++) {
 		bits.push( flippedstim&Math.pow(2,i) ? 1 : 0 );
-		oldbits.push( flippedstim&Math.pow(2,i) ? 1 : 0 );
 	}
 	
 	changeorder(bits, condition.dimorder);
 	
 	var multiples = [1, 2, 4, 8];
 	var ret = 0;
-	for (var i=0; i<=3; i++) {
+	for (i=0; i<=3; i++) {
 		ret += multiples[i] * bits[i];
 	}
 	return ret;
@@ -353,7 +407,7 @@ var Instructions = function() {
 	};
 	
 	this.nextForm = function () {
-		next = screens.splice(0, 1)[0];
+		var next = screens.splice(0, 1)[0];
 		currentscreen = next;
         showpage( next );
 		timestamp = new Date().getTime();
@@ -447,7 +501,7 @@ function exampleTrain() {
 		swap( that.cardlocs, exceptions );
 		that.animating = true;
 		for ( var i=0; i < ncards; i ++){
-			coords = loc_coords( that.cardlocs[i] );
+			var coords = loc_coords( that.cardlocs[i] );
 			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
 			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
 			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
@@ -462,7 +516,7 @@ function exampleTrain() {
 				if ( that.next != cardid ) { return false; }
 			}
 			if ( ! timerects.length ) { return false; }
-			if ( lock ) {  return false; }
+			if ( that.lock ) {  return false; }
 			if (condition.traintype===0) {
 				turnon(cardid)();
 			}
@@ -472,7 +526,7 @@ function exampleTrain() {
 			$('#tryit').fadeOut(500, function(){
 				$('.hidden').fadeIn(500);
 			});
-			lock = true;
+			that.lock = true;
 			cards[cardid][2].show();
 			setTimeout(
 				function(){
@@ -488,7 +542,7 @@ function exampleTrain() {
 						if (condition.traintype===1) {
 							that.indicateCard( that.next );
 						}
-						else setTimeout( function(){ lock=false; }, 400); 
+						else setTimeout( function(){ that.lock=false; }, 400); 
 					};
 					shuffletimestamp  = new Date().getTime();
 					shufflecards( callback, that.lastcards );
@@ -727,7 +781,7 @@ var TrainingPhase = function() {
 	
 	for ( i=0; i < ncards; i ++) {
 		cards[i] = cardpaper.set();
-		coords = loc_coords( this.cardlocs[i] );
+		var coords = loc_coords( this.cardlocs[i] );
 		var thisleft = coords.x, thistop = coords.y;
 		var imgoffset = (cardw-imgw)/2;
 		
@@ -767,7 +821,7 @@ var TrainingPhase = function() {
         var actual = new Array(8),
 			theory = new Array(8);
         cardattributes.map( function(item) {
-            loc = item.getlocation();
+            var loc = item.getlocation();
             theory[loc] = item.theorystim;
             actual[loc] = item.actualstim;
         });
@@ -803,12 +857,13 @@ var TestPhase = function() {
 	    lock,
 	    stimimage,
 	    buttonson,
+	    prescard,
 	    testcardsleft = new Array();
 	
 	this.hits = new Array();
 	
-	acknowledgment = '<p>Thanks for your response!</p>';
-	buttons = '<p id="prompt">Which group does the object belong to?\
+	var acknowledgment = '<p>Thanks for your response!</p>';
+	var buttons = '<p id="prompt">Which group does the object belong to?\
 		<div id="inputs">\
 				<input type="button" id="CategoryA" value="A">\
 				<input type="button" id="CategoryB" value="B">\
@@ -845,7 +900,7 @@ var TestPhase = function() {
 	
 	var finishblock = function() {
 		currentblock++;
-		done = false;
+		var done = false;
 		if (currentblock >=20) done = true;
 		else {
 			if ( boolpercent(that.hits)==100 ) {
@@ -900,7 +955,7 @@ var TestPhase = function() {
 * Finish up  *
 *************/
 var givequestionnaire = function() {
-	timestamp = new Date().getTime();
+	var timestamp = new Date().getTime();
 	showpage('postquestionnaire');
 	recordinstructtrial( "postquestionnaire", (new Date().getTime())-timestamp );
 	$("#continue").click(function () {
