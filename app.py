@@ -126,7 +126,7 @@ def get_random_counterbalance(conn):
     indicies = [i for i, x in enumerate(counts) if x == min(counts)]
     rstate = getstate()
     seed()
-    subj_cond = choice(indicies)
+    subj_counter = choice(indicies)
     setstate(rstate)
     return subj_counter
 
