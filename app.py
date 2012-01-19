@@ -94,18 +94,22 @@ def mturkroute():
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             print hitID, assignmentID
-            s = select([participantsdb.c.status])
+            s = select([participantsdb.c.status, participantsdb.c.subjid])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID))
             conn = engine.connect()
             status = -1;
             for row in conn.execute(s):
                 status = row[0]
+                subj_id = row[1]
             finished = status >= CREDITED
-            if status == COMPLETED and not finished:
-                # They haven't answered the debriefing question.
-                return render_template('debriefing.html', hitid = hitID, assignmentid = assignmentID)
+            if status == COMPLETED:
+                if finished:
+                    return render_template('thanks.html', hitid = hitID, assignmentid = assignmentID)
+                else:
+                    # They haven't answered the debriefing question.
+                    return render_template('debriefing.html', hitid = hitID, subjid = subj_id)
             else:
-                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID, finished=finished)
+                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
         else:
             return render_template('error.html')
 
@@ -282,13 +286,13 @@ def completed():
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
+            conn.close()
             if numrecs == 1:
                 hitid, assignid = matches[0]
             else:
                 print "Error, more than one subject matches"
                 return render_template('error.html')
-            conn.close()
-            return render_template('thanks.html', hitId=hitid, assignmentId=assignid)
+            return render_template('closepopup.html')
     return render_template('error.html')
 
 
