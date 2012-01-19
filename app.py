@@ -289,6 +289,10 @@ def completed():
             conn.close()
             if numrecs == 1:
                 hitid, assignid = matches[0]
+                s = participantsdb.update()
+                s = s.where(participantsdb.c.subjid==subj_id)
+                s = s.values(status=CREDITED)
+                conn.execute(s)
             else:
                 print "Error, more than one subject matches"
                 return render_template('error.html')
@@ -397,3 +401,4 @@ if __name__ == '__main__':
             participantsdb = loaddatabase(engine, metadata)
             # by default just launch webserver
             app.run(debug=True, host='0.0.0.0', port=5001)
+
