@@ -1,24 +1,6 @@
 <!doctype html>
 
 
-<script type="text/javascript">
-	function insert_hidden_into_form(findex, name, value ) {
-		var form = document.forms[findex];
-		var hiddenField = document.createElement('input');
-		hiddenField.setAttribute('type', 'hidden');
-		hiddenField.setAttribute('name', name);
-		hiddenField.setAttribute('value', value );
-		form.appendChild( hiddenField );
-	}
-	function submitdebrief(response) {
-		formindex = 0;
-		insert_hidden_into_form(formindex, "subjid", {{ subjid }} );
-		insert_hidden_into_form(formindex, "agree", response );
-		document.forms[formindex]
-		document.forms[formindex].submit();
-	};
-</script>
-
 <html>
 <head>
 	<title>Debriefing for Group Learning Experiment</title>
@@ -62,10 +44,18 @@
 					of the study.  The investigator has explained the purposes of the
 					research to me, and I feel that any questions I have asked were
 					satisfactorily answered.</p>
-					<form id="debrief" action="complete" method="post"><table><tr>
-						<td id="affirmative" onClick="javascript:submitdebrief(true)">Yes, I agree.</td>
-						<td id="negative" onClick="javascript:submitdebrief(false)">No, please withhold my data. I will contact the experimenter with questions.</td>
-					</tr></table> </form>
+					<table><tr>
+						<td id="affirmative" onClick="javascript:document.forms['accept'].submit()">Yes, I agree.</td>
+						<td id="negative" onClick="javascript:document.forms['decline'].submit()">No, please withhold my data. I will contact the experimenter with questions.</td>
+					</tr></table> 
+					<form id="accept" action="complete" method="post">
+						<input type="hidden" name="subjid" value="{{ subjid }}" />
+						<input type="hidden" name="agree" value="true" />
+					</form>
+					<form id="decline" action="complete" method="post">
+						<input type="hidden" name="subjid" value="{{ subjid }}" />
+						<input type="hidden" name="agree" value="false" />
+					</form>
 			</div>
 	</div>
 </body>
