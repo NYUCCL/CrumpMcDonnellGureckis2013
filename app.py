@@ -105,7 +105,7 @@ def mturkroute():
             finished = status >= DEBRIEFED
             if status >= COMPLETED:
                 if finished:
-                    return render_template('thanks.html', hitid = hitID, assignmentid = assignmentID)
+                    return render_template('thanks.html', hitid = hitID, assignmentId = assignmentID)
                 else:
                     # They haven't answered the debriefing question.
                     return render_template('debriefing.html', hitid = hitID, subjid = subj_id)
