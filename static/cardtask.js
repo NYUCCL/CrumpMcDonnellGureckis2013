@@ -354,7 +354,6 @@ var pagenames = [
 var Instructions = function() {
 	var that = this;
 	var screens = [
-			"instructDemo",
 			"instruct1",
 			"instructCatExample",
 			"instructCatColor",
