@@ -97,6 +97,7 @@ def mturkroute():
             s = select([participantsdb.c.status])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID))
             conn = engine.connect()
+            status = -1;
             for row in conn.execute(s):
                 status = row[0]
             finished = status >= CREDITED
