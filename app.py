@@ -94,7 +94,15 @@ def mturkroute():
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             print hitID, assignmentID
-            return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
+            s = select([participantsdb.c.participants_status])
+            s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID))
+            status = conn.execute(s)[0][0]
+            finished = int(status >= CREDITED)
+            if status == COMPLETED and not finished:
+                # They haven't answered the debriefing question.
+                return render_template('debrief.html', hitid = hitID, assignmentid = assignmentID)
+            else:
+                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
         else:
             return render_template('error.html')
 
