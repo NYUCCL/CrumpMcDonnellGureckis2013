@@ -39,7 +39,38 @@
 			}
 
 			// Load resources then run the exp
-			runfun();
+			$.ajaxSetup({cache: true});
+			for (i=0; i<pagenames.length; i++) {
+			    var pagename = pagenames[i];
+			    $.ajax({ 
+					url: pagename + ".html",
+					success: function(page){ return function(){ pages[pagename] = page; } }(),
+					async: false
+			    });
+			}
+			if (condition.traintype===0) {
+				$.ajax( {
+					url:"active.html", 
+					success:function(page) { pages["train"]=page; }, 
+					async: false });
+				$.ajax( {
+					url: "instructDemoActiveIntro.html", 
+					sucess: function(page) { pages["instructDemoIntro"]=page; }, 
+					async: false } );
+				$.ajax( {
+					url: "instructDemoActive.html", 
+					success:function(page) { pages["instructDemo"]=page; }, 
+					async: false, 
+					success: runfun });
+			}
+			else {
+				$.ajax( {url: "passive.html", success: function(page) {
+					pages["train"]=page; }, async: false }  );
+				$.ajax( {url: "instructDemoPassiveIntro.html", success: function(page) {
+					pages["instructDemoIntro"]=page; }, async: false }  );
+				$.ajax( {url: "instructDemoPassive.html", success: function(page) {
+					pages["instructDemo"]=page; }, async: false, success: runfun }  );
+			}
 		});
 		//-->
 		</script>
