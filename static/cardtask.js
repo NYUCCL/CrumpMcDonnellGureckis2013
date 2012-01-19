@@ -81,13 +81,12 @@ function changeorder( arr, ordernum ) {
 
 // Fisher-Yates shuffle algorithm.
 // modified from http://sedition.com/perl/javascript-fy.html
-// TODO: make sure this works okay.
 function shuffle( arr, exceptions ) {
 	var i;
-	var except = exceptions || [];
+	exceptions = exceptions || [];
 	var shufflelocations = new Array();
 	for (i=0; i<arr.length; i++) {
-		if (except.indexOf(i)==-1) { shufflelocations.push(i); } // TODO are exceptions being handled appropriately?
+		if (exceptions.indexOf(i)==-1) { shufflelocations.push(i); }
 	}
 	for (i=shufflelocations.length-1; i>=0; --i) {
 		var loci = shufflelocations[i];
@@ -355,6 +354,7 @@ var pagenames = [
 var Instructions = function() {
 	var that = this;
 	var screens = [
+			"instructDemo",
 			"instruct1",
 			"instructCatExample",
 			"instructCatColor",
@@ -460,7 +460,7 @@ function exampleTrain() {
 		};
 	};
 	this.indicateCard = function(cardid) {
-		that.lock = true;
+		lock = true;
 		turnon();
 		setTimeout(turnoff(cardid), 100);
 		setTimeout(turnon(cardid), 200);
@@ -488,7 +488,7 @@ function exampleTrain() {
 				if ( that.next != cardid ) { return false; }
 			}
 			if ( ! timerects.length ) { return false; }
-			if ( that.lock ) {  return false; }
+			if ( lock ) {  return false; }
 			if (condition.traintype===0) {
 				turnon(cardid)();
 			}
@@ -498,7 +498,7 @@ function exampleTrain() {
 			$('#tryit').fadeOut(500, function(){
 				$('.hidden').fadeIn(500);
 			});
-			that.lock = true;
+			lock = true;
 			cards[cardid][2].show();
 			setTimeout(
 				function(){
@@ -514,7 +514,7 @@ function exampleTrain() {
 						if (condition.traintype===1) {
 							that.indicateCard( that.next );
 						}
-						else setTimeout( function(){ that.lock=false; }, 400); 
+						else setTimeout( function(){ lock=false; }, 400); 
 					};
 					shuffletimestamp  = new Date().getTime();
 					shufflecards( callback, that.lastcards );
@@ -660,7 +660,7 @@ var TrainingPhase = function() {
 		};
 	};
 	this.indicateCard = function(cardid) {
-		that.lock = true;
+		lock = true;
 		turnon();
 		setTimeout(turnoff(cardid), 100);
 		setTimeout(turnon(cardid), 200);
@@ -792,11 +792,12 @@ var TrainingPhase = function() {
 	var getShuffleState = function() {
         var actual = new Array(8),
 			theory = new Array(8);
-        cardattributes.map( function(item) {
+        for (i=0; i<cardattributes.length; i++) {
+            item = cardattributes[i];
             var loc = item.getlocation();
             theory[loc] = item.theorystim;
             actual[loc] = item.actualstim;
-        });
+        }
         var encode = function(num) {
 			return num.toString( 32 );
             // if (num < 10) return '0'+num;
@@ -807,8 +808,13 @@ var TrainingPhase = function() {
 				return rest.concat(next);
 			}, '');
         };
-		return [concatlist(theory.map(encode)),
-			   concatlist(actual.map(encode))];
+        var theoryret = [],
+            actualret = [];
+        for (i=0; i<theory.length; i++) {
+            theoryret.push(encode(theory[i]));
+            actualret.push(encode(actual[i]));
+        }
+        return [concatlist(theoryret), concatlist(actualret)];
 	};
 	
 	shuffletimestamp  = new Date().getTime();
