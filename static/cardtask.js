@@ -347,34 +347,6 @@ var pagenames = [
 ];
 
 
-$( function($) {
-    $.ajaxSetup({cache: false});
-    pagenames.map( function (pagename){
-		$.ajax({ 
-			url: pagename + ".html",
-			success: function(page){
-                pages[pagename] = page; 
-            },
-			async: true
-		});
-	});
-	if (condition.traintype===0) {
-		$.ajax( {url:"active.html", success:function(page) { pages["train"]=page;
-		}, async: true });
-		$.ajax( {url:"instructDemoActiveIntro.html", sucess:function(page) {
-			pages["instructDemoIntro"]=page; }, async: true } );
-		$.ajax( {url:"instructDemoActive.html", success:function(page) {
-			pages["instructDemo"]=page; }, async: true } );
-	}
-	else {
-		$.ajax( {url: "passive.html", success: function(page) {
-			pages["train"]=page; }, async: true }  );
-		$.ajax( {url: "instructDemoPassiveIntro.html", success: function(page) {
-			pages["instructDemoIntro"]=page; }, async: true }  );
-		$.ajax( {url: "instructDemoPassive.html", success: function(page) {
-			pages["instructDemo"]=page; }, async: true }  );
-	}
-});
 
 
 /************************
