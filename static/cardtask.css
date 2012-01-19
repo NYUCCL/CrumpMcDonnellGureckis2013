@@ -133,9 +133,6 @@ strong {
     font-size: 150%;
 }
 
-.questiontext em {
-    font-size: 80%;
-}
 
 /* Experiment styles */
 #holder {
@@ -179,23 +176,26 @@ input {
 #questionnaire h1 {
     text-align: center;
 }
-#questionnaire .questiontext {
-    float: left;
-    width: 300px;
-    color: #bbbbff;
-    margin: 0;
-}
 #questionnaire .question {
     position: relative;
-    width: 100%;
     clear: both;
     height: 150px;
     margin: 20px;
 }
+#questionnaire .questiontext {
+    float: left;
+    width: 280px;
+    color: #bbbbff;
+    margin: 0;
+    margin-right: 10px;
+}
+.questiontext em {
+    font-size: 80%;
+}
 #questionnaire textarea {
-    display: inline
-    float: left
-    width: 100%;
+    display: inline;
+    float: right;
+    width: 320px;
     height: 130px;
 }
 #questionnaire form {
