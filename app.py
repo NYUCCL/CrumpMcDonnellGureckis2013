@@ -94,15 +94,17 @@ def mturkroute():
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             print hitID, assignmentID
-            s = select([participantsdb.c.participants_status])
+            s = select([participantsdb.c.status])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID))
-            status = conn.execute(s)[0][0]
-            finished = int(status >= CREDITED)
+            conn = engine.connect()
+            for row in conn.execute(s):
+                status = row[0]
+            finished = status >= CREDITED
             if status == COMPLETED and not finished:
                 # They haven't answered the debriefing question.
-                return render_template('debrief.html', hitid = hitID, assignmentid = assignmentID)
+                return render_template('debriefing.html', hitid = hitID, assignmentid = assignmentID)
             else:
-                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
+                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID, finished=finished)
         else:
             return render_template('error.html')
 
@@ -215,16 +217,16 @@ def start_exp_debug():
             import random
             subj_cond = random.randrange(12);
         if "subjid" in request.args.keys():
-            myid = int( request.args['subjid'] );
+            counterbalance = int( request.args['counterbalance'] );
         else:
             import random
-            myid = random.randrange(24);
+            counterbalance = random.randrange(384);
         return render_template('exp.html', 
-                               subj_num = myid, 
+                               subj_num = -1, 
                                traintype = 0 if subj_cond<6 else 1, 
                                rule = subj_cond%6, 
-                               dimorder = myid%24, 
-                               dimvals = myid%16,
+                               dimorder = counterbalance%24, 
+                               dimvals = counterbalance//24,
                                skipto = request.args['skipto'] if 'skipto' in request.args else ''
                               )
     else:
