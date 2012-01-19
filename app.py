@@ -16,7 +16,8 @@ NUMCOUNTERS = 24*16
 ALLOCATED = 1
 STARTED = 2
 COMPLETED = 3
-CREDITED = 4
+DEBRIEFED = 4
+CREDITED = 5
 
 
 app = Flask(__name__)
@@ -101,8 +102,8 @@ def mturkroute():
             for row in conn.execute(s):
                 status = row[0]
                 subj_id = row[1]
-            finished = status >= CREDITED
-            if status == COMPLETED:
+            finished = status >= DEBRIEFED
+            if status >= COMPLETED:
                 if finished:
                     return render_template('thanks.html', hitid = hitID, assignmentid = assignmentID)
                 else:
@@ -286,16 +287,16 @@ def completed():
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
-            conn.close()
             if numrecs == 1:
                 hitid, assignid = matches[0]
                 s = participantsdb.update()
                 s = s.where(participantsdb.c.subjid==subj_id)
-                s = s.values(status=CREDITED)
+                s = s.values(status=DEBRIEFED)
                 conn.execute(s)
             else:
                 print "Error, more than one subject matches"
                 return render_template('error.html')
+            conn.close()
             return render_template('closepopup.html')
     return render_template('error.html')
 
