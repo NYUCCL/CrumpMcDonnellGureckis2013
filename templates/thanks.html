@@ -7,20 +7,27 @@
 	<link rel=stylesheet href="static/cardtask.css" type="text/css" media="screen">
 	<script src="static/jquery.js" type="text/javascript"> </script>
 	<script>
-		$.ajax({
-			url: 'http://workersandbox.mturk.com/mturk/externalSubmit', // Sandbox
-			// url: 'http://www.mturk.com/mturk/externalSubmit', // Deploy
-			assignmentId: '{{assignmentId}}'
-			success: function(amazonresp) {
-				if (amazonresp.search('<bean:message key="external_submit.title" />') !== -1) {
-					alert( "Successully submitted! This window will now close." );
-					self.close();
+		function submittoamazon() {
+			$.ajax({
+				url: 'http://workersandbox.mturk.com/mturk/externalSubmit', // Sandbox
+				// url: 'http://www.mturk.com/mturk/externalSubmit', // Deploy
+				type: 'POST',
+				data: {assignmentId: '{{assignmentId}}'},
+				success: function(amazonresp) {
+					if (amazonresp.search('<bean:message key="external_submit.title" />') !== -1) {
+						alert( "Successully submitted! This window will now close." );
+						self.close();
+					}
+					else {
+						alert( "There may have been a problem with your submission, hopefully displayed below. Try refreshing the Amazon HIT page to submit your HIT again." )
+						$('#results').html( amazonresp );
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert( "Error encountered on submission. Please try again, or contact the experimenter." );
 				}
-				else {
-					alert( "There may have been a problem with your submission, hopefully displayed below. Try refreshing the Amazon HIT page to submit your HIT again.jjk." )
-				}
-			}
-		});
+			});
+		}
 	</script>
 </head>
 <body>
@@ -28,17 +35,18 @@
 		<h1>Thanks for your participation</h1>
 
 		<div id="debriefingtext">
-		<p style="text-align: center; font-size: 140%" >Thanks again for your participation in our study!</p>
+			<p style="text-align: center; font-size: 140%" >Thanks again for your participation in our study!</p>
 
-		<p style="text-align: center; font-size: 140%" >To complete the HIT, simply press the button below.</p>
+			<p style="text-align: center; font-size: 140%" >To complete the HIT, simply press the button below.</p>
 
-		<!-- USE THIS FOR FINAL DEPLOYMENT
-		    <form style="width: auto;" id="mturk_form" action="http://wwww.mturk.com/mturk/externalSubmit" method="post">
-		-->
-        
-		<!--<form style="width: auto;" id="mturk_form" action="http://workersandbox.mturk.com/mturk/externalSubmit" method="post">
-			<input type="hidden" id="assignmentId" name="assignmentId" value="{{ assignmentId }}"  />  -->
-		<input style="margin: 0 auto; font-size: 140%; width: 100%;" id="submitButton" type="submit" name="Submit" value="Complete HIT"  /> 
+			<!-- USE THIS FOR FINAL DEPLOYMENT
+			    <form style="width: auto;" id="mturk_form" action="http://wwww.mturk.com/mturk/externalSubmit" method="post">
+			-->
+		
+			<!--<form style="width: auto;" id="mturk_form" action="http://workersandbox.mturk.com/mturk/externalSubmit" method="post">
+				<input type="hidden" id="assignmentId" name="assignmentId" value="{{ assignmentId }}"  />  -->
+			<input style="margin: 0 auto; font-size: 140%; width: 100%;" id="submitButton" type="submit" name="Submit" value="Complete HIT" onClick='submittoamazon()' /> 
+		</div>
 		<!-- </form -->
 		<div id="results"></div>
 	</div>
