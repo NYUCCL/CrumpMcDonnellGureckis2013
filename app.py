@@ -89,6 +89,8 @@ def get_people(conn, s):
 #----------------------------------------------
 @app.route('/mturk', methods=['GET','POST'])
 def mturkroute():
+    if request.user_agent.browser == "msie":
+        return render_template( 'ie.html' )
     # this just is a way-stop along the way to the experiment code
     if request.method == 'GET':
         if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
