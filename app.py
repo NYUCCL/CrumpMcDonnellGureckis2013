@@ -76,7 +76,7 @@ def get_people(conn, s):
     i=0
     for row in conn.execute(s):
         person = {}
-        for field in ['participants_subjid', 'participants_hitid', 'participants_assignmentid', 
+        for field in ['participants_subjid', 'participants_ipaddress', 'participants_hitid', 'participants_assignmentid', 
                         'participants_condition', 'participants_counterbalance', 'participants_beginhit', 'participants_endhit',
                         'participants_status', 'participants_datafile']:
             person[field] = row[field]
@@ -191,6 +191,7 @@ def start_exp():
                 # set condition here and insert into database
                 result = conn.execute(participantsdb.insert(),
                     hitid = hitID,
+                    ipaddress = request.remote_addr,
                     assignmentid = assignmentID,
                     condition = subj_cond,
                     counterbalance = subj_counter,
@@ -360,6 +361,7 @@ def createdatabase(engine, metadata):
         print "ok will create the participant database"
         participants = Table('participants', metadata,
             Column('subjid', Integer, primary_key=True),
+            Column('ipaddress', String(128)),
             Column('hitid', String(128)),
             Column('assignmentid', String(128)),
             Column('condition', Integer),
