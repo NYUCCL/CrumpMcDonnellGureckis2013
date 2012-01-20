@@ -105,14 +105,16 @@ def mturkroute():
                 status = row[0]
                 subj_id = row[1]
             finished = status >= DEBRIEFED
-            if status >= COMPLETED:
-                if finished:
-                    return render_template('thanks.html', hitid = hitID, assignmentId = assignmentID)
-                else:
-                    # They haven't answered the debriefing question.
-                    return render_template('debriefing.html', hitid = hitID, subjid = subj_id)
-            else:
+            if status == ALLOCATED:
                 return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
+            elif status == STARTED:
+                return render_template('error.html') # this means the screwed something up (closed window in middle of experiment)
+            elif status == COMPLETED:
+                return render_template('debriefing.html', hitid = hitID, subjid = subj_id) # if reloading but not debriefed
+            elif status == DEBRIEFED:
+                return render_template('thanks.html', hitid = hitID, assignmentId = assignmentID) # if debriefed successfully
+            else:
+                return render_template('error.html')  # hopefully never get here
         else:
             return render_template('error.html')
 
