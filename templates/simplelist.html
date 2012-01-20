@@ -16,7 +16,7 @@
     $(document).ready(function() {
         $(".editable_select_status").editable("/updatestatus/", { 
           indicator : "<img src='/static/images/indicator.gif'>",
-          data   : "{1:'ALLOCATED', 2:'STARTED', 3:'COMPLETED', 4:'CREDITED'}",
+          data   : "{1:'ALLOCATED', 2:'STARTED', 3:'COMPLETED', 4:'DEBRIEFED', 5:'CREDITED'}",
           type   : "select",
           submit : "OK",
           style  : "inherit",
@@ -78,6 +78,8 @@
 		      {% elif records[rec]['participants_status'] == 3 %}
 		        COMPLETED
 		      {% elif records[rec]['participants_status'] == 4 %}
+				DEBRIEFED
+		      {% elif records[rec]['participants_status'] == 5 %}
 		        CREDITED
 		      {% else %}
 		        ERROR
