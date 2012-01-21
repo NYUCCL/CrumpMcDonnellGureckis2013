@@ -27,7 +27,7 @@ def get_all_reviewable_hits( mtc ):
 mtc = MTurkConnection(
     aws_access_key_id="EXAMPLE",
     aws_secret_access_key="EXAMPLE",
-    host='mechanicalturk.sandbox.amazonaws.com')
+    host='mechanicalturk.amazonaws.com')
 
 hits = get_all_reviewable_hits( mtc )
 print hits
