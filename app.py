@@ -76,10 +76,16 @@ def get_people(conn, s):
     i=0
     for row in conn.execute(s):
         person = {}
-        for field in ['participants_subjid', 'participants_ipaddress', 'participants_hitid', 'participants_assignmentid', 
-                        'participants_condition', 'participants_counterbalance', 'participants_beginhit', 'participants_endhit',
-                        'participants_status', 'participants_datafile']:
-            person[field] = row[field]
+        for field in ['subjid', 'ipaddress', 'hitid', 'assignmentid', 'workerid',
+                        'cond', 'counterbalance', 'beginhit','beginexp', 'endhit',
+                        'status', 'datafile']:
+            if field=='datafile':
+                if row[field] == '':
+                    person[field] = "Nothing yet"
+                else:
+                    person[field] = row[field][:10]
+            else:
+                person[field] = row[field]
         people[i] = person
         i+=1
     return [people, i]
@@ -93,25 +99,26 @@ def mturkroute():
         return render_template( 'ie.html' )
     # this just is a way-stop along the way to the experiment code
     if request.method == 'GET':
-        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId') and request.args.has_key('workerId'):
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
-            print hitID, assignmentID
+            workerID = request.args['workerId']
+            print hitID, assignmentID, workerID
             s = select([participantsdb.c.status, participantsdb.c.subjid])
-            s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID))
+            s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID, participantsdb.c.workerid==workerID))
             conn = engine.connect()
             status = -1;
             for row in conn.execute(s):
                 status = row[0]
                 subj_id = row[1]
             if status == ALLOCATED or status==-1:
-                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID)
+                return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID, workerid = workerID)
             elif status == STARTED:
                 return render_template('error.html') # this means the screwed something up (closed window in middle of experiment)
             elif status == COMPLETED:
-                return render_template('debriefing.html', hitid = hitID, subjid = subj_id) # if reloading but not debriefed
+                return render_template('debriefing.html', subjid = subj_id) # if reloading but not debriefed
             elif status == DEBRIEFED:
-                return render_template('thanks.html', hitid = hitID, assignmentId = assignmentID) # if debriefed successfully
+                return render_template('thanks.html', hitid = hitID, assignmentid = assignmentID, workerid = workerID) # if debriefed successfully
             else:
                 return render_template('error.html')  # hopefully never get here
         else:
@@ -119,7 +126,7 @@ def mturkroute():
 
 
 def get_random_condition(conn):
-    s = select([participantsdb.c.condition], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+    s = select([participantsdb.c.cond], participantsdb.c.endhit!=null, from_obj=[participantsdb])
     result = conn.execute(s)
     counts = [0]*NUMCONDS
     for row in result:
@@ -154,12 +161,13 @@ def get_random_counterbalance(conn):
 def give_consent():
     # this serves up the experiment applet
     if request.method == 'GET':
-        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId') and request.args.has_key('workerId'):
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
-            print hitID, assignmentID
+            workerID = request.args['workerId']
+            print hitID, assignmentID, workerID
             
-            return render_template('consent.html', hitid = hitID, assignmentid=assignmentID)
+            return render_template('consent.html', hitid = hitID, assignmentid=assignmentID, workerid=workerID)
         else:
             return render_template('error.html')
 
@@ -168,25 +176,26 @@ def give_consent():
 def start_exp():
     # this serves up the experiment applet
     if request.method == 'GET':
-        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId') and request.args.has_key('workerId'):
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
-            print hitID, assignmentID
+            workerID = request.args['workerId']
+            print hitID, assignmentID, workerID
             
             conn = engine.connect()
             
             # check first to see if this hitID or assignmentID exists.  if so check to see if inExp is set
-            s = select([participantsdb.c.subjid, participantsdb.c.condition, participantsdb.c.counterbalance, participantsdb.c.status], from_obj=[participantsdb])
-            s = s.where(and_(participantsdb.c.hitid==hitID,participantsdb.c.assignmentid==assignmentID))
+            s = select([participantsdb.c.subjid, participantsdb.c.cond, participantsdb.c.counterbalance, participantsdb.c.status], from_obj=[participantsdb])
+            s = s.where(and_(participantsdb.c.hitid==hitID,participantsdb.c.assignmentid==assignmentID,participantsdb.c.workerid==workerID))
             result = conn.execute(s)
             matches = [row for row in result]
             numrecs = len(matches)
             if numrecs == 0:
                 
-                # doesn't exist, get a histogram of completed conditions and choose a under-used condition
+                # doesn't exist, get a histogram of completed conditions and choose an under-used condition
                 subj_cond = get_random_condition(conn)
                 
-                # doesn't exist, get a histogram of completed counterbalanced, and choose a under-used one
+                # doesn't exist, get a histogram of completed counterbalanced, and choose an under-used one
                 subj_counter = get_random_counterbalance(conn)
                 
                 # set condition here and insert into database
@@ -194,7 +203,8 @@ def start_exp():
                     hitid = hitID,
                     ipaddress = request.remote_addr,
                     assignmentid = assignmentID,
-                    condition = subj_cond,
+                    workerid = workerID,
+                    cond = subj_cond,
                     counterbalance = subj_counter,
                     status = ALLOCATED,
                     debriefed=False,
@@ -250,7 +260,7 @@ def enterexp():
         if request.form.has_key('subjId'):
             subid = request.form['subjId']
             conn = engine.connect()
-            results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED))
+            results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED, beginexp = datetime.datetime.now()))
             conn.close()
     return render_template('error.html')
 
@@ -274,7 +284,7 @@ def savedata():
 
 @app.route('/complete', methods=['POST'])
 def completed():
-    print "ACCESSING the /complete route"
+    print "accessing the /complete route"
     if request.method == 'POST':
         print request.form.keys()
         if request.form.has_key('subjid') and request.form.has_key('agree'):
@@ -283,23 +293,9 @@ def completed():
             print subj_id, agreed
             conn = engine.connect()
             if agreed=="true":
-                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(debriefed=True))
+                conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(debriefed=True, status=DEBRIEFED))
             else:
-                results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(debriefed=False))
-            s = select([participantsdb.c.hitid, participantsdb.c.assignmentid])
-            s = s.where(and_(participantsdb.c.subjid==subj_id))
-            result = conn.execute(s)
-            matches = [row for row in result]
-            numrecs = len(matches)
-            if numrecs == 1:
-                hitid, assignid = matches[0]
-                s = participantsdb.update()
-                s = s.where(participantsdb.c.subjid==subj_id)
-                s = s.values(status=DEBRIEFED)
-                conn.execute(s)
-            else:
-                print "Error, more than one subject matches"
-                return render_template('error.html')
+                conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(debriefed=False, status=DEBRIEFED))
             conn.close()
             return render_template('closepopup.html')
     return render_template('error.html')
@@ -311,7 +307,7 @@ def completed():
 @app.route('/list')
 @requires_auth
 def viewdata():
-    s = select([participantsdb], use_labels=True)
+    s = select([participantsdb], use_labels=False)
     s = s.order_by(participantsdb.c.subjid.asc())
     conn = engine.connect()
     [people, i] = get_people(conn, s)
@@ -356,18 +352,20 @@ def createdatabase(engine, metadata):
 
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants', metadata, autoload=True)
+        participants = Table('participants_v2', metadata, autoload=True)
     except: # can you put in the specific exception here?
         # ok will create the database
         print "ok will create the participant database"
-        participants = Table('participants', metadata,
+        participants = Table('participants_v2', metadata,
             Column('subjid', Integer, primary_key=True),
             Column('ipaddress', String(128)),
             Column('hitid', String(128)),
             Column('assignmentid', String(128)),
-            Column('condition', Integer),
+            Column('workerid', String(128)),
+            Column('cond', Integer),
             Column('counterbalance', Integer),
             Column('beginhit', DateTime(), nullable=True),
+            Column('beginexp', DateTime(), nullable=True),
             Column('endhit', DateTime(), nullable=True),
             Column('status', Integer, default = ALLOCATED),
             Column('debriefed', Boolean),
@@ -381,7 +379,7 @@ def createdatabase(engine, metadata):
 def loaddatabase(engine, metadata):
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants', metadata, autoload=True)
+        participants = Table('participants_v2', metadata, autoload=True)
     except: # can you put in the specific exception here?
         print "Error, participants table doesn't exist"
         exit()
