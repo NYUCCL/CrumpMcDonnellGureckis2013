@@ -297,8 +297,8 @@ getstim = function(theorystim) {
 
 // Mutable global variables
 var responsedata = [],
-    currentblock = 0,
-    currenttrial = 0,
+    currentblock = 1,
+    currenttrial = 1,
     datastring = "",
     lastperfect = false;
 
@@ -878,7 +878,7 @@ var TestPhase = function() {
 	var finishblock = function() {
 		currentblock++;
 		var done = false;
-		if (currentblock >=20) done = true;
+		if (currentblock >= condition.maxblocks) done = true;
 		else {
 			if ( boolpercent(that.hits)==100 ) {
 				if ( lastperfect ) done = true;
