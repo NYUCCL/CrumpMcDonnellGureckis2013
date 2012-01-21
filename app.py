@@ -10,6 +10,9 @@ from sqlalchemy import *
 from functools import wraps
 
 # constants
+DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
+
+
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 NUMCONDS = 12
 NUMCOUNTERS = 24*16
@@ -19,6 +22,10 @@ COMPLETED = 3
 DEBRIEFED = 4
 CREDITED = 5
 
+if DEPLOYMENT_ENV == 'sandbox':
+    MAXBLOCKS = 1
+else:
+    MAXBLOCKS = 20
 
 app = Flask(__name__)
 
@@ -118,7 +125,7 @@ def mturkroute():
             elif status == COMPLETED:
                 return render_template('debriefing.html', subjid = subj_id) # if reloading but not debriefed
             elif status == DEBRIEFED:
-                return render_template('thanks.html', hitid = hitID, assignmentid = assignmentID, workerid = workerID) # if debriefed successfully
+                return render_template('thanks.html', target_env=DEPLOYMENT_ENV, hitid = hitID, assignmentid = assignmentID, workerid = workerID) # if debriefed successfully
             else:
                 return render_template('error.html')  # hopefully never get here
         else:
@@ -222,7 +229,7 @@ def start_exp():
             
             conn.close()
             dimo, dimv = counterbalanceconds[subj_counter]
-            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv)
+            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv, maxblocks=MAXBLOCKS)
         else:
             return render_template('error.html')
 
@@ -343,7 +350,6 @@ def regularpage(pagename=None):
         print "error"
     else:
         return render_template(pagename)
-
 
 #----------------------------------------------
 # database management

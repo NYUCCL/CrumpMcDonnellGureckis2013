@@ -13,8 +13,11 @@
 			<p style="text-align: center; font-size: 140%" >Thanks again for your participation in our study!</p>
 
 			<p style="text-align: center; font-size: 140%" >To complete the HIT, simply press the button below.</p>
-
-		<form style="width: auto;" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit" method="post">
+            {% if target_env== 'sandbox'%}
+		        <form style="width: auto;" id="mturk_form" action="http://workersandbox.mturk.com/mturk/externalSubmit" method="post">
+            {% else %}
+    		    <form style="width: auto;" id="mturk_form" action="https://www.mturk.com/mturk/externalSubmit" method="post">
+            {% endif %}
 			<input type="hidden" id="assignmentId" name="assignmentId" value="{{ assignmentid }}"  /> 
 			<input type="hidden" id="hitId" name="hitId" value="{{ hitid }}"  /> 
 			<input type="hidden" id="workerId" name="workerId" value="{{ workerid }}"  /> 
