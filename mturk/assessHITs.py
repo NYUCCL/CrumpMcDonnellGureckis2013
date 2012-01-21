@@ -24,10 +24,30 @@ def get_all_reviewable_hits( mtc ):
     return hits
 
 
+
+
+
 mtc = MTurkConnection(
     aws_access_key_id="AKIAI5GNWGIA4KM76PRA",
     aws_secret_access_key="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",
     host='mechanicalturk.amazonaws.com')
 
-hits = get_all_reviewable_hits( mtc )
-print hits
+print "Reviewable:"
+for hit in get_all_reviewable_hits( mtc ):
+    print hit
+
+print "HITs:"
+for hit in mtc.get_all_hits():
+    print "\tHitID:", hit.HITId
+    print "\tAssignments:"
+    for assignment in mtc.get_assignments(hit.HITId):
+        print "\t\tWorker ID:", assignment.WorkerId
+        print "\t\tAssignment ID:", assignment.AssignmentId
+        print "\t\tSubmit URL:", "https://www.mturk.com/mturk/externalSubmit?assignmentId=%s&hitId=%s&workerId=%s" % (assignment.AssignmentId, hit.HITId, assignment.WorkerId)
+        import urllib2, urllib
+        values = {'assignmentId':assignment.AssignmentId, 'hitId':hit.HITId, 'workerId':assignment.WorkerId}
+        req = urllib2.Request("https://www.mturk.com/mturk/externalSubmit", urllib.urlencode( values ))
+        response = urllib2.urlopen(req)
+        result = response.read()
+        print result
+
