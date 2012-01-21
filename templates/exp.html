@@ -27,15 +27,15 @@
 			catfun = catfuns[condition.rule];
 			runfun = function() {
 			    {% if skipto %}
-				{% if skipto=="questionnaire" %}
-				givequestionnaire();
-				{% elif skipto=="test" %}
-				testobject = new TestPhase();
-				{% elif skipto=="train" %}
-				trainobject = new TrainingPhase();
-				{% endif %}
+    				{% if skipto=="questionnaire" %}
+    				givequestionnaire();
+    				{% elif skipto=="test" %}
+    				testobject = new TestPhase();
+    				{% elif skipto=="train" %}
+    				trainobject = new TrainingPhase();
+    				{% endif %}
 			    {% else %}
-				instructobject = new Instructions();
+    				instructobject = new Instructions();
 			    {% endif %}
 			}
 			
@@ -56,7 +56,7 @@
 					async: false });
 				$.ajax( {
 					url: "instructDemoActiveIntro.html", 
-					sucess: function(page) { pages["instructDemoIntro"]=page; }, 
+					success: function(page) { pages["instructDemoIntro"]=page; }, 
 					async: false } );
 				$.ajax( {
 					url: "instructDemoActive.html", 
