@@ -1,10 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
-
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>NYU Psychology Grad Admissions 2012</title>
+    <title>Active Category Learning Mechanical Turk List</title>
     <meta name="generator" content="TextMate http://macromates.com/">
     <meta name="author" content="Todd Gureckis">
     <link rel="stylesheet" href="/static/stylelist.css">
@@ -31,11 +30,6 @@
     <!-- Date: 2011-12-13 -->
 </head>
 <body>
-	<!--
-    <p align="right">
-    <a href="http://www.google.com/search?q=beer&start=10&hl=en&client=safari&sa=N&rls=en&prmd=imvnslbr&tbm=isch&tbo=u&source=univ&ei=oIzpTuO3MdHmggfh7-DdCA&ved=0CEwQsAQ4Cg&biw=1087&bih=802">Tips</a> are still accepted - t.g.
-    </p>
-    -->
     <h1><font face="helvetica">Active Category Learning Mechanical Turk Participants</font></h1>
 	<br>
 	<small>{{ nrecords }} found</small>
@@ -44,8 +38,11 @@
 		<td class="helpHed"><b>Subj #</b></td>
 		<td class="helpHed"><b>HitID</b></td>
 		<td class="helpHed"><b>AssignmentID</b></td>
+		<td class="helpHed"><b>WorkerID</b></td>
+		<td class="helpHed"><b>IP</b></td>
 		<td class="helpHed"><b>Condition</b></td>
 		<td class="helpHed" width="25%"><b>Begin Hit</b></td>
+		<td class="helpHed" width="25%"><b>Begin Exp</b></td>
 		<td class="helpHed" width="25%"><b>End Hit</b></td>
 		<td class="helpHed" width="15%"><b>Status</b></td>
 		<td class="helpHed" width="40%"><b>DataFile</b></td>
@@ -53,33 +50,42 @@
 	{% for rec in records.keys() %}
 	<tr>
 		<td valign="top" {{ loop.cycle('', 'class=even') }}>
-		    <font size="+2" color="#aaa" face="helvetica">{{ records[rec]['participants_subjid'] }}</font></td>
+		    <font size="+2" color="#aaa" face="helvetica">{{ records[rec]['subjid'] }}</font></td>
 		<td {{ loop.cycle('', 'class=even') }}>
-		    {{ records[rec]['participants_hitid'] }}
+		    {{ records[rec]['hitid'] }}
 		</td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            {{ records[rec]['participants_assignmentid'] }}
+            {{ records[rec]['assignmentid'] }}
 		</td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            {{ records[rec]['participants_condition'] }}
+            {{ records[rec]['workerid'] }}
+		</td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['ipaddress'] }}
+		</td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            {{ records[rec]['condition'] }}
         </td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            {{ records[rec]['participants_beginhit'] }}
+            {{ records[rec]['beginhit'] }}
         </td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            {{ records[rec]['participants_endhit'] }}
+            {{ records[rec]['beginexp'] }}
         </td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            <small class="editable_select_status" id="applicants_status_{{ records[rec]['participants_subjid'] }}">
-		      {% if records[rec]['participants_status'] == 1 %}
+            {{ records[rec]['endhit'] }}
+        </td>
+		<td {{ loop.cycle('', 'class=even') }}>
+            <small class="editable_select_status" id="applicants_status_{{ records[rec]['subjid'] }}">
+		      {% if records[rec]['status'] == 1 %}
 		        ALLOCATED
-		      {% if records[rec]['participants_status'] == 2 %}
+		      {% elif records[rec]['status'] == 2 %}
 		        STARTED
-		      {% elif records[rec]['participants_status'] == 3 %}
+		      {% elif records[rec]['status'] == 3 %}
 		        COMPLETED
-		      {% elif records[rec]['participants_status'] == 4 %}
+		      {% elif records[rec]['status'] == 4 %}
 				DEBRIEFED
-		      {% elif records[rec]['participants_status'] == 5 %}
+		      {% elif records[rec]['status'] == 5 %}
 		        CREDITED
 		      {% else %}
 		        ERROR
@@ -87,7 +93,7 @@
 		    </small>
         </td>
 		<td {{ loop.cycle('', 'class=even') }}>
-            {{ records[rec]['participants_datafile'] }}
+            {{ records[rec]['datafile'] }}
         </td>
 	</tr>
 	{% endfor %}	
