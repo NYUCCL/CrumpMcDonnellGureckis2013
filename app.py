@@ -133,7 +133,13 @@ def mturkroute():
 
 
 def get_random_condition(conn):
-    s = select([participantsdb.c.cond], participantsdb.c.endhit!=null, from_obj=[participantsdb])
+    # hits can be in one of three states:
+        # jobs that are finished
+        # jobs that are started but not finished
+        # jobs that are never going to finish (user decided not to do it)
+    # our count should be based on the first two so, lets stay anything finished or anything not finished that was started in the last 45 minutes should be counted
+    starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
+    s = select([participantsdb.c.cond], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])
     result = conn.execute(s)
     counts = [0]*NUMCONDS
     for row in result:
@@ -149,8 +155,8 @@ def get_random_condition(conn):
 
 
 def get_random_counterbalance(conn):
-    s = select([participantsdb.c.counterbalance], participantsdb.c.endhit!=null, from_obj=[participantsdb])
-    result = conn.execute(s)
+    starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
+    s = select([participantsdb.c.counterbalance], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])    result = conn.execute(s)
     counts = [0]*NUMCOUNTERS
     for row in result:
         counts[row[0]]+=1
