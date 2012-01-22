@@ -5,16 +5,61 @@
     <p>Before you go, we'd like you to answer a few questions for us.</p>
     <div class="question">
         <p class="questiontext">
-        Did you use any particular strategy to figure out the categories?
-            </p>
-        <textarea id="strategy" cols=50 rows=3 />
+        On a scale of 1-10 (where 10 is the most engaged), please rate how <b>ENGAGING</b> you found the learning task.
+        </p>
+        <select id="engagement" name="engagement">
+            <option value="10">10 - Very (I was absorbed in the task)</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5" SELECTED>5 - Moderately (I was somewhat engaged in the task)</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+            <option value="0">0 - Not engaged (I was not very interested in the task)</option>
+        </select>
     </div>
     <div class="question">
         <p class="questiontext">
-        Did you use any physical aids such as pencil or paper to perform the experiment?<br>
-        <em>(Your response here will not affect your compensation)</em>
-            </p>
-        <textarea id="physicalaids" cols=50 rows=3 />
+        On a scale of 1-10 (where 10 is the most difficult), please rate how <b>DIFFICULT</b> you found the learning task.
+        </p>
+        <select id="difficulty" name="difficulty">
+            <option value="10">10 - Very difficult</option>
+            <option value="9">9</option>
+            <option value="8">8</option>
+            <option value="7">7</option>
+            <option value="6">6</option>
+            <option value="5" SELECTED>5 - Moderately difficult</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+            <option value="0">0 - Not difficult at all (easy)</option>
+        </select>
+    </div>
+    <div class="question">
+        <p class="questiontext">
+        Describe in your own words the rule you used to determine category membership.
+        </p>
+        <textarea id="rulestrategy" cols=50 rows=3 /></textarea>
+    </div>
+    <div class="question">
+        <p class="questiontext">
+        Did you use pencil, paper, or take notes on your computer in order perform the grouping task?<br>
+        <em>(Please respond honestly so we can analyze your data appropriately.)</em>
+        </p>
+        <select name="physicalaids">
+            <option value="no" SELECTED>No, include my data in the analysis.</option>
+            <option value="yes">Yes, I used a memory aid.  Analyze my data separately.</option>
+        </select>
+    </div>
+    <div class="question">
+        <p class="questiontext">
+            Do you have any suggestion on how we might improve the experiment?
+        </p>
+        <textarea id="howtoimprove" cols=50 rows=3 /></textarea>
     </div>
     <form id="postquiz" action="debrief" method="post">
         <input type="button" class="continue" id="continue" value="Continue"></input>
