@@ -946,6 +946,9 @@ var submitquestionnaire = function() {
 	$('textarea').each( function(i, val) {
 		datastring = datastring.concat( "\n", this.id, ":",  this.value);
 	});
+	$('select').each( function(i, val) {
+		datastring = datastring.concat( "\n", this.id, ":",  this.value);
+	});
 	insert_hidden_into_form(0, "subjid", subjid );
 	insert_hidden_into_form(0, "data", datastring );
 	$('form').submit();
