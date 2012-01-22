@@ -27,6 +27,19 @@ if DEPLOYMENT_ENV == 'sandbox':
 else:
     MAXBLOCKS = 20
 
+
+# error codes
+STATUS_INCORRECTLY_SET = 1000
+HIT_ASSIGN_WORKER_ID_NOT_SET_IN_MTURK = 1001
+HIT_ASSIGN_WORKER_ID_NOT_SET_IN_CONSENT = 1002
+HIT_ASSIGN_WORKER_ID_NOT_SET_IN_EXP = 1003
+HIT_ASSIGN_APPEARS_IN_DATABASE_MORE_THAN_ONCE = 1004
+IN_EXP_ACCESSED_WITHOUT_POST = 1005
+DEBRIEF_ACCESSED_WITHOUT_POST = 1006
+COMPLETE_ACCESSED_WITHOUT_POST = 1007
+
+IN_DEBUG = 1005
+
 app = Flask(__name__)
 
 #----------------------------------------------
@@ -127,9 +140,9 @@ def mturkroute():
             elif status == DEBRIEFED:
                 return render_template('thanks.html', target_env=DEPLOYMENT_ENV, hitid = hitID, assignmentid = assignmentID, workerid = workerID) # if debriefed successfully
             else:
-                return render_template('error.html')  # hopefully never get here
+                return render_template('error.html', errornum=STATUS_INCORRECTLY_SET)  # hopefully never get here
         else:
-            return render_template('error.html')
+            return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_MTURK)
 
 
 def get_random_condition(conn):
@@ -182,7 +195,7 @@ def give_consent():
             
             return render_template('consent.html', hitid = hitID, assignmentid=assignmentID, workerid=workerID)
         else:
-            return render_template('error.html')
+            return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_CONSENT)
 
 
 @app.route('/exp', methods=['GET'])
@@ -231,13 +244,13 @@ def start_exp():
                     return render_template('error.html')
             else:
                 print "Error, hit/assignment appears in database more than once (serious problem)"
-                exit()
+                return render_template('error.html', errornum=HIT_ASSIGN_APPEARS_IN_DATABASE_MORE_THAN_ONCE)
             
             conn.close()
             dimo, dimv = counterbalanceconds[subj_counter]
             return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv, maxblocks=MAXBLOCKS)
         else:
-            return render_template('error.html')
+            return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_EXP)
 
 
 @app.route('/debug', methods=['GET','POST'])
@@ -263,7 +276,7 @@ def start_exp_debug():
                                skipto = request.args['skipto'] if 'skipto' in request.args else ''
                               )
     else:
-        return render_template('error.html')
+        return render_template('error.html', errornum=IN_DEBUG)
 
 
 @app.route('/inexp', methods=['POST'])
@@ -275,7 +288,7 @@ def enterexp():
             conn = engine.connect()
             results = conn.execute(participantsdb.update().where(participantsdb.c.subjid==subid).values(status=STARTED, beginexp = datetime.datetime.now()))
             conn.close()
-    return render_template('error.html')
+    return render_template('error.html', errornum=IN_EXP_ACCESSED_WITHOUT_POST)
 
 
 @app.route('/debrief', methods=['POST'])
@@ -292,7 +305,7 @@ def savedata():
             s = s.values(status=COMPLETED, datafile=datafile, endhit=datetime.datetime.now())
             conn.execute(s)
             return render_template('debriefing.html', subjid=subj_id)
-    return render_template('error.html')
+    return render_template('error.html', errornum=DEBRIEF_ACCESSED_WITHOUT_POST)
 
 
 @app.route('/complete', methods=['POST'])
@@ -311,7 +324,7 @@ def completed():
                 conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(debriefed=False, status=DEBRIEFED))
             conn.close()
             return render_template('closepopup.html')
-    return render_template('error.html')
+    return render_template('error.html', errornum=COMPLETE_ACCESSED_WITHOUT_POST)
 
 
 #----------------------------------------------
