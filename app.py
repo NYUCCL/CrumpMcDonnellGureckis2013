@@ -128,7 +128,7 @@ def mturkroute():
             if request.args.has_key('workerId'):
                 workerID = request.args['workerId']
             else:
-                workerid = '-1'
+                workerID = '-1'
             print hitID, assignmentID, workerID
             s = select([participantsdb.c.status, participantsdb.c.subjid])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID, participantsdb.c.workerid==workerID))
