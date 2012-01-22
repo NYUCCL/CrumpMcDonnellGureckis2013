@@ -1,7 +1,21 @@
 <!doctype html>
 <html>
 <body >
-	<p> Sorry, there was an unexpected error in our processing of your hit.  Please contact <a href="mailto:gureckislab@gmail.com">gureckislab@gmail.com</a>
-	    and let us know that you encountered error #{{ errornum }}.  Our sincere apologies!</p>
+	<h2> 
+	    <p>Sorry, there was an unexpected error in our processing of your hit.<p> 
+	    <p>Please email <a href="mailto:gureckislab@gmail.com">gureckislab@gmail.com</a>
+	    and send the following information:</p>
+	</h2>
+	    <p>
+	        <h4>
+	        Error: #{{ errornum }}<br>
+	        {% if hitid %} HitID: #{{ hitid }}<br> {% endif %}
+	        {% if assignid %}AssignId: #{{ assignid }}<br> {% endif %}
+	        {% if workerid %} WorkerId: #{{ workerid }}<br> {% endif %}
+	        </h4>
+	    </p>
+	    <h2>
+	    <p>Our sincere apologies!</p>
+	    </h2>
 </body>
 </html>

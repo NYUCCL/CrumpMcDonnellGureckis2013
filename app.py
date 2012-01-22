@@ -37,6 +37,8 @@ HIT_ASSIGN_APPEARS_IN_DATABASE_MORE_THAN_ONCE = 1004
 IN_EXP_ACCESSED_WITHOUT_POST = 1005
 DEBRIEF_ACCESSED_WITHOUT_POST = 1006
 COMPLETE_ACCESSED_WITHOUT_POST = 1007
+ALREADY_STARTED_EXP = 1008
+ALREADY_STARTED_EXP_MTURK = 1009
 
 IN_DEBUG = 1005
 
@@ -134,13 +136,13 @@ def mturkroute():
             if status == ALLOCATED or status==-1:
                 return render_template('mturkindex.html', hitid = hitID, assignmentid = assignmentID, workerid = workerID)
             elif status == STARTED:
-                return render_template('error.html') # this means the screwed something up (closed window in middle of experiment)
+                return render_template('error.html', errornum=ALREADY_STARTED_EXP_MTURK, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId']) # this means the screwed something up (closed window in middle of experiment)
             elif status == COMPLETED:
                 return render_template('debriefing.html', subjid = subj_id) # if reloading but not debriefed
             elif status == DEBRIEFED:
                 return render_template('thanks.html', target_env=DEPLOYMENT_ENV, hitid = hitID, assignmentid = assignmentID, workerid = workerID) # if debriefed successfully
             else:
-                return render_template('error.html', errornum=STATUS_INCORRECTLY_SET)  # hopefully never get here
+                return render_template('error.html', errornum=STATUS_INCORRECTLY_SET, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId'])  # hopefully never get here
         else:
             return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_MTURK)
 
@@ -169,7 +171,8 @@ def get_random_condition(conn):
 
 def get_random_counterbalance(conn):
     starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
-    s = select([participantsdb.c.counterbalance], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])    result = conn.execute(s)
+    s = select([participantsdb.c.counterbalance], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])    
+    result = conn.execute(s)
     counts = [0]*NUMCOUNTERS
     for row in result:
         counts[row[0]]+=1
@@ -241,10 +244,10 @@ def start_exp():
             elif numrecs==1:
                 myid, subj_cond, subj_counter, status = matches[0]
                 if status>=STARTED: # in experiment (or later) can't restart at this point
-                    return render_template('error.html')
+                    return render_template('error.html', errornum=ALREADY_STARTED_EXP, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId'])
             else:
                 print "Error, hit/assignment appears in database more than once (serious problem)"
-                return render_template('error.html', errornum=HIT_ASSIGN_APPEARS_IN_DATABASE_MORE_THAN_ONCE)
+                return render_template('error.html', errornum=HIT_ASSIGN_APPEARS_IN_DATABASE_MORE_THAN_ONCE, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId'])
             
             conn.close()
             dimo, dimv = counterbalanceconds[subj_counter]
