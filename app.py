@@ -121,10 +121,14 @@ def mturkroute():
         return render_template( 'ie.html' )
     # this just is a way-stop along the way to the experiment code
     if request.method == 'GET':
-        if request.args.has_key('hitId') and request.args.has_key('assignmentId') and request.args.has_key('workerId'):
+        if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
+            
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
-            workerID = request.args['workerId']
+            if request.args.has_key('workerId'):
+                workerID = request.args['workerId']
+            else:
+                workerid = '-1'
             print hitID, assignmentID, workerID
             s = select([participantsdb.c.status, participantsdb.c.subjid])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID, participantsdb.c.workerid==workerID))
