@@ -5,7 +5,7 @@
     <p>Before you go, we'd like you to answer a few questions for us.</p>
     <div class="question">
         <p class="questiontext">
-        On a scale of 1-10 (where 10 is the most engaged), please rate how <b>ENGAGING</b> you found the learning task.
+        On a scale of 1-10 (where 10 is the most engaged), please rate how <b>ENGAGING</b> you found the learning task:
         </p>
         <select id="engagement" name="engagement">
             <option value="10">10 - Very (I was absorbed in the task)</option>
@@ -18,15 +18,15 @@
             <option value="3">3</option>
             <option value="2">2</option>
             <option value="1">1</option>
-            <option value="0">0 - Not engaged (I was not very interested in the task)</option>
+            <option value="0">0 - Not engaged (I was not very engaged or interested in the task)</option>
         </select>
     </div>
     <div class="question">
         <p class="questiontext">
-        On a scale of 1-10 (where 10 is the most difficult), please rate how <b>DIFFICULT</b> you found the learning task.
+        On a scale of 1-10 (where 10 is the most difficult), please rate how <b>DIFFICULT</b> you found the learning task:
         </p>
         <select id="difficulty" name="difficulty">
-            <option value="10">10 - Very difficult</option>
+            <option value="10">10 - Very difficult (hard)</option>
             <option value="9">9</option>
             <option value="8">8</option>
             <option value="7">7</option>
@@ -41,7 +41,8 @@
     </div>
     <div class="question">
         <p class="questiontext">
-        Describe in your own words the rule you used to determine category membership.
+        Describe, in your own words, the rule you used to determine category membership.  Try to be clear enough that someone could
+        follow your instructions and perform perfectly at the task.  If you are unable to explain your approach, please say so.
         </p>
         <textarea id="rulestrategy" cols=50 rows=3 /></textarea>
     </div>
@@ -51,7 +52,7 @@
         <em>(Please respond honestly so we can analyze your data appropriately.)</em>
         </p>
         <select name="physicalaids">
-            <option value="no" SELECTED>No, include my data in the analysis.</option>
+            <option value="no" SELECTED>No, include my data in the main analysis.</option>
             <option value="yes">Yes, I used a memory aid.  Analyze my data separately.</option>
         </select>
     </div>
