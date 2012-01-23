@@ -39,6 +39,7 @@ DEBRIEF_ACCESSED_WITHOUT_POST = 1006
 COMPLETE_ACCESSED_WITHOUT_POST = 1007
 ALREADY_STARTED_EXP = 1008
 ALREADY_STARTED_EXP_MTURK = 1009
+ALREADY_DID_EXP_HIT = 1010
 
 IN_DEBUG = 1005
 
@@ -122,17 +123,25 @@ def mturkroute():
     # this just is a way-stop along the way to the experiment code
     if request.method == 'GET':
         if request.args.has_key('hitId') and request.args.has_key('assignmentId'):
-            
+            conn = engine.connect()
             hitID = request.args['hitId']
             assignmentID = request.args['assignmentId']
             if request.args.has_key('workerId'):
                 workerID = request.args['workerId']
+                # first check if this workerId has completed the task before
+                s = select([participantsdb.c.subjid])
+                s = s.where(and_(participantsdb.c.hitid!=hitID, participantsdb.c.workerid==workerID))
+                result = conn.execute(s)
+                matches = [row for row in result]
+                numrecs = len(matches)
+                if numrecs != 0:
+                    return render_template('error.html', errornum=ALREADY_DID_EXP_HIT, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId']) # already completed task
             else:
                 workerID = '-1'
             print hitID, assignmentID, workerID
             s = select([participantsdb.c.status, participantsdb.c.subjid])
             s = s.where(and_(participantsdb.c.hitid==hitID, participantsdb.c.assignmentid==assignmentID, participantsdb.c.workerid==workerID))
-            conn = engine.connect()
+            
             status = -1;
             for row in conn.execute(s):
                 status = row[0]
@@ -312,7 +321,8 @@ def savedata():
             s = s.values(status=COMPLETED, datafile=datafile, endhit=datetime.datetime.now())
             conn.execute(s)
             return render_template('debriefing.html', subjid=subj_id)
-    return render_template('error.html', errornum=DEBRIEF_ACCESSED_WITHOUT_POST)
+    else:
+        return render_template('error.html', errornum=DEBRIEF_ACCESSED_WITHOUT_POST)
 
 
 @app.route('/complete', methods=['POST'])
