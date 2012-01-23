@@ -33,7 +33,7 @@
 
 		<script>
 			function openwindow() {
-				popup = window.open('/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width='+screen.availWidth+',height='+screen.availHeight+'');
+				popup = window.open('/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+screen.availWidth+',height='+screen.availHeight+'');
 				popup.onunload = function() { location.reload(true) }
 			}
 		</script>
