@@ -13,31 +13,27 @@ mtc = MTurkConnection(
     aws_secret_access_key="EXAMPLE",
     host=HOST)
 
-#print mtc.get_account_balance()  # Tests the connection
-
-# TODO: what did we tell the IRB? Payment, etc.
-
 # Configure portal
 experimentPortalURL = "http://smash.psych.nyu.edu:5001/mturk"
 frameheight = 600
 mturkQuestion = ExternalQuestion( experimentPortalURL, 600 )
 
 # Qualification:
-quals = Qualifications()
-quals.add( PercentAssignmentsApprovedRequirement('GreaterThanOrEqualTo', 95) )
-quals.add( LocaleRequirement("Country", "US") )
+quals = Qualifications();
+quals.add( PercentAssignmentsApprovedRequirement("GreaterThanOrEqualTo", "95") )
+quals.add( LocaleRequirement("EqualTo", "US") )
 
 # Specify all the HIT parameters
 paramdict = dict(
     hit_type = None,
     question = mturkQuestion,
     lifetime = datetime.timedelta(1),  # How long the HIT will be available
-    max_assignments = 1, # Total times it will be assigned, not max per turker
-    title = "The Group Discovery Game (Psychology Experiment)",
-    description = "Learn to group a set of objects",
-    keywords = "psychology, learning, memory, cognition, experiment",
+    max_assignments = 24, # Total times it will be assigned, not max per turker
+    title = "Paid volunteers needed for an online experiment in Psychology",
+    description = "Learn to categorize a set of cards over a series of training trials.",
+    keywords = "New York University, psychology experiment, category learning",
     reward = 1,
-    duration = datetime.timedelta(1),
+    duration = datetime.timedelta(hours=2),
     approval_delay = None,
     annotation = None,  # Do we need this? Not clear on what it is.
     questions = None,
@@ -46,3 +42,5 @@ paramdict = dict(
 
 myhit = mtc.create_hit(**paramdict )[0]
 hitid = myhit.HITId
+
+print mtc.get_account_balance()  # Tests the connection
