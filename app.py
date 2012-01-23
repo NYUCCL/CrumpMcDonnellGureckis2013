@@ -103,7 +103,7 @@ def get_people(conn, s):
                         'cond', 'counterbalance', 'beginhit','beginexp', 'endhit',
                         'status', 'datafile']:
             if field=='datafile':
-                if row[field] == '':
+                if row[field] == None:
                     person[field] = "Nothing yet"
                 else:
                     person[field] = row[field][:10]
