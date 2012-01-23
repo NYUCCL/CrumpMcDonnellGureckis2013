@@ -240,10 +240,15 @@ def start_exp():
                 # doesn't exist, get a histogram of completed counterbalanced, and choose an under-used one
                 subj_counter = get_random_counterbalance(conn)
                 
+                if request.remote_addr:
+                    myip = request.remote_addr
+                else:
+                    myip = "UKNOWNIP"
+                
                 # set condition here and insert into database
                 result = conn.execute(participantsdb.insert(),
                     hitid = hitID,
-                    ipaddress = request.remote_addr,
+                    ipaddress = myip,
                     assignmentid = assignmentID,
                     workerid = workerID,
                     cond = subj_cond,
