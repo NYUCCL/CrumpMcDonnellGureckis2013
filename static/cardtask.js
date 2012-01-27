@@ -177,7 +177,7 @@ var ncards = 8,
 	"static/images/STIM13.PNG",
 	"static/images/STIM14.PNG",
 	"static/images/STIM15.PNG"],
-    categorynames= [ "A", "B" ];
+	categorynames= [ "A", "B" ];
 
 // Interface variables
 var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
@@ -198,7 +198,7 @@ catfuns = [
 		//5  1 0 1 - 1
 		//6  1 1 0 - 0
 		//7  1 1 1 - 1
-		
+
 		return num % 2;
 	},
 	function (num) {
@@ -238,6 +238,7 @@ catfuns = [
 		//5  1 0 1 - 0    E
 		//6  1 1 0 - 0       E
 		//7  1 1 1 - 0
+
 		var score = 0; // prototypicality score
 		if ( num & 1 ) { score++; }
 		if ( num & 2 ) { score++; }
@@ -254,7 +255,7 @@ catfuns = [
 		//5  1 0 1 - 0
 		//6  1 1 0 - 0  E
 		//7  1 1 1 - 1  E
-		
+
 		if (num & 1) { return (num%8 === 7) ? 1 : 0; }
 		else { return (num%8 === 6) ? 0 : 1; }
 	},
@@ -268,7 +269,7 @@ catfuns = [
 		//5  1 0 1 - 1
 		//6  1 1 0 - 1
 		//7  1 1 1 - 0
-		
+
 		if (num & 1) { return (num&2)^((num&4)/2) ? 1:0; }
 		else { return (num&2)^((num&4)/2) ? 0:1; }
 	}
@@ -342,7 +343,8 @@ var pagenames = [
 	"instructDimDots",
 	"instructDimStripe",
 	"instructDimAll",
-	"instructFinal"
+	"instructFinal",
+	"instructFinal2"
 ];
 
 
@@ -367,7 +369,8 @@ var Instructions = function() {
 			"instructDimDots",
 			"instructDimStripe",
 			"instructDimAll",
-			"instructFinal"
+			"instructFinal",
+			"instructFinal2"
 		],
 		currentscreen = "",
 		timestamp;
@@ -380,7 +383,7 @@ var Instructions = function() {
 	this.nextForm = function () {
 		var next = screens.splice(0, 1)[0];
 		currentscreen = next;
-        showpage( next );
+		showpage( next );
 		timestamp = new Date().getTime();
 		if ( screens.length === 0 ) $('.continue').click(function() {
 			that.recordtrial();
@@ -703,7 +706,9 @@ var TrainingPhase = function() {
 					timetext.attr({text:timerects.length});
 					if ( timerects.length===0 ) {
 						$('body').html('<h1>Training Complete</h1>\
-							<p>Training complete! Press "Continue" to move on to the test phase.</p>\
+                        <p>Training complete! <b>You have completed ' + currentblock + ' out of ' + condition.maxblocks + ' total training rounds</b>. Keep trying and please don\'t quit\
+						early as you will be ineligble for your payment or the bonus!</p>\
+						<p>Press "Continue" to move on to the test phase.</p>\
 							<input type="button" id="continue" value="Continue"></input>');
 						$('#continue').click( function(){ testobject = new TestPhase(); } );
 						$('#continue').attr('style', 'width: auto;');
@@ -789,7 +794,7 @@ var TrainingPhase = function() {
 		cards[i].click( this.cardclick(i) );
 	}
 	var getShuffleState = function() {
-        var actual = new Array(8),
+	    var actual = new Array(8),
 			theory = new Array(8);
         for (i=0; i<cardattributes.length; i++) {
             item = cardattributes[i];
@@ -878,7 +883,7 @@ var TestPhase = function() {
 	var finishblock = function() {
 		currentblock++;
 		var done = false;
-		if (currentblock >= condition.maxblocks) done = true;
+		if (currentblock > condition.maxblocks) done = true;
 		else {
 			if ( boolpercent(that.hits)==100 ) {
 				if ( lastperfect ) done = true;
@@ -888,9 +893,16 @@ var TestPhase = function() {
 		}
 		if (done) givequestionnaire();
 		else {
+        	$.ajax("inexpsave", {
+        			type: "POST",
+        			async: true,
+        			data: {subjId: subjid, dataString: datastring}
+        	});
 			$('body').html('<h1>Test phase Complete</h1>\
-				<p>Test phase complete! You got ' + boolpercent(that.hits) + '% correct.</p>' +
-				((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : "") +
+				<p>Test phase complete!<br><br>\
+				<p><b>You have completed ' + currentblock-1 + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
+				 You got ' + boolpercent(that.hits) + '% correct.</p>' +
+				((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : '\r<p>If you can get two in a row at 100% you can stop early!') +
 				'<p>Press "Continue" to move on to the next training block.</p>\
 				<input type="button" id="continue" value="Continue"></input>');
 			$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
@@ -962,7 +974,12 @@ var startTask = function () {
 	});
 	// Provide opt-out 
 	window.onbeforeunload = function(){
-		alert( "By leaving this page, you opt out of the experiment. Please confirm that this is what you meant to do." );
+    	$.ajax("quitter", {
+    			type: "POST",
+    			async: false,
+    			data: {subjId: subjid, dataString: datastring}
+    	});
+		alert( "By leaving this page, you opt out of the experiment.  You are forfitting your $1.00 payment and your 1/10 chance to with $10. Please confirm that this is what you meant to do." );
 		return "Are you sure you want to leave the experiment?";
 	};
 };
