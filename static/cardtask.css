@@ -170,7 +170,7 @@ input {
 }
 
 #questionnaire {
-    font-size: 80%;
+    font-size: 70%;
     text-align: left;
 }
 #questionnaire h1 {
@@ -190,7 +190,7 @@ input {
     margin-right: 10px;
 }
 .questiontext em {
-    font-size: 80%;
+    font-size: 70%;
 }
 #questionnaire textarea {
     display: inline;

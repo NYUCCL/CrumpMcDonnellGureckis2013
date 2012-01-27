@@ -11,7 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-
+CODE_VERSION = "2.0"
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 NUMCONDS = 12
@@ -21,12 +21,14 @@ STARTED = 2
 COMPLETED = 3
 DEBRIEFED = 4
 CREDITED = 5
+QUITEARLY = 6
 
 if DEPLOYMENT_ENV == 'sandbox':
-    MAXBLOCKS = 1
+    MAXBLOCKS = 2
 else:
-    MAXBLOCKS = 20
+    MAXBLOCKS = 15
 
+TESTINGPROBLEMSIX = True
 
 # error codes
 STATUS_INCORRECTLY_SET = 1000
@@ -40,8 +42,10 @@ COMPLETE_ACCESSED_WITHOUT_POST = 1007
 ALREADY_STARTED_EXP = 1008
 ALREADY_STARTED_EXP_MTURK = 1009
 ALREADY_DID_EXP_HIT = 1010
+TRIED_TO_QUIT= 1011
+INTERMEDIATE_SAVE = 1012
 
-IN_DEBUG = 1005
+IN_DEBUG = 2005
 
 app = Flask(__name__)
 
@@ -128,12 +132,13 @@ def mturkroute():
             assignmentID = request.args['assignmentId']
             if request.args.has_key('workerId'):
                 workerID = request.args['workerId']
-                # first check if this workerId has completed the task before
+                # first check if this workerId has completed the task before (v1)
                 s = select([participantsdb.c.subjid])
                 s = s.where(and_(participantsdb.c.hitid!=hitID, participantsdb.c.workerid==workerID))
                 result = conn.execute(s)
                 matches = [row for row in result]
                 numrecs = len(matches)
+                
                 if numrecs != 0:
                     return render_template('error.html', errornum=ALREADY_DID_EXP_HIT, hitid=request.args['hitId'], assignid=request.args['assignmentId'], workerid=request.args['workerId']) # already completed task
             else:
@@ -167,7 +172,7 @@ def get_random_condition(conn):
         # jobs that are never going to finish (user decided not to do it)
     # our count should be based on the first two so, lets stay anything finished or anything not finished that was started in the last 45 minutes should be counted
     starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
-    s = select([participantsdb.c.cond], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])
+    s = select([participantsdb.c.cond], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])
     result = conn.execute(s)
     counts = [0]*NUMCONDS
     for row in result:
@@ -177,14 +182,17 @@ def get_random_condition(conn):
     indicies = [i for i, x in enumerate(counts) if x == min(counts)]
     rstate = getstate()
     seed()
-    subj_cond = choice(indicies)
+    if TESTINGPROBLEMSIX:
+        subj_cond = choice([5,11])
+    else:
+        subj_cond = choice(indicies)
     setstate(rstate)
     return subj_cond
 
 
 def get_random_counterbalance(conn):
     starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
-    s = select([participantsdb.c.counterbalance], or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime), from_obj=[participantsdb])    
+    s = select([participantsdb.c.counterbalance], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])    
     result = conn.execute(s)
     counts = [0]*NUMCOUNTERS
     for row in result:
@@ -254,6 +262,7 @@ def start_exp():
                     cond = subj_cond,
                     counterbalance = subj_counter,
                     status = ALLOCATED,
+                    codeversion = CODE_VERSION,
                     debriefed=False,
                     beginhit = datetime.datetime.now()
                 )
@@ -328,6 +337,35 @@ def savedata():
             return render_template('debriefing.html', subjid=subj_id)
     else:
         return render_template('error.html', errornum=DEBRIEF_ACCESSED_WITHOUT_POST)
+
+
+@app.route('/inexpsave', methods=['POST'])
+def inexpsave():
+    print "accessing the /inexpsave route"
+    if request.method == 'POST':
+        print request.form.keys()
+        if request.form.has_key('subjId') and request.form.has_key('dataString'):
+            subj_id = request.form['subjId']
+            datastring = request.form['dataString']  
+            print "getting the save data", subj_id, datastring
+            conn = engine.connect()
+            conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(datafile=datastring, status=STARTED))
+            conn.close()
+    return render_template('error.html', errornum=INTERMEDIATE_SAVE)
+
+@app.route('/quitter', methods=['POST'])
+def quitter():
+    print "accessing the /quitter route"
+    if request.method == 'POST':
+        print request.form.keys()
+        if request.form.has_key('subjId') and request.form.has_key('dataString'):
+            subj_id = request.form['subjId']
+            datastring = request.form['dataString']  
+            print "getting the save data", subj_id, datastring
+            conn = engine.connect()
+            conn.execute(participantsdb.update().where(participantsdb.c.subjid==subj_id).values(datafile=datastring, status=QUITEARLY))
+            conn.close()
+    return render_template('error.html', errornum=TRIED_TO_QUIT)
 
 
 @app.route('/complete', methods=['POST'])
@@ -411,6 +449,7 @@ def createdatabase(engine, metadata):
             Column('workerid', String(128)),
             Column('cond', Integer),
             Column('counterbalance', Integer),
+            Column('codeversion',String(128)),
             Column('beginhit', DateTime(), nullable=True),
             Column('beginexp', DateTime(), nullable=True),
             Column('endhit', DateTime(), nullable=True),

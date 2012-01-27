@@ -29,27 +29,34 @@
 		{% if assignmentid != "ASSIGNMENT_ID_NOT_AVAILABLE" %}
 		<h1>Thank you for accepting this HIT!</h1>
 		<p>By clicking the following URL link, you will be taken to the experiment,
-		including complete instructions and an informed consent agreement.</p>
-
+				including complete instructions and an informed consent agreement.</p>
+		
 		<script>
 			function openwindow() {
 				popup = window.open('/consent?hitId={{ hitid }}&assignmentId={{ assignmentid }}&workerId={{ workerid }}','Popup','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=no,width='+screen.availWidth+',height='+screen.availHeight+'');
 				popup.onunload = function() { location.reload(true) }
 			}
 		</script>
-		<p><a href="#" onClick="openwindow()">Link to the experiment.</a></p>
+		<p>
+		Please disable pop-up blockers before continuing.
+		</p>
+		<p><a href="#" onClick="openwindow()">Ok, I understand, I'm read to start.</a></p>
 
-		<p>If you have any questions, you may contact the principal investigator, Todd
-		Gureckis, via <a href="mailto:todd.gureckis@nyu.edu">email</a>.</p>
 		{% else %}
 		<h1> Call for participants</h1>
 		<p>The Cognition and Computation Lab at New York University (NYU) is looking
 		for online participants for a brief experiment on how people learn. The
-		experiment can be run right at your desk. The only formal requirements are that
-		you are at least 18 years old and are a fluent English speaker. The experiment
-		will take anywhere between 10 to 20 minutes to complete and you will be
-		remunerated $1.00 for your time.</p>
-		
+		experiment can be run right at your desk. The only requirements are that
+		you are at least 18 years old and are a fluent English speaker.
+		</p>
+		<p>
+		If you completely finish the experiment, you will be paid $1.00 and entered 
+		into a drawing for an additional $10 bonus.  We enforce the odds so that one out of every 10 people who 
+		completes the task will receive a $10 bonus.  The experiment can take as little as 10 minutes or as 
+		long as 45 minutes depending on how fast you learn.  Thus, <b>you could be paid up to $11 for only a few minutes 
+		of your time!</b>  Most people finish in 10-30 minutes (although it could take 
+		a bit longer, depending on the individual).
+		</p>
 		<p>This task can only be completed once.  Thus, if you have already
 		    completed this task before the system will not allow you to run again.  If this
 		    looks familiar please release the hit so someone else can participate.</p>
