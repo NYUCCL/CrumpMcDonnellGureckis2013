@@ -942,13 +942,13 @@ var TestPhase = function() {
         			async: true,
         			data: {subjId: subjid, dataString: datastring}
         	});
+
 			$('body').html('<h1>Test phase Complete</h1>\
-				<p>Test phase complete!<br><br>\
-				<p><b>You have completed ' + currentblock-1 + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
+				<p>Test phase complete! <b>You have completed ' + (currentblock-1) + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
 				 You got ' + boolpercent(that.hits) + '% correct.</p>' +
-				((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : '\r<p>If you can get two in a row at 100% you can stop early!') +
-				'<p>Press "Continue" to move on to the next training block.</p>\
-				<input type="button" id="continue" value="Continue"></input>');
+				 ((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : '\r<p>If you can get two in a row at 100% you can stop early!') + 
+				 '<p>Press "Continue" to move on to the next training block.</p>\
+				  <input type="button" id="continue" value="Continue"></input>');
 			$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
 			$('#continue').attr('style', 'width: auto;');
 			$("p").attr("style", "font-size: 150%");
