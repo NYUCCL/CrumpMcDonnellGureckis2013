@@ -105,17 +105,19 @@ function swap( arr, exceptions ) {
 	var i;
 	var except = exceptions ? exceptions : [];
 	var shufflelocations = new Array();
-	for (i=0; i<arr.length; i++) {
-		if (except.indexOf(i)==-1) { shufflelocations.push(i); }
-	}
-	var loc1 = shufflelocations.splice(
-			randrange(0, shufflelocations.length), 1);
-	var loc2 = shufflelocations.splice(
-			randrange(0, shufflelocations.length), 1);
-	var temp1 = arr[loc1];
-	var temp2 = arr[loc2];
-	arr[loc1] = temp2;
-	arr[loc2] = temp1;
+    for (i=0; i<arr.length; i++) {
+        if (except.indexOf(i)==-1) { shufflelocations.push(i); }
+    }
+    
+    for (i=shufflelocations.length-1; i>=0; --i) {
+        var loci = shufflelocations[i];
+        var locj = shufflelocations[randrange(0,i+1)]
+        var tempi = arr[loci];
+        var tempj = arr[locj];
+    	arr[loci] = tempj;
+    	arr[locj] = tempi;
+    }
+    
 	return arr;
 }
 
@@ -461,23 +463,42 @@ function exampleTrain() {
 			cards[cardid][0].attr({"stroke-opacity": 0});
 		};
 	};
+	var hideallexcept = function(cardid){
+	    return function() {
+	        for (var i=0; i < ncards; i++) {
+	            if (i!=cardid) { 
+	                cards[i][0].hide();
+	                cards[i][1].hide();
+                    cards[i][2].hide();
+	            }
+	        }
+	    };
+	};
+	var showall = function(){
+	    return function() {
+	        for (var i=0; i < ncards; i++) {
+	            cards[i][0].show();
+	            cards[i][1].show();
+	        }
+	    };
+	};
 	this.indicateCard = function(cardid) {
 		lock = true;
 		turnon();
-		setTimeout(turnoff(cardid), 100);
-		setTimeout(turnon(cardid), 200);
 		setTimeout(turnoff(cardid), 300);
 		setTimeout(turnon(cardid), 400);
-		setTimeout(function(){ lock=false; }, 400);
+		setTimeout(turnoff(cardid), 500);
+		setTimeout(turnon(cardid), 600);
+		setTimeout(function(){ lock=false; }, 700);
 	};
 	
 	var shufflecards = function(callback, exceptions) {
 		swap( that.cardlocs, exceptions );
-		that.animating = true;
+		//that.animating = true;
 		for ( var i=0; i < ncards; i ++){
 			var coords = loc_coords( that.cardlocs[i] );
 			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
-			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
+			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 1, "<", callback);
 			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
 			// outerrect = cards[i][0];
 		}
@@ -500,8 +521,9 @@ function exampleTrain() {
 			$('#tryit').fadeOut(500, function(){
 				$('.hidden').fadeIn(500);
 			});
+			hideallexcept(cardid)();
 			lock = true;
-			cards[cardid][2].show();
+			cards[cardid][2].show(); // shows the category label
 			setTimeout(
 				function(){
 					cards[cardid][2].hide();
@@ -520,6 +542,7 @@ function exampleTrain() {
 					};
 					shuffletimestamp  = new Date().getTime();
 					shufflecards( callback, that.lastcards );
+					showall()();
 					return true;
 				},
 				1500);
@@ -664,19 +687,38 @@ var TrainingPhase = function() {
 	this.indicateCard = function(cardid) {
 		lock = true;
 		turnon();
-		setTimeout(turnoff(cardid), 100);
-		setTimeout(turnon(cardid), 200);
 		setTimeout(turnoff(cardid), 300);
 		setTimeout(turnon(cardid), 400);
-		setTimeout(function(){ lock=false; }, 400);
+		setTimeout(turnoff(cardid), 500);
+		setTimeout(turnon(cardid), 600);
+		setTimeout(function(){ lock=false; }, 700);
+	};
+	var hideallexcept = function(cardid){
+	    return function() {
+	        for (var i=0; i < ncards; i++) {
+	            if (i!=cardid) { 
+	                cards[i][0].hide();
+	                cards[i][1].hide();
+                    cards[i][2].hide();
+	            }
+	        }
+	    };
+	};
+	var showall = function(){
+	    return function() {
+	        for (var i=0; i < ncards; i++) {
+	            cards[i][0].show();
+	            cards[i][1].show();
+	        }
+	    };
 	};
 	var shufflecards = function(callback, exceptions) {
 		swap( that.cardlocs, exceptions );
-		that.animating = true;
+		//that.animating = true;
 		for ( var i=0; i < ncards; i ++){
 			coords = loc_coords( that.cardlocs[i] );
 			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
-			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 500, "<", callback);
+			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 1, "<", callback);
 			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
 			// outerrect = cards[i][0];
 		}
@@ -696,6 +738,7 @@ var TrainingPhase = function() {
 			else {
 				that.next = presentations.pop();
 			}
+			hideallexcept(cardid)();
 			lock = true;
 			cards[cardid][2].show();
 			setTimeout(
@@ -723,6 +766,7 @@ var TrainingPhase = function() {
 					};
 					shuffletimestamp  = new Date().getTime();
 					shufflecards( callback, that.lastcards );
+					showall()();
 					return true;
 				},
 				1500);

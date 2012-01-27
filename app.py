@@ -11,7 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-CODE_VERSION = "2.0"
+CODE_VERSION = '3.0'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 NUMCONDS = 12
@@ -183,7 +183,8 @@ def get_random_condition(conn):
     rstate = getstate()
     seed()
     if TESTINGPROBLEMSIX:
-        subj_cond = choice([5,11])
+        #subj_cond = choice([5,11])
+        subj_cond = 11
     else:
         subj_cond = choice(indicies)
     setstate(rstate)
@@ -216,7 +217,6 @@ def give_consent():
             assignmentID = request.args['assignmentId']
             workerID = request.args['workerId']
             print hitID, assignmentID, workerID
-            
             return render_template('consent.html', hitid = hitID, assignmentid=assignmentID, workerid=workerID)
         else:
             return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_CONSENT)
@@ -437,11 +437,11 @@ def createdatabase(engine, metadata):
 
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants_v2', metadata, autoload=True)
+        participants = Table('participants_v3', metadata, autoload=True)
     except: # can you put in the specific exception here?
         # ok will create the database
         print "ok will create the participant database"
-        participants = Table('participants_v2', metadata,
+        participants = Table('participants_v3', metadata,
             Column('subjid', Integer, primary_key=True),
             Column('ipaddress', String(128)),
             Column('hitid', String(128)),
@@ -465,7 +465,7 @@ def createdatabase(engine, metadata):
 def loaddatabase(engine, metadata):
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants_v2', metadata, autoload=True)
+        participants = Table('participants_v3', metadata, autoload=True)
     except: # can you put in the specific exception here?
         print "Error, participants table doesn't exist"
         exit()
