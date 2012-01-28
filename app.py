@@ -11,9 +11,10 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-CODE_VERSION = '3.0'
+CODE_VERSION = '3.1'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
+TABLENAME = 'participants_v3'
 NUMCONDS = 12
 NUMCOUNTERS = 24*16
 ALLOCATED = 1
@@ -437,11 +438,11 @@ def createdatabase(engine, metadata):
 
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants_v3', metadata, autoload=True)
+        participants = Table(TABLENAME, metadata, autoload=True)
     except: # can you put in the specific exception here?
         # ok will create the database
         print "ok will create the participant database"
-        participants = Table('participants_v3', metadata,
+        participants = Table(TABLENAME, metadata,
             Column('subjid', Integer, primary_key=True),
             Column('ipaddress', String(128)),
             Column('hitid', String(128)),
@@ -458,14 +459,13 @@ def createdatabase(engine, metadata):
             Column('datafile', Text, nullable=True),  #the data from the exp
         )
         participants.create()
-    
     return participants
 
 
 def loaddatabase(engine, metadata):
     # try to load tables from a file, if that fails create new tables
     try:
-        participants = Table('participants_v3', metadata, autoload=True)
+        participants = Table(TABLENAME, metadata, autoload=True)
     except: # can you put in the specific exception here?
         print "Error, participants table doesn't exist"
         exit()
