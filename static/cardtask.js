@@ -270,8 +270,8 @@ catfuns = [
 		//4  1 0 0 - 0
 		//5  1 0 1 - 1
 		//6  1 1 0 - 1
-		//7  1 1 1 - 0
-
+		//7  1 1 1 - 0        
+        
 		if (num & 1) { return (num&2)^((num&4)/2) ? 1:0; }
 		else { return (num&2)^((num&4)/2) ? 0:1; }
 	}
@@ -407,7 +407,7 @@ function exampleTrain() {
 	var ncards = 8,
 	    ncardswide = 4,
 	    ncardstall = 2,
-	    sampleunits = 16,
+	    sampleunits = 8,
 	    lock = false,
 	    cards = new Array(),
 	    cardattributes = [],
@@ -433,7 +433,7 @@ function exampleTrain() {
 	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
     
     // Presentations for passive condition.
-    var presentations = [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7];
+    var presentations = [0,1,2,3,4,5,6,7];
     shuffle(presentations);
     this.next = presentations.pop();
 	
@@ -620,7 +620,7 @@ var TrainingPhase = function() {
 	var that = this; // make 'this' accessble by privileged methods
 	var cardattributes = new Array(8);
 	
-	var sampleunits = 16;
+	var sampleunits = 8;
 	
 	// Mutables
 	var lock = false;
@@ -645,7 +645,7 @@ var TrainingPhase = function() {
 	var w2 = timertotalw, h2 = timertotalh;
 	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
 	
-	var presentations = [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7];
+	var presentations = [0,1,2,3,4,5,6,7];
 	shuffle(presentations);
 	this.next = presentations.pop();
 	
