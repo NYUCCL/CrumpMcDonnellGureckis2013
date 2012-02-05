@@ -13,7 +13,7 @@ from functools import wraps
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
 CODE_VERSION = '3.1'
 
-DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
+DATABASE = 'mysql://released_data:shareit@gureckislab.org:3306/released_data'   # 'sqlite:///:memory:' - tests in memory
 TABLENAME = 'participants_v3'
 NUMCONDS = 12
 NUMCOUNTERS = 24*16
@@ -75,7 +75,7 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    return username == 'gureckislab' and password == '2research'
+    return username == 'gureckislab' and password == 'shareit'
 
 
 def authenticate():

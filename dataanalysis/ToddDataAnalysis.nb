@@ -313,9 +313,9 @@ Cell[BoxData[
      RowBox[{"JDBC", "[", 
       RowBox[{
       "\"\<MySQL(Connector/J)\>\"", ",", 
-       "\"\<gureckislab.org:3306/active_learn_shj_turk\>\""}], "]"}], ",", 
+       "\"\<gureckislab.org:3306/released_data\>\""}], "]"}], ",", 
      RowBox[{"\"\<Username\>\"", "->", "\"\<lab\>\""}], ",", 
-     RowBox[{"\"\<Password\>\"", "->", "\"\<2research\>\""}]}], "]"}]}], 
+     RowBox[{"\"\<Password\>\"", "->", "\"\<shareit\>\""}]}], "]"}]}], 
   ";"}]], "Input",
  CellChangeTimes->{{3.535913921111377*^9, 3.535914030189595*^9}, {
   3.5360729002758102`*^9, 3.536072901074792*^9}}],
