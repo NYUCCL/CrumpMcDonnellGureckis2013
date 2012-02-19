@@ -357,17 +357,15 @@ var Instructions = function() {
 			"instructCatExample",
 			"instructCatColor",
 			"instructCatStripe",
-			"instructDemoIntro",
-			"instructDemo",
-			"instructTest",
-			"instructTest2",
+			"instructTest", // TODO: Change wording for new exp.
+			"instructTest2", // TODO: Change wording for new exp.
 			"instructDimColor",
 			"instructDimBorder",
 			"instructDimDots",
 			"instructDimStripe",
 			"instructDimAll",
 			"instructFinal",
-			"instructFinal2"
+			"instructFinal2" 
 		],
 		currentscreen = "",
 		timestamp;
@@ -439,15 +437,17 @@ var TestPhase = function() {
 		    actual = catfun(prescard); // should be "A" or "B"
 		washit = resp === actual;
 		lock = true;
-		var hitmessage = '<span style="font-size: 42px; color: green;">CORRECT.</span>';
-		var missmessage = '<span style="font-size: 42px; color: red;">INCORRECT!</span>';
-		$('#query').html(hit ? hitmessage : missmessage);
+		var hitmessage = '<span style="font-size: 42px; color: #0F0;">CORRECT.</span>';
+		var missmessage = '<span style="font-size: 42px; color: #F00;">INCORRECT!</span>';
+		$('#query').html(washit ? hitmessage : missmessage);
+		console.warn( "Should have just given feedback ");
 		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
+				console.warn( "Should have just hidden the stim and the feedback");
+				setTimeout( nextcard, 500);
 			}, 
 			500);
-		setTimeout( nextcard, 1000);
 		that.hits.push( washit );
 		recordtesttrial (prescard, getstim(prescard), actual, resp, washit, rt );
 		return false;
@@ -487,6 +487,7 @@ var TestPhase = function() {
 	};
 	
 	var nextcard = function () {
+		console.warn( "Should be showing the next card.");
 		var done = false;
 		if (! testcardsleft.length) {
 			finishblock();
