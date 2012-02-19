@@ -357,8 +357,8 @@ var Instructions = function() {
 			"instructCatExample",
 			"instructCatColor",
 			"instructCatStripe",
-			"instructTest", // TODO: Change wording for new exp.
-			"instructTest2", // TODO: Change wording for new exp.
+			"instructTest",
+			"instructTest2",
 			"instructDimColor",
 			"instructDimBorder",
 			"instructDimDots",
