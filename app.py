@@ -31,7 +31,7 @@ else:
 
 
 
-TESTINGPROBLEMSIX = True
+TESTINGPROBLEMSIX = False
 
 # error codes
 STATUS_INCORRECTLY_SET = 1000
@@ -187,7 +187,7 @@ def get_random_condition(conn):
     seed()
     if TESTINGPROBLEMSIX:
         #subj_cond = choice([5,11])
-        subj_cond = 11
+        subj_cond = 5
     else:
         subj_cond = choice(indicies)
     setstate(rstate)
@@ -199,6 +199,7 @@ def get_random_counterbalance(conn):
     s = select([participantsdb.c.counterbalance], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])    
     result = conn.execute(s)
     counts = [0]*NUMCOUNTERS
+    assert len(counts) == NUMCOUNTERS, "WTF? len(counts)=%d while NUMCOUNTERS was %d." % (len(counts), NUMCOUNTERS)
     for row in result:
         counts[row[0]]+=1
     
