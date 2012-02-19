@@ -105,19 +105,19 @@ function swap( arr, exceptions ) {
 	var i;
 	var except = exceptions ? exceptions : [];
 	var shufflelocations = new Array();
-    for (i=0; i<arr.length; i++) {
-        if (except.indexOf(i)==-1) { shufflelocations.push(i); }
-    }
-    
-    for (i=shufflelocations.length-1; i>=0; --i) {
-        var loci = shufflelocations[i];
-        var locj = shufflelocations[randrange(0,i+1)]
-        var tempi = arr[loci];
-        var tempj = arr[locj];
-    	arr[loci] = tempj;
-    	arr[locj] = tempi;
-    }
-    
+	for (i=0; i<arr.length; i++) {
+		if (except.indexOf(i)==-1) { shufflelocations.push(i); }
+	}
+	
+	for (i=shufflelocations.length-1; i>=0; --i) {
+		var loci = shufflelocations[i],
+			locj = shufflelocations[randrange(0,i+1)],
+			tempi = arr[loci],
+			tempj = arr[locj];
+		arr[loci] = tempj;
+		arr[locj] = tempi;
+	}
+	
 	return arr;
 }
 
@@ -186,7 +186,7 @@ var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 
 
 // Task objects
-var trainobject, testobject;
+var testobject;
 
 // Tasks
 catfuns = [
@@ -311,11 +311,6 @@ function recordinstructtrial (instructname, rt ) {
 	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructname, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 }
-function recordtraintrial (theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt ) {
-	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, currentblock, currenttrial, "TRAINING", theorystim, actualstim, category, loc, shuffleStateTheory, shuffleStateActual, rt];
-	datastring = datastring.concat( trialvals, "\n" );
-	currenttrial++;
-}
 function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, currentblock, currenttrial,  "TEST", theorystim, actualstim, correct, resp, hit, rt];
 	datastring = datastring.concat( trialvals, "\n" );
@@ -389,489 +384,20 @@ var Instructions = function() {
 		timestamp = new Date().getTime();
 		if ( screens.length === 0 ) $('.continue').click(function() {
 			that.recordtrial();
-			that.startTraining();
+			that.startTest();
 		});
 		else $('.continue').click( function() {
 			that.recordtrial();
 			that.nextForm();
 		});
 	};
-	this.startTraining = function() {
+	this.startTest = function() {
 		startTask();
-		trainobject = new TrainingPhase();
+		testobject = new TestPhase();
 	};
 	this.nextForm();
 };
 
-function exampleTrain() {
-	var ncards = 8,
-	    ncardswide = 4,
-	    ncardstall = 2,
-	    sampleunits = 8,
-	    lock = false,
-	    cards = new Array(),
-	    cardattributes = [],
-	    that = this;
-	
-	this.lastcards = [undefined,undefined];
-	
-	// Canvas for the cards.
-	var nowX, nowY, w = ncardswide*cardw, h = ncardstall*cardh, r=30;
-	//var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
-	var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
-	
-	this.cardlocs = new Array();
-	for ( var i=0; i < ncards; i ++ ){ 
-		this.cardlocs.push( i ); 
-	}
-	shuffle( this.cardlocs );
-	
-	// Canvas for the timer.
-	var timertotalw = w*2/3;
-	var timertotalh = 50;
-	var w2 = timertotalw, h2 = timertotalh;
-	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
-    
-    // Presentations for passive condition.
-    var presentations = [0,1,2,3,4,5,6,7];
-    shuffle(presentations);
-    this.next = presentations.pop();
-	
-	var loc_coords = function ( loci ) {
-		var x = cardw * (loci % 4) + left;
-		var y = cardh*Math.floor(loci/4) + upper;
-		var imgoffset = (cardw-imgw)/2;
-		return {
-			x: x,
-			y: y,
-			outerx: x + (imgoffset/2),
-			outery: y + (imgoffset/2),
-			cardx: x + imgoffset,
-			cardy: y + imgoffset,
-			labelx: x + cardw/2,
-			labely: (y+imgoffset + y+(imgoffset/2) + cardh-imgoffset + imgh)/2
-		};
-	};
-	
-	var turnon = function(cardid){
-		return function() {
-			cards[cardid][0].attr({"stroke-opacity": 100});
-		};
-	};
-	var turnoff = function(cardid){
-		return function() {
-			cards[cardid][0].attr({"stroke-opacity": 0});
-		};
-	};
-	var hideallexcept = function(cardid){
-	    return function() {
-	        for (var i=0; i < ncards; i++) {
-	            if (i!=cardid) { 
-	                cards[i][0].hide();
-	                cards[i][1].hide();
-                    cards[i][2].hide();
-	            }
-	        }
-	    };
-	};
-	var showall = function(){
-	    return function() {
-	        for (var i=0; i < ncards; i++) {
-	            cards[i][0].show();
-	            cards[i][1].show();
-	        }
-	    };
-	};
-	this.indicateCard = function(cardid) {
-		lock = true;
-		turnon();
-		setTimeout(turnoff(cardid), 300);
-		setTimeout(turnon(cardid), 400);
-		setTimeout(turnoff(cardid), 500);
-		setTimeout(turnon(cardid), 600);
-		setTimeout(function(){ lock=false; }, 700);
-	};
-	
-	var shufflecards = function(callback, exceptions) {
-		swap( that.cardlocs, exceptions );
-		//that.animating = true;
-		for ( var i=0; i < ncards; i ++){
-			var coords = loc_coords( that.cardlocs[i] );
-			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
-			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 1, "<", callback);
-			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
-			// outerrect = cards[i][0];
-		}
-		return true;
-	};
-	
-	this.cardclick = function (cardid) {
-		return function() {
-			if (condition.traintype===1) {
-				if ( that.next != cardid ) { return false; }
-			}
-			if ( ! timerects.length ) { return false; }
-			if ( lock ) {  return false; }
-			if (condition.traintype===0) {
-				turnon(cardid)();
-			}
-			else {
-				that.next = presentations.pop();
-			}
-			$('#tryit').fadeOut(500, function(){
-				$('.hidden').fadeIn(500);
-			});
-			hideallexcept(cardid)();
-			lock = true;
-			cards[cardid][2].show(); // shows the category label
-			setTimeout(
-				function(){
-					cards[cardid][2].hide();
-					turnoff(cardid)();
-					timerects.pop().attr({fill: "gray"});
-					timetext.attr({text:timerects.length});
-					if ( timerects.length===0 ) {
-						alert( "You have used up all of your training examples." );
-						return true;
-					}
-					var callback = function () {
-						if (condition.traintype===1) {
-							that.indicateCard( that.next );
-						}
-						else setTimeout( function(){ lock=false; }, 400); 
-					};
-					shuffletimestamp  = new Date().getTime();
-					shufflecards( callback, that.lastcards );
-					showall()();
-					return true;
-				},
-				1500);
-			that.lastcards.splice(0,1);
-			that.lastcards.push( cardid );
-			return true;
-		};
-	};
-	
-	var textsize = 42;
-	var timerects = timerpaper.set();
-	timerectw = timertotalw / (sampleunits*2-2+10);
-	var timetext = timerpaper.text( textsize/2, h2/2, sampleunits ).attr({fill:"white","font-size":textsize});
-	for ( i=0; i < sampleunits; i ++) {
-		timerects.push(
-			timerpaper.rect(
-				timerectw * i * 2 + textsize*1.5,
-				0,
-				timerectw, timertotalh, [5]).attr({fill:"red" }));
-	}
-	
-	for ( i=0; i < ncards; i++) {
-		cards[i] = cardpaper.set();
-		coords = loc_coords( this.cardlocs[i] );
-		var thisleft = coords.x, thistop = coords.y;
-		var imgoffset = (cardw-imgw)/2;
-		
-		cardattributes[i] = {
-			"theorystim": i,
-			"actualstim": getstim(i),
-			"catnum": catfun(i),
-			"getlocation": function() { return that.cardlocs[ this.theorystim ]; }
-		};
-		// Add outside rectangle ('card')
-		cards[i].push(
-			cardpaper.rect( 
-				thisleft + (imgoffset/2),
-				thistop + (imgoffset/2),
-				imgw + imgoffset,
-				cardh - imgoffset).attr(
-					{stroke: "red", "stroke-width": "5px", "stroke-opacity": 0}
-				));
-		// Add actual stim
-		cards[i].push(
-			cardpaper.image(
-				cardnames[cardattributes[i].actualstim], 
-				thisleft + imgoffset, 
-				thistop+imgoffset, 
-				imgw, imgh));
-		// Add label (hidden initially)
-		cards[i].push(
-				cardpaper.text(
-					thisleft + cardw/2,
-					(thistop+imgoffset + thistop+(imgoffset/2) + cardh-imgoffset + imgh)/2,
-					["X","Y"][randrange(0, 2)]).attr(
-						{ fill: "white", "font-size":36 }).hide());
-		
-		cards[i].click( this.cardclick(i) );
-	}
-    
-	if ( condition.traintype===1 ) { this.indicateCard(this.next); }
-	
-	// Usually this would be a dictionary of public methods but 
-	// I'm exporting the whole thing, which will make everything accessible.
-	return this;
-}
-
-
-/********************
-* CODE FOR TRAINING *
-********************/
-
-var TrainingPhase = function() {
-	var i; // just initializing the iterator dummy
-	var that = this; // make 'this' accessble by privileged methods
-	var cardattributes = new Array(8);
-	
-	var sampleunits = 8;
-	
-	// Mutables
-	var lock = false;
-	var animating = false;
-	var cards = new Array();
-	var shuffletimestamp;
-	
-	// View variables
-	var ncardswide = 4, ncardstall = 2;
-	
-	// Write out training html 
-	showpage('train');
-	
-	// Canvas for the cards.
-	var nowX, nowY, w = ncardswide*cardw, h = ncardstall*cardh, r=30;
-	//var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
-	var cardpaper = Raphael(document.getElementById("cardcanvas"), w, h);
-	
-	// Canvas for the timer.
-	var timertotalw = w*2/3;
-	var timertotalh = 50;
-	var w2 = timertotalw, h2 = timertotalh;
-	var timerpaper = Raphael(document.getElementById("timercanvas"), w2, h2);
-	
-	var presentations = [0,1,2,3,4,5,6,7];
-	shuffle(presentations);
-	this.next = presentations.pop();
-	
-	var textsize = 42;
-	var timerects = timerpaper.set();
-	timerectw = timertotalw / (sampleunits*2-2+10);
-	var timetext = timerpaper.text( textsize/2, h2/2, sampleunits ).attr({fill:"white","font-size":textsize});
-	for ( i=0; i < sampleunits; i ++) {
-		timerects.push(
-			timerpaper.rect(
-				timerectw * i * 2 + textsize*1.5,
-				0,
-				timerectw, timertotalh, [5]).attr({fill:"red" }));
-	}
-	
-	// Category labels are just the letters.
-	
-	// Card locations are randomized.
-	this.cardlocs = new Array();
-	for ( i=0; i < ncards; i ++ ){ 
-		this.cardlocs.push( i ); 
-	}
-	shuffle( this.cardlocs );
-	
-	// recent cards; will not move after next selection.
-	this.lastcards = [undefined,undefined];
-	
-	// Card hilighting functions:
-	var turnon = function(cardid){
-		return function() {
-			cards[cardid][0].attr({"stroke-opacity": 100});
-		};
-	};
-	var turnoff = function(cardid){
-		return function() {
-			cards[cardid][0].attr({"stroke-opacity": 0});
-		};
-	};
-	this.indicateCard = function(cardid) {
-		lock = true;
-		turnon();
-		setTimeout(turnoff(cardid), 300);
-		setTimeout(turnon(cardid), 400);
-		setTimeout(turnoff(cardid), 500);
-		setTimeout(turnon(cardid), 600);
-		setTimeout(function(){ lock=false; }, 700);
-	};
-	var hideallexcept = function(cardid){
-	    return function() {
-	        for (var i=0; i < ncards; i++) {
-	            if (i!=cardid) { 
-	                cards[i][0].hide();
-	                cards[i][1].hide();
-                    cards[i][2].hide();
-	            }
-	        }
-	    };
-	};
-	var showall = function(){
-	    return function() {
-	        for (var i=0; i < ncards; i++) {
-	            cards[i][0].show();
-	            cards[i][1].show();
-	        }
-	    };
-	};
-	var shufflecards = function(callback, exceptions) {
-		swap( that.cardlocs, exceptions );
-		//that.animating = true;
-		for ( var i=0; i < ncards; i ++){
-			coords = loc_coords( that.cardlocs[i] );
-			cards[i][0].attr({ x: coords.outerx, y: coords.outery });
-			cards[i][1].animate({ x: coords.cardx, y: coords.cardy }, 1, "<", callback);
-			cards[i][2].attr({ x: coords.labelx, y: coords.labely });
-			// outerrect = cards[i][0];
-		}
-		return true;
-	};
-	
-	this.cardclick = function (cardid) {
-		return function() {
-			if (condition.traintype===1) {
-				if ( that.next != cardid ) { return false; }
-			}
-			if ( ! timerects.length ) { return false; }
-			if ( lock ) {  return false; }
-			if (condition.traintype===0) {
-				turnon(cardid)();
-			}
-			else {
-				that.next = presentations.pop();
-			}
-			hideallexcept(cardid)();
-			lock = true;
-			cards[cardid][2].show();
-			setTimeout(
-				function(){
-					cards[cardid][2].hide();
-					turnoff(cardid)();
-					timerects.pop().attr({fill: "gray"});
-					timetext.attr({text:timerects.length});
-					if ( timerects.length===0 ) {
-						$('body').html('<h1>Training Complete</h1>\
-                        <p>Training complete! <b>You have completed ' + currentblock + ' out of ' + condition.maxblocks + ' total training rounds</b>. Keep trying and please don\'t quit\
-						early as you will be ineligble for your payment or the bonus!</p>\
-						<p>Press "Continue" to move on to the test phase.</p>\
-							<input type="button" id="continue" value="Continue"></input>');
-						$('#continue').click( function(){ testobject = new TestPhase(); } );
-						$('#continue').attr('style', 'width: auto;');
-						$("p").attr("style", "font-size: 150%");
-						return true;
-					}
-					var callback = function () {
-						if (condition.traintype===1) {
-							that.indicateCard( that.next );
-						}
-						else setTimeout( function(){ lock=false; }, 400); 
-					};
-					shuffletimestamp  = new Date().getTime();
-					shufflecards( callback, that.lastcards );
-					showall()();
-					return true;
-				},
-				1500);
-			var actualstim = cardattributes[cardid].actualstim,
-			    theorystim = cardattributes[cardid].theorystim,
-			    catnum = cardattributes[cardid].catnum,
-			    loc = cardattributes[cardid].getlocation();
-			rt = new Date().getTime() - shuffletimestamp;
-			shufflestate = getShuffleState();
-			recordtraintrial(theorystim, actualstim, catnum, loc, shufflestate[0], shufflestate[1], rt);
-			that.lastcards.splice(0,1);
-			that.lastcards.push( cardid );
-			return true;
-		};
-	};
-	
-	var loc_coords = function ( loci ) {
-		var x = cardw * (loci % 4) + left;
-		var y = cardh*Math.floor(loci/4) + upper;
-		var imgoffset = (cardw-imgw)/2;
-		return {
-			x: x,
-			y: y,
-			outerx: x + (imgoffset/2),
-			outery: y + (imgoffset/2),
-			cardx: x + imgoffset,
-			cardy: y + imgoffset,
-			labelx: x + cardw/2,
-			labely: (y+imgoffset + y+(imgoffset/2) + cardh-imgoffset + imgh)/2
-		};
-	};
-	
-	for ( i=0; i < ncards; i ++) {
-		cards[i] = cardpaper.set();
-		var coords = loc_coords( this.cardlocs[i] );
-		var thisleft = coords.x, thistop = coords.y;
-		var imgoffset = (cardw-imgw)/2;
-		
-		cardattributes[i] = {
-			"theorystim": i,
-			"actualstim": getstim(i),
-			"catnum": catfun(i),
-			"getlocation": function() { return that.cardlocs[ this.theorystim ]; }
-		};
-		// Add outside rectangle ('card')
-		cards[i].push(
-			cardpaper.rect( 
-				thisleft + (imgoffset/2),
-				thistop + (imgoffset/2),
-				imgw + imgoffset,
-				cardh - imgoffset).attr(
-					{stroke: "red", "stroke-width": "5px", "stroke-opacity": 0}
-				));
-		// Add actual stim
-		cards[i].push(
-			cardpaper.image(
-				cardnames[cardattributes[i].actualstim], 
-				thisleft + imgoffset, 
-				thistop+imgoffset, 
-				imgw, imgh));
-		// Add label (hidden initially)
-		cards[i].push(
-				cardpaper.text(
-					thisleft + cardw/2,
-					(thistop+imgoffset + thistop+(imgoffset/2) + cardh-imgoffset + imgh)/2,
-					categorynames[cardattributes[i].catnum]).attr(
-						{ fill: "white", "font-size":36 }).hide());
-		
-		cards[i].click( this.cardclick(i) );
-	}
-	var getShuffleState = function() {
-	    var actual = new Array(8),
-			theory = new Array(8);
-        for (i=0; i<cardattributes.length; i++) {
-            item = cardattributes[i];
-            var loc = item.getlocation();
-            theory[loc] = item.theorystim;
-            actual[loc] = item.actualstim;
-        }
-        var encode = function(num) {
-			return num.toString( 32 );
-            // if (num < 10) return '0'+num;
-            // else return num.toString();
-        };
-        var concatlist = function( list ) {
-            return list.reduce( function(rest, next) {
-				return rest.concat(next);
-			}, '');
-        };
-        var theoryret = [],
-            actualret = [];
-        for (i=0; i<theory.length; i++) {
-            theoryret.push(encode(theory[i]));
-            actualret.push(encode(actual[i]));
-        }
-        return [concatlist(theoryret), concatlist(actualret)];
-	};
-	
-	shuffletimestamp  = new Date().getTime();
-	if ( condition.traintype===1 ) { this.indicateCard(this.next); }
-	
-	// Usually this would be a dictionary of public methods but 
-	// I'm exporting the whole thing, which will make everything accessible.
-	return this;
-};
 
 /********************
 * CODE FOR TEST     *
@@ -899,7 +425,9 @@ var TestPhase = function() {
 	var addbuttons = function() {
 		buttonson = new Date().getTime();
 		$('#query').html( buttons );
-		$('input').click( function(){catresponse(this.value);} );
+		$('input').click( function(){
+			catresponse(this.value);
+		} );
 		$('#query').show();
 	};
 	
@@ -911,7 +439,9 @@ var TestPhase = function() {
 		    actual = catfun(prescard); // should be "A" or "B"
 		washit = resp === actual;
 		lock = true;
-		$('#query').html(acknowledgment);
+		var hitmessage = '<span style="font-size: 42px; color: green;">CORRECT.</span>';
+		var missmessage = '<span style="font-size: 42px; color: red;">INCORRECT!</span>';
+		$('#query').html(hit ? hitmessage : missmessage);
 		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
@@ -944,12 +474,12 @@ var TestPhase = function() {
         	});
 
 			$('body').html('<h1>Test phase Complete</h1>\
-				<p>Test phase complete! <b>You have completed ' + (currentblock-1) + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
+				<p>Block complete! <b>You have completed ' + (currentblock-1) + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
 				 You got ' + boolpercent(that.hits) + '% correct.</p>' +
 				 ((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : '\r<p>If you can get two in a row at 100% you can stop early!') + 
-				 '<p>Press "Continue" to move on to the next training block.</p>\
+				 '<p>Press "Continue" to move on to the next block.</p>\
 				  <input type="button" id="continue" value="Continue"></input>');
-			$('#continue').click( function(){ trainobject = new TrainingPhase(); } );
+			$('#continue').click( function(){ testobject = new TestPhase(); } );
 			$('#continue').attr('style', 'width: auto;');
 			$("p").attr("style", "font-size: 150%");
 			// postback();
@@ -976,7 +506,7 @@ var TestPhase = function() {
 	};
 	
 	//testcardpaper = Raphael(document.getElementById("testcanvas"), w, h);
-	testcardsleft = [0,1,2,3,4,5,6,7];
+	testcardsleft = [ 0,1,2,3,4,5,6,7,  0,1,2,3,4,5,6,7 ];
 	shuffle(testcardsleft);
 	$("#stim").attr("width", imgw);
 	$('#query').hide();

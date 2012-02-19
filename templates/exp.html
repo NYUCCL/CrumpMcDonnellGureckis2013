@@ -13,11 +13,11 @@
 		// Subject info, including condition and counterbalance codes.
 		var subjid = {{ subj_num }};
 		var condition = {
-			traintype: {{ traintype }}, // 0=active, 1=passive
+			traintype: {{ traintype }}, // 0=active, 1=passive 
 			rule: {{ rule }}, // type I-VI -> 0-5.
 			dimorder: {{ dimorder }}, // 0-23; which order to order the dimensions
 			dimvals: {{ dimvals }},  // 0-16 whether a '0' means 0 or 1 in terms of the stim.
-			maxblocks: {{ maxblocks }} // maximum number of blocks to run
+			maxblocks: {{ maxblocks }} // maximum number of blocks to run ( TODO: Nosofsky says 25 )
 		};
 		/*********************
 		* Get things started *
