@@ -440,11 +440,9 @@ var TestPhase = function() {
 		var hitmessage = '<span style="font-size: 42px; color: #0F0;">CORRECT.</span>';
 		var missmessage = '<span style="font-size: 42px; color: #F00;">INCORRECT!</span>';
 		$('#query').html(washit ? hitmessage : missmessage);
-		console.warn( "Should have just given feedback ");
 		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
-				console.warn( "Should have just hidden the stim and the feedback");
 				setTimeout( nextcard, 500);
 			}, 
 			500);
@@ -487,7 +485,6 @@ var TestPhase = function() {
 	};
 	
 	var nextcard = function () {
-		console.warn( "Should be showing the next card.");
 		var done = false;
 		if (! testcardsleft.length) {
 			finishblock();
