@@ -14,8 +14,8 @@ DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ON
 CODE_VERSION = '3.1'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
-TABLENAME = 'participants_v3'
-NUMCONDS = 12
+TABLENAME = 'nosofskyrep'
+NUMCONDS = 6
 NUMCOUNTERS = 24*16
 ALLOCATED = 1
 STARTED = 2
@@ -27,7 +27,9 @@ QUITEARLY = 6
 if DEPLOYMENT_ENV == 'sandbox':
     MAXBLOCKS = 2
 else:
-    MAXBLOCKS = 15
+    MAXBLOCKS = 25
+
+
 
 TESTINGPROBLEMSIX = True
 
@@ -279,7 +281,7 @@ def start_exp():
             
             conn.close()
             dimo, dimv = counterbalanceconds[subj_counter]
-            return render_template('exp.html', subj_num = myid, traintype = 0 if subj_cond<6 else 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv, maxblocks=MAXBLOCKS)
+            return render_template('exp.html', subj_num = myid, traintype = 1, rule = subj_cond%6, dimorder = dimo, dimvals = dimv, maxblocks=MAXBLOCKS)
         else:
             return render_template('error.html', errornum=HIT_ASSIGN_WORKER_ID_NOT_SET_IN_EXP)
 
