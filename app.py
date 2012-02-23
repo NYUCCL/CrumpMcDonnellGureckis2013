@@ -175,6 +175,9 @@ def get_random_condition(conn):
     s = select([participantsdb.c.cond], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])
     result = conn.execute(s)
     counts = [0]*NUMCONDS
+    # Excluding less interesting conditions:
+    counts[2] = 999
+    counts[4] = 999
     for row in result:
         counts[row[0]]+=1
     
