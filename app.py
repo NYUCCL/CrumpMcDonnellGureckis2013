@@ -24,10 +24,7 @@ DEBRIEFED = 4
 CREDITED = 5
 QUITEARLY = 6
 
-if DEPLOYMENT_ENV == 'sandbox':
-    MAXBLOCKS = 2
-else:
-    MAXBLOCKS = 25
+MAXBLOCKS = 25
 
 
 
