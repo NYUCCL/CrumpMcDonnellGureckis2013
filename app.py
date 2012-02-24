@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, Response, jsonify
+from flask import Flask, render_template, request, Response, jsonify, send_from_directory
 from string import split
 import os
 import time
@@ -433,6 +433,15 @@ def regularpage(pagename=None):
         print "error"
     else:
         return render_template(pagename)
+
+
+#----------------------------------------------
+# favicon issue - http://flask.pocoo.org/docs/patterns/favicon/
+#----------------------------------------------
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 #----------------------------------------------
 # database management
