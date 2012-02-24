@@ -23,7 +23,8 @@
 # - 1.0: Array of 8 items on each learning block, 16 samples per training block, paid $1 for completion
 # - 2.0: Ran passive, type VI as in version 1.0 but added new instruction urging people not to quit and offered $10 lottery for finishers
 # - 3.0: Ran passive, type VI again but after clicking on item during sampling other items are hidden (shuffling occurs while hidden)
-# - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block (nosofsky rep)
+# - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block 
+# - 4.0: Ran classic nosofsky rep for type I, II, IV, and VI.
 
 # <codecell>
 
@@ -79,7 +80,7 @@ def get_avg_learn_curve(people, version, training, rule):
 
 # <codecell>
 
-VERSION='3.1'
+VERSION='4.0'
 fig=plt.figure(figsize=(15,6))
 
 ax=fig.add_subplot(121)
@@ -117,7 +118,7 @@ def get_avg_blocks_to_criterion(people, version, training, rule):
 
 # <codecell>
 
-VERSION = '3.1'
+VERSION = '4.0'
 
 # plot parameters
 ind = arange(6)
