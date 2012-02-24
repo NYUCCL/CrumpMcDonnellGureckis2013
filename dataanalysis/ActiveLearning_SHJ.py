@@ -23,7 +23,7 @@
 # - 1.0: Array of 8 items on each learning block, 16 samples per training block, paid $1 for completion
 # - 2.0: Ran passive, type VI as in version 1.0 but added new instruction urging people not to quit and offered $10 lottery for finishers
 # - 3.0: Ran passive, type VI again but after clicking on item during sampling other items are hidden (shuffling occurs while hidden)
-# - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block
+# - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block (nosofsky rep)
 
 # <codecell>
 
@@ -37,7 +37,7 @@ from string import replace
 
 # define various constants
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'
-TABLENAME = 'participants_v2'
+TABLENAME = 'nosofskyrep'
 
 # <codecell>
 
@@ -79,21 +79,10 @@ def get_avg_learn_curve(people, version, training, rule):
 
 # <codecell>
 
-VERSION='1.0'
+VERSION='3.1'
 fig=plt.figure(figsize=(15,6))
-ax=fig.add_subplot(121)
-t1a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 0),'yo-',antialiased=True,markersize=3,linewidth=1)
-t2a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 1),'ro-',antialiased=True,markersize=3,linewidth=1)
-t3a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 2),'bo-',antialiased=True,markersize=3,linewidth=1)
-t4a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 3),'co-',antialiased=True,markersize=3,linewidth=1)
-t5a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 4),'mo-',antialiased=True,markersize=3,linewidth=1)
-t6a=ax.plot(get_avg_learn_curve(participants, VERSION, 0, 5),'go-',antialiased=True,markersize=3,linewidth=1)
-ax.legend( (t1a[0], t2a[0], t3a[0], t4a[0], t5a[0], t6a[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
-plt.axis([-1,20,0,1.0])
-plt.ylabel('probability of error')
-plt.xlabel('training blocks')
 
-ax=fig.add_subplot(122)
+ax=fig.add_subplot(121)
 t1p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 0),'yo-',antialiased=True,markersize=3,linewidth=1)
 t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'ro-',antialiased=True,markersize=3,linewidth=1)
 t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 2),'bo-',antialiased=True,markersize=3,linewidth=1)
@@ -128,13 +117,13 @@ def get_avg_blocks_to_criterion(people, version, training, rule):
 
 # <codecell>
 
-VERSION = '1.0'
+VERSION = '3.1'
 
 # plot parameters
 ind = arange(6)
 width=0.35
 
-activeMs, activeSEs = array([get_avg_blocks_to_criterion(participants, VERSION, 0, i) for i in range(6)]).T
+
 fig = plt.figure()
 ax = fig.add_subplot(111)
 activ = ax.bar(ind, activeMs, width, color='y', yerr=activeSEs)
