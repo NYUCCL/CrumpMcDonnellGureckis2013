@@ -437,15 +437,17 @@ var TestPhase = function() {
 		    actual = catfun(prescard); // should be "A" or "B"
 		washit = resp === actual;
 		lock = true;
-		var hitmessage = '<span style="font-size: 42px; color: #0F0;">CORRECT.</span>';
-		var missmessage = '<span style="font-size: 42px; color: #F00;">INCORRECT!</span>';
-		$('#query').html(washit ? hitmessage : missmessage);
+		var hitmessage = '<span style="color: #0F0;"><p style="font-size: 42px;">CORRECT.</p>';
+		var missmessage = '<span style="color: #0F0;"><p style="font-size: 42px;">INCORRECT!</p>';
+		var respmessages = ['<p>The correct answer was A.</p></span>',
+                            '<p>The correct answer was B.</p></span>'];
+		$('#query').html(washit ? hitmessage : missmessage + respmessages[actual]);
 		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
 				setTimeout( nextcard, 500);
 			}, 
-			500);
+			1000);
 		that.hits.push( washit );
 		recordtesttrial (prescard, getstim(prescard), actual, resp, washit, rt );
 		return false;
