@@ -438,10 +438,10 @@ var TestPhase = function() {
 		washit = resp === actual;
 		lock = true;
 		var hitmessage = '<span style="color: #0F0;"><p style="font-size: 42px;">CORRECT.</p>';
-		var missmessage = '<span style="color: #0F0;"><p style="font-size: 42px;">INCORRECT!</p>';
-		var respmessages = ['<p>The correct answer was A.</p></span>',
-                            '<p>The correct answer was B.</p></span>'];
-		$('#query').html(washit ? hitmessage : missmessage + respmessages[actual]);
+		var missmessage = '<span style="color: #F00;"><p style="font-size: 42px;">INCORRECT!</p>';
+		var respmessages = ['<p style="font-size: 24px">The correct answer was A.</p></span>',
+                            '<p style="font-size: 24px">The correct answer was B.</p></span>'];
+		$('#query').html((washit ? hitmessage : missmessage) + respmessages[actual]);
 		setTimeout( function() {
 				$("#stim").hide();
 				$("#query").hide();
