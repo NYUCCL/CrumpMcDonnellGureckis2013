@@ -7,7 +7,6 @@ from boto.mturk.qualification import LocaleRequirement, PercentAssignmentsApprov
 HOST = 'mechanicalturk.amazonaws.com'
 
 
-
 mtc = MTurkConnection(
     aws_access_key_id="EXAMPLE",
     aws_secret_access_key="EXAMPLE",
@@ -28,7 +27,7 @@ paramdict = dict(
     hit_type = None,
     question = mturkQuestion,
     lifetime = datetime.timedelta(1),  # How long the HIT will be available
-    max_assignments = 24, # Total times it will be assigned, not max per turker
+    max_assignments = 30, # Total times it will be assigned, not max per turker
     title = "Paid volunteers needed for an online experiment in Psychology (large bonus available)",
     description = "Learn to categorize a set of cards over a series of training trials.",
     keywords = "New York University, psychology experiment, category learning",
