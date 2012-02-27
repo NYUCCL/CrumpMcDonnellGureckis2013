@@ -176,10 +176,6 @@ def get_random_condition(conn):
     result = conn.execute(s)
     counts = [0]*NUMCONDS
     # Excluding less interesting conditions:
-    counts[0] = 999
-    counts[1] = 999
-    counts[3] = 999
-    counts[5] = 999
     for row in result:
         counts[row[0]]+=1
     
