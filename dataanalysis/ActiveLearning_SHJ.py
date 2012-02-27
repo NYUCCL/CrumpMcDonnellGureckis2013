@@ -91,7 +91,7 @@ t4p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'co-',antialiased=T
 t5p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 4),'mo-',antialiased=True,markersize=3,linewidth=1)
 t6p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 5),'go-',antialiased=True,markersize=3,linewidth=1)
 ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
-plt.axis([-1,20,0,1.0])
+plt.axis([-1,15,0,0.7])
 plt.ylabel('probability of error')
 plt.xlabel('training blocks')
 
@@ -127,18 +127,18 @@ width=0.35
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-activ = ax.bar(ind, activeMs, width, color='y', yerr=activeSEs)
 
 
 passiveMs, passiveSEs = array([get_avg_blocks_to_criterion(participants, VERSION, 1, i) for i in range(6)]).T
-passv = ax.bar(ind+width, passiveMs, width, color='c', yerr=passiveSEs)
+passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
 
+passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
+passv = ax.bar(ind+width, passiveMs, width, color='y')
 ax.set_ylabel('Blocks')
 ax.set_title('Avg. Blocks to Criterion')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(('I','II','III','IV','V','VI'))
 
-ax.legend( (activ[0], passv[0]), ('Active','Passive') )
 plt.show()
 
 # <codecell>

@@ -198,7 +198,7 @@ class Participant():
         self.nBlocksToCriterion = self.dfTest['block'].max()
     
     def per_block_learning_curve(self):
-        blocks = ones(20)*stimuliperblock
+        blocks = ones(15)*stimuliperblock
         for line in range(len(self.datafileFTest)):
             blocks[self.datafileFTest[line][5]-1] -= float(self.datafileFTest[line][12])
         self.learnCurve = 1.0-(blocks/stimuliperblock)
