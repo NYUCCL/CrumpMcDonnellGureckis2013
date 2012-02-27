@@ -172,14 +172,16 @@ class Participant():
     
     def format_datafile_as_dataframe(self):
         if not self.datafileFInstruct:
-            print "run format_datafile_as_list first!"
+            #print "run format_datafile_as_list first!"
+            pass
         else:
             self.dfInstruct = DataFrame(self.datafileFInstruct, columns=['subjid', 'traintype', 'rule', \
                                                                         'dimorder', 'dimvals', 'type', 'file', \
                                                                         'rt'])
         
         if not self.datafileFTraining:
-            print "run format_datafile_as_list first!"
+            #print "run format_datafile_as_list first!"
+            pass
         else:
             self.dfTraining = DataFrame(self.datafileFTraining, columns=['subjid', 'traintype', 'rule', \
                                                                         'dimorder', 'dimvals', 'block', \
@@ -187,7 +189,8 @@ class Participant():
                                                                         'actualstim', 'category','loc', 'shuffleTheory', \
                                                                         'shuffleActual', 'rt'])
         if not self.datafileFTest:
-            print "run format_datafile_as_list first!"
+            #print "run format_datafile_as_list first!"
+            pass
         else:
             self.dfTest = DataFrame(self.datafileFTest, columns=['subjid', 'traintype', 'rule', \
                                                                         'dimorder', 'dimvals', 'block', \
