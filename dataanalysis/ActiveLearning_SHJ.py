@@ -24,7 +24,7 @@
 # - 2.0: Ran passive, type VI as in version 1.0 but added new instruction urging people not to quit and offered $10 lottery for finishers
 # - 3.0: Ran passive, type VI again but after clicking on item during sampling other items are hidden (shuffling occurs while hidden)
 # - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block 
-# - 4.0: Ran classic nosofsky rep for type I, II, IV, and VI.
+# - 4.0: Ran classic nosofsky rep for type I, II, III IV, V, and VI.
 
 # <codecell>
 
@@ -32,6 +32,7 @@
 from sqlalchemy import *
 from pandas import *
 from string import replace
+from datetime import timedelta
 
 # reload the utilities (if they have changed)
 %run -i ActiveLearning_SHJ_Utilities.py
@@ -72,7 +73,7 @@ def get_avg_learn_curve(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule:
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and (p.endhit-p.beginexp)<timedelta(minutes=30):
             allTest += [p.learnCurve]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -90,6 +91,19 @@ t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 2),'bo-',antialiased=T
 t4p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'co-',antialiased=True,markersize=3,linewidth=1)
 t5p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 4),'mo-',antialiased=True,markersize=3,linewidth=1)
 t6p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 5),'go-',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
+plt.axis([-1,15,0,0.7])
+plt.ylabel('probability of error')
+plt.xlabel('training blocks')
+
+#nosofsky comparison
+ax=fig.add_subplot(122)
+t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
+t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008, .000, .002, .005, .003, .002],'ro-',antialiased=True,markersize=3,linewidth=1)
+t3p=ax.plot([0.459, 0.286, .223, .145, .081, .078, .063, .033, .023, .016, .019, .009, .008, .013, .009],'bo-',antialiased=True,markersize=3,linewidth=1)
+t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031, .019, .025, .005, .000, .000],'co-',antialiased=True,markersize=3,linewidth=1)
+t5p=ax.plot([0.472, 0.331, .230, .139, .106, .081, .067, .078, .048, .045, .050, .036, .031, .027, .016],'mo-',antialiased=True,markersize=3,linewidth=1)
+t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128, .139, .117, .103, .098, .106],'go-',antialiased=True,markersize=3,linewidth=1)
 ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
 plt.axis([-1,15,0,0.7])
 plt.ylabel('probability of error')

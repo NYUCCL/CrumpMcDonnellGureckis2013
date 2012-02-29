@@ -100,6 +100,7 @@ class Participant():
         self.format_datafile_as_list()
         self.format_datafile_as_dataframe()
         self.blocks_to_criterion()
+        self.maxRT()
         self.per_block_learning_curve()
         self.get_conditions()
         self.get_questionaire()
@@ -199,6 +200,9 @@ class Participant():
 
     def blocks_to_criterion(self):
         self.nBlocksToCriterion = self.dfTest['block'].max()
+    
+    def maxRT(self):
+        self.maxRT = self.dfTest['rt'].max()
     
     def per_block_learning_curve(self):
         blocks = ones(15)*stimuliperblock
