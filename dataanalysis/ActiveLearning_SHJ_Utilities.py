@@ -102,6 +102,10 @@ class Participant():
         self.blocks_to_criterion()
         self.maxRT()
         self.per_block_learning_curve()
+        self.medianRT()
+        self.maxRT()
+        self.meanOverallAcc()
+        self.percentLongRT()
         self.get_conditions()
         self.get_questionaire()
         
@@ -200,13 +204,31 @@ class Participant():
 
     def blocks_to_criterion(self):
         self.nBlocksToCriterion = self.dfTest['block'].max()
-    
+
+    def percentLongRT(self):
+        self.percentLongRT = self.dfTest[self.dfTest['rt']>10000]['rt'].mean()
+        
+    def medianRT(self):
+        self.medianRT = self.dfTest['rt'].median()
+
     def maxRT(self):
         self.maxRT = self.dfTest['rt'].max()
     
+<<<<<<< .mine
+    def meanOverallAcc(self):
+        self.meanOverallAcc = self.dfTest['hit'].mean()
+    
+=======
+    def maxRT(self):
+        self.maxRT = self.dfTest['rt'].max()
+    
+>>>>>>> .r200
     def per_block_learning_curve(self):
         blocks = ones(15)*stimuliperblock
         for line in range(len(self.datafileFTest)):
             blocks[self.datafileFTest[line][5]-1] -= float(self.datafileFTest[line][12])
         self.learnCurve = 1.0-(blocks/stimuliperblock)
+
+# <codecell>
+
 
