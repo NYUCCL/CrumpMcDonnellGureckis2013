@@ -66,18 +66,42 @@ print "Number of subjects is ", nsubj
 
 # <codecell>
 
+from datetime import timedelta
 # a function to gather up the learning curves for different subsets of subjects and averages them
 def get_avg_learn_curve(people, version, training, rule):
     allTest = []
     count=0
     for key in people.keys():
         p = people[key]
+<<<<<<< .mine
+        #print p.traintype, p.rule, p.physicalaids;#
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+            #print 
+=======
         #print p.traintype, p.rule, p.physicalaids
         if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and (p.endhit-p.beginexp)<timedelta(minutes=30):
+>>>>>>> .r200
             allTest += [p.learnCurve]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
     return DataFrame(allTest).mean()
+
+# <codecell>
+
+def count_longest_run(values):
+    current_value = values[0]
+    runs = []
+    current_run = []
+    current_run.append(values[0])
+    for i in range(1,len(values)):
+        if current_value == values[i]:
+            current_run.append(values[i])
+        else:
+            current_value = values[i]
+            runs.append(current_run)
+            current_run = [current_value]
+    lens = [len(i) for i in runs]
+    return max(lens)
 
 # <codecell>
 
@@ -113,6 +137,50 @@ plt.show()
 
 # <headingcell level=1>
 
+# Measure Avg. Overall Accuracy
+
+# <codecell>
+
+# a function to gather up the block-to-criterion for different subsets of subjects and averages them
+def get_overall_acc(people, version, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+            allTest += [1.0-p.meanOverallAcc]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return mean(allTest), std(allTest)/sqrt(count)
+
+# <codecell>
+
+VERSION = '4.0'
+
+# plot parameters
+ind = arange(6)
+width=0.35
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+
+Ms, SEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+barinfo = ax.bar(ind, Ms, width, color='c', yerr=SEs)
+
+#passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
+#passv = ax.bar(ind+width, passiveMs, width, color='y')
+ax.set_ylabel('Overall Accuracy')
+ax.set_title('Overall Accuracy')
+ax.set_xticks(ind+width)
+ax.set_xticklabels(('I','II','III','IV','V','VI'))
+
+plt.show()
+
+# <headingcell level=1>
+
 # Measure Avg. Blocks to Criterion
 
 # <codecell>
@@ -124,7 +192,7 @@ def get_avg_blocks_to_criterion(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule:
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             allTest += [p.nBlocksToCriterion]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -143,13 +211,125 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 
-passiveMs, passiveSEs = array([get_avg_blocks_to_criterion(participants, VERSION, 1, i) for i in range(6)]).T
-passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
+Ms, SEs = array([get_avg_blocks_to_criterion(participants, VERSION, 1, i) for i in range(6)]).T
+barinfo = ax.bar(ind, Ms, width, color='c', yerr=SEs)
 
-passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
-passv = ax.bar(ind+width, passiveMs, width, color='y')
+# nosofsky (estimated from paper)
+SHJMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
+shjinfo = ax.bar(ind+width, SHJMs, width, color='y')
 ax.set_ylabel('Blocks')
 ax.set_title('Avg. Blocks to Criterion')
+ax.set_xticks(ind+width)
+ax.set_xticklabels(('I','II','III','IV','V','VI'))
+
+plt.show()
+
+# <codecell>
+
+# a function to gather up the block-to-criterion for different subsets of subjects and averages them
+def get_blocks_to_criterion_ind(people, version, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule:# and count_longest_run(p.dfTest['resp'].values)<16  and p.endhit - p.beginexp < timedelta(minutes=30):
+            #print p.nBlocksToCriterion, p.medianRT
+            allTest += [p.nBlocksToCriterion]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return allTest
+
+# <codecell>
+
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 0)
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 1)
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 2)
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 3)
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 4)
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 5)
+
+# <markdowncell>
+
+# This plots a histogram of the blocks-to-criterion measure.  The reason this is useful is that average blocks to criterion is a little misleading due to the large number of people who took all 15 blocks.  I think this format shows a little better that there are a fair number of people in type I and type II that learn quickly (i.e., less than 8 blocks) and less-so for the other problems.  The mean shows that as well, I guess, but this is more clear.
+
+# <codecell>
+
+fig = plt.figure(figsize=(9,9))
+ax = fig.add_subplot(231)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 0),15, normed=0, facecolor='orange',alpha=0.75)
+ax = fig.add_subplot(232)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 1),15, normed=0, facecolor='orange',alpha=0.75)
+ax = fig.add_subplot(233)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 2),15, normed=0, facecolor='orange',alpha=0.75)
+ax = fig.add_subplot(234)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 3),15, normed=0, facecolor='orange',alpha=0.75)
+ax = fig.add_subplot(235)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 4),15, normed=0, facecolor='orange',alpha=0.75)
+ax = fig.add_subplot(236)
+n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 5),15, normed=0, facecolor='orange',alpha=0.75)
+
+
+plt.show()
+
+# <headingcell level=1>
+
+# Rated Difficulty/Engagement
+
+# <markdowncell>
+
+# Just interested in how people rated the difficulty of the task.
+
+# <codecell>
+
+# a function to gather up the block-to-criterion for different subsets of subjects and averages them
+def get_avg_difficulty(people, version, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+            allTest += [p.difficulty]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return mean(allTest), std(allTest)/sqrt(count)
+
+
+# a function to gather up the block-to-criterion for different subsets of subjects and averages them
+def get_avg_engagement(people, version, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+            allTest += [p.engagement]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return mean(allTest), std(allTest)/sqrt(count)
+
+# <codecell>
+
+VERSION = '4.0'
+
+# plot parameters
+ind = arange(6)
+width=0.35
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+
+diffMs, diffSEs = array([get_avg_difficulty(participants, VERSION, 1, i) for i in range(6)]).T
+diffv = ax.bar(ind, diffMs, width, color='c', yerr=diffSEs)
+
+engageMs, engageSEs = array([get_avg_engagement(participants, VERSION, 1, i) for i in range(6)]).T
+engv = ax.bar(ind+width, engageMs, width, color='y', yerr=engageSEs)
+
+ax.set_ylabel('Rating')
+ax.set_title('Difficulty (blue) / Engagement (yellow)')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(('I','II','III','IV','V','VI'))
 
