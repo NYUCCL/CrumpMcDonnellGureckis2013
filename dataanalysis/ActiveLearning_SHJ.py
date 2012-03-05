@@ -24,7 +24,7 @@
 # - 2.0: Ran passive, type VI as in version 1.0 but added new instruction urging people not to quit and offered $10 lottery for finishers
 # - 3.0: Ran passive, type VI again but after clicking on item during sampling other items are hidden (shuffling occurs while hidden)
 # - 3.1: Ran passive, type II, IV, VI as in 3.0 but with only 8 samples per training block 
-# - 4.0: Ran classic nosofsky rep for type I, II, III IV, V, and VI.
+# - 4.0: Ran classic nosofsky rep for type I, II, IV, and VI.
 
 # <codecell>
 
@@ -32,7 +32,6 @@
 from sqlalchemy import *
 from pandas import *
 from string import replace
-from datetime import timedelta
 
 # reload the utilities (if they have changed)
 %run -i ActiveLearning_SHJ_Utilities.py
@@ -73,14 +72,9 @@ def get_avg_learn_curve(people, version, training, rule):
     count=0
     for key in people.keys():
         p = people[key]
-<<<<<<< .mine
         #print p.traintype, p.rule, p.physicalaids;#
         if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             #print 
-=======
-        #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and (p.endhit-p.beginexp)<timedelta(minutes=30):
->>>>>>> .r200
             allTest += [p.learnCurve]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -167,8 +161,8 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 
-Ms, SEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
-barinfo = ax.bar(ind, Ms, width, color='c', yerr=SEs)
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
 
 #passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
 #passv = ax.bar(ind+width, passiveMs, width, color='y')
@@ -211,12 +205,11 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 
-Ms, SEs = array([get_avg_blocks_to_criterion(participants, VERSION, 1, i) for i in range(6)]).T
-barinfo = ax.bar(ind, Ms, width, color='c', yerr=SEs)
+passiveMs, passiveSEs = array([get_avg_blocks_to_criterion(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
 
-# nosofsky (estimated from paper)
-SHJMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
-shjinfo = ax.bar(ind+width, SHJMs, width, color='y')
+passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
+passv = ax.bar(ind+width, passiveMs, width, color='y')
 ax.set_ylabel('Blocks')
 ax.set_title('Avg. Blocks to Criterion')
 ax.set_xticks(ind+width)
@@ -249,10 +242,6 @@ print get_blocks_to_criterion_ind(participants, VERSION, 1, 3)
 print get_blocks_to_criterion_ind(participants, VERSION, 1, 4)
 print get_blocks_to_criterion_ind(participants, VERSION, 1, 5)
 
-# <markdowncell>
-
-# This plots a histogram of the blocks-to-criterion measure.  The reason this is useful is that average blocks to criterion is a little misleading due to the large number of people who took all 15 blocks.  I think this format shows a little better that there are a fair number of people in type I and type II that learn quickly (i.e., less than 8 blocks) and less-so for the other problems.  The mean shows that as well, I guess, but this is more clear.
-
 # <codecell>
 
 fig = plt.figure(figsize=(9,9))
@@ -275,10 +264,6 @@ plt.show()
 # <headingcell level=1>
 
 # Rated Difficulty/Engagement
-
-# <markdowncell>
-
-# Just interested in how people rated the difficulty of the task.
 
 # <codecell>
 
@@ -329,7 +314,7 @@ engageMs, engageSEs = array([get_avg_engagement(participants, VERSION, 1, i) for
 engv = ax.bar(ind+width, engageMs, width, color='y', yerr=engageSEs)
 
 ax.set_ylabel('Rating')
-ax.set_title('Difficulty (blue) / Engagement (yellow)')
+ax.set_title('Difficulty/Engagement')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(('I','II','III','IV','V','VI'))
 
