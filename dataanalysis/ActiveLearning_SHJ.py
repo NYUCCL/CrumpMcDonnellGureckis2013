@@ -73,7 +73,7 @@ def get_avg_learn_curve(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids;#
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and count_longest_run(p.dfTest['resp'])<16 and p.endhit - p.beginexp < timedelta(minutes=20):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and count_longest_run(p.dfTest['resp'])<16 and p.endhit - p.beginexp < timedelta(minutes=30):
             #print 
             allTest += [p.learnCurve]
             count += 1
