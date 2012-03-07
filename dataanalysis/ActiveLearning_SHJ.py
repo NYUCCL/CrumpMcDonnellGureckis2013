@@ -166,6 +166,7 @@ passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
 
 #passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
 #passv = ax.bar(ind+width, passiveMs, width, color='y')
+ax.set_xlabel('Rule Type')
 ax.set_ylabel('Overall Accuracy')
 ax.set_title('Overall Accuracy')
 ax.set_xticks(ind+width)
@@ -210,6 +211,7 @@ passv = ax.bar(ind, passiveMs, width, color='c', yerr=passiveSEs)
 
 passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
 passv = ax.bar(ind+width, passiveMs, width, color='y')
+ax.set_xlabel('Rule Type')
 ax.set_ylabel('Blocks')
 ax.set_title('Avg. Blocks to Criterion')
 ax.set_xticks(ind+width)
@@ -244,19 +246,34 @@ print get_blocks_to_criterion_ind(participants, VERSION, 1, 5)
 
 # <codecell>
 
-fig = plt.figure(figsize=(9,9))
+fig = plt.figure(figsize=(12,12))
 ax = fig.add_subplot(231)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 0),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
 ax = fig.add_subplot(232)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 1),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
+ax.set_title('Frequency of finishing per n block')
 ax = fig.add_subplot(233)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 2),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
 ax = fig.add_subplot(234)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 3),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
 ax = fig.add_subplot(235)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 4),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
 ax = fig.add_subplot(236)
 n, bins, patches = ax.hist(get_blocks_to_criterion_ind(participants, VERSION, 1, 5),15, normed=0, facecolor='orange',alpha=0.75)
+ax.set_xlabel('Blocks to Finish')
+ax.set_ylabel('Participants')
+
+
 
 
 plt.show()
@@ -313,16 +330,13 @@ diffv = ax.bar(ind, diffMs, width, color='c', yerr=diffSEs)
 engageMs, engageSEs = array([get_avg_engagement(participants, VERSION, 1, i) for i in range(6)]).T
 engv = ax.bar(ind+width, engageMs, width, color='y', yerr=engageSEs)
 
+ax.set_xlabel('Rule Type')
 ax.set_ylabel('Rating')
 ax.set_title('Difficulty/Engagement')
 ax.set_xticks(ind+width)
 ax.set_xticklabels(('I','II','III','IV','V','VI'))
 
 plt.show()
-
-# <codecell>
-
-people
 
 # <codecell>
 
