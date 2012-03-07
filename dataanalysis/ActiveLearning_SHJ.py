@@ -73,7 +73,7 @@ def get_avg_learn_curve(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids;#
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and count_longest_run(p.dfTest['resp'])<16 and p.endhit - p.beginexp < timedelta(minutes=20):
             #print 
             allTest += [p.learnCurve]
             count += 1
@@ -142,7 +142,7 @@ def get_overall_acc(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and count_longest_run(p.dfTest['resp'])<16 and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             allTest += [1.0-p.meanOverallAcc]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -186,7 +186,7 @@ def get_avg_blocks_to_criterion(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and count_longest_run(p.dfTest['resp'])<16 and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             allTest += [p.nBlocksToCriterion]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -274,7 +274,7 @@ def get_avg_difficulty(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and count_longest_run(p.dfTest['resp'])<16 and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             allTest += [p.difficulty]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -288,7 +288,7 @@ def get_avg_engagement(people, version, training, rule):
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
-        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
+        if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and count_longest_run(p.dfTest['resp'])<16 and p.rule==rule and p.endhit - p.beginexp < timedelta(minutes=30):
             allTest += [p.engagement]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
@@ -319,6 +319,10 @@ ax.set_xticks(ind+width)
 ax.set_xticklabels(('I','II','III','IV','V','VI'))
 
 plt.show()
+
+# <codecell>
+
+people
 
 # <codecell>
 
