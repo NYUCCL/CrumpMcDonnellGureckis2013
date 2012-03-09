@@ -553,7 +553,7 @@ var startTask = function () {
     			async: false,
     			data: {subjId: subjid, dataString: datastring}
     	});
-		alert( "By leaving this page, you opt out of the experiment.  You are forfitting your $1.00 payment and your 1/10 chance to with $10. Please confirm that this is what you meant to do." );
+		alert( "By leaving this page, you opt out of the experiment.  You are forfitting your payment. Please confirm that this is what you meant to do." );
 		return "Are you sure you want to leave the experiment?";
 	};
 };

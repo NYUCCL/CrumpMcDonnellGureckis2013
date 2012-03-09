@@ -11,7 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-CODE_VERSION = '4.0'
+CODE_VERSION = '4.1'
 
 DATABASE = 'mysql://released_data:shareit@gureckislab.org:3306/released_data'   # 'sqlite:///:memory:' - tests in memory
 TABLENAME = 'cmg_plot_2013_exp8_10'
@@ -176,6 +176,11 @@ def get_random_condition(conn):
     result = conn.execute(s)
     counts = [0]*NUMCONDS
     # Excluding less interesting conditions:
+    
+    counts[0] = 1000
+    counts[2] = 1000
+    counts[4] = 1000
+    counts[5] = 1000
     for row in result:
         counts[row[0]]+=1
     
