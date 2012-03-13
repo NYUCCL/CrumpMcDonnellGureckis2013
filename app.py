@@ -13,7 +13,7 @@ from functools import wraps
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
 CODE_VERSION = '4.3'
 
-DATABASE = 'mysql://mturk@localhost/mturk?unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock'   # 'sqlite:///:memory:' - tests in memory
+DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 TABLENAME = 'nosofskyrep'
 NUMCONDS = 6
 NUMCOUNTERS = 24*16
