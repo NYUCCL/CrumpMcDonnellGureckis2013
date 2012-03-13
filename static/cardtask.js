@@ -184,7 +184,6 @@ var ncards = 8,
 // Interface variables
 var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
 
-
 // Task objects
 var testobject;
 
@@ -302,6 +301,7 @@ getstim = function(theorystim) {
 var responsedata = [],
     currentblock = 1,
     currenttrial = 1,
+    totalhits = 0,
     datastring = "",
     lastperfect = false;
 
@@ -311,8 +311,11 @@ function recordinstructtrial (instructname, rt ) {
 	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructname, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 }
-function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
-	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, currentblock, currenttrial,  "TEST", theorystim, actualstim, correct, resp, hit, rt];
+function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) { 
+    trialvals = [subjid, condition.traintype, condition.rule,
+              condition.dimorder, condition.dimvals, currentblock,
+              currenttrial, "TEST", theorystim, actualstim, correct, resp, hit,
+              rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
@@ -327,6 +330,7 @@ var showpage = function(pagename) {
 };
 
 var pagenames = [
+    "showbonus",
 	"postquestionnaire",
 	"test",
 	"instruct1",
@@ -428,6 +432,43 @@ var TestPhase = function() {
 		} );
 		$('#query').show();
 	};
+
+    function calculatebonus () {
+        var chances = currenttrial-1,
+            hits = totalhits;
+        if (condition.maxblocks > currentblock ) {
+            var skipped = (condition.maxblocks - currentblock) * testcardsleft.length;
+            hits += skipped;
+            chances += skipped;
+        }
+        proportionhits = hits / chances;
+        reward = 0;
+        for (i=0; i<10; i++) {
+            if ( Math.random() >= proportionhits ) reward+=0.25;
+        }
+        return reward;
+    }
+
+    function showbonus() {
+        var bonus = calculatebonus();
+        datastring = datastring.concat( "BONUS: " + bonus + "\n" );
+        
+        var timestamp = new Date().getTime();
+        messagecode = '<h1>Task Complete</h1>\
+        <p>Congratulations, you had two perfect two perfect test phases in a row or\
+        reached 10 blocks! </p>\
+        <p> Your reward was calculated to be $' + bonus + '</p>\
+        <form>\
+            <input type="button" class="continue" id="continue" value="Continue"></input>\
+        </form>';
+        $('body').html( messagecode );
+
+        
+        recordinstructtrial( "showbonus", (new Date().getTime())-timestamp );
+        $("#continue").click(function () {
+            givequestionnaire();
+        });
+    }
 	
 	catresponse = function (buttonid){
 		if (lock) { return false; }
@@ -465,7 +506,7 @@ var TestPhase = function() {
 			}
 			else lastperfect=false;
 		}
-		if (done) givequestionnaire();
+		if (done) showbonus();
 		else {
         	$.ajax("inexpsave", {
         			type: "POST",
@@ -517,6 +558,7 @@ var TestPhase = function() {
 /*************
 * Finish up  *
 *************/
+
 var givequestionnaire = function() {
 	var timestamp = new Date().getTime();
 	showpage('postquestionnaire');
@@ -553,7 +595,7 @@ var startTask = function () {
     			async: false,
     			data: {subjId: subjid, dataString: datastring}
     	});
-		alert( "By leaving this page, you opt out of the experiment.  You are forfitting your payment. Please confirm that this is what you meant to do." );
+		alert( "By leaving this page, you opt out of the experiment. You are forfitting your payment. Please confirm that this is what you meant to do." );
 		return "Are you sure you want to leave the experiment?";
 	};
 };
