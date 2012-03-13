@@ -330,7 +330,6 @@ var showpage = function(pagename) {
 };
 
 var pagenames = [
-    "showbonus",
 	"postquestionnaire",
 	"test",
 	"instruct1",
