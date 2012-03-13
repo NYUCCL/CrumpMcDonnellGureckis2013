@@ -21,6 +21,7 @@ mturkQuestion = ExternalQuestion( experimentPortalURL, 600 )
 quals = Qualifications();
 quals.add( PercentAssignmentsApprovedRequirement("GreaterThanOrEqualTo", "95") )
 quals.add( LocaleRequirement("EqualTo", "US") )
+#quals.add( NumberHitsApprovedRequirement("GreaterThanOrEqualTo", "100") )
 
 # Specify all the HIT parameters
 paramdict = dict(
@@ -28,10 +29,10 @@ paramdict = dict(
     question = mturkQuestion,
     lifetime = datetime.timedelta(1),  # How long the HIT will be available
     max_assignments = 32, # Total times it will be assigned, not max per turker
-    title = "Paid volunteers needed for an online experiment in Psychology",
+    title = "Paid volunteers needed for an online experiment in Psychology (bonus available)",
     description = "Learn to categorize a set of cards over a series of training trials.",
     keywords = "New York University, psychology experiment, category learning",
-    reward = .75,
+    reward = 2,
     duration = datetime.timedelta(hours=2),
     approval_delay = None,
     annotation = None,  # Do we need this? Not clear on what it is.
