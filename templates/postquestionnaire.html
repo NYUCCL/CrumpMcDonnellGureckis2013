@@ -59,6 +59,37 @@
         </p>
         <textarea id="howtoimprove" cols=50 rows=3 /></textarea>
     </div>
+    <div class="question">
+        <p class="questiontext">
+        What gender do you identify with?
+        </p>
+        <select id="gender" name="gender">
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="noresponse">I'd prefer not to respond</option>
+        </select>
+    </div>
+    <div class="question">
+        <p class="questiontext">
+        How old are you in years? Enter '-1' if you would prefer not to respond.
+        </p>
+        <input id="age" name="age" type="number" min="-1" />
+    </div>
+    <div class="question">
+        <p class="questiontext">
+        How would you describe your level of educational attainment?
+        </p>
+        <select id="education" name="education">
+            <option value="somehs">Some high school (or less)</option>
+            <option value="highschool">High School diploma / GED / equivalent</option>
+            <option value="somecollege">Some college / 2-year degree</option>
+            <option value="bachelors">Bachelor's degree</option>
+            <option value="somegrad">Some graduate school</option>
+            <option value="masters">Master's degree</option>
+            <option value="doctor">Doctoral degree</option>
+            <option value="noresponse">I'd prefer not to respond</option>
+        </select>
+    </div>
     <form id="postquiz" action="debrief" method="post">
         <input type="button" class="continue" id="continue" value="Continue"></input>
     </form>
