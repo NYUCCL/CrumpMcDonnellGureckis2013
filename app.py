@@ -14,7 +14,7 @@ DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ON
 CODE_VERSION = '4.3'
 
 DATABASE = 'mysql://released_data:shareit@gureckislab.org:3306/released_data'   # 'sqlite:///:memory:' - tests in memory
-TABLENAME = 'cmg_plot_2013_exp8_10_test'
+TABLENAME = 'cmg_plot_2013_exp8_10'
 NUMCONDS = 6
 NUMCOUNTERS = 24*16
 ALLOCATED = 1
