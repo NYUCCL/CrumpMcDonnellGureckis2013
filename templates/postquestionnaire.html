@@ -1,96 +1,113 @@
 <div id="questionnaire">
     <h1>Questionnaire</h1>
 	<p>To complete the experiment, please respond the following questions.</p>
-    <div class="question">
-        <p class="questiontext">
-        On a scale of 1-10 (where 10 is the most engaged), please rate how <b>ENGAGING</b> you found the learning task:
-        </p>
-        <select id="engagement" name="engagement">
-            <option value="10">10 - Very engaging</option>
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5" SELECTED>5 - Moderately</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-            <option value="0">0 - Not engaged</option>
-        </select>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        On a scale of 1-10 (where 10 is the most difficult), please rate how <b>DIFFICULT</b> you found the learning task:
-        </p>
-        <select id="difficulty" name="difficulty">
-            <option value="10">10 - Very difficult</option>
-            <option value="9">9</option>
-            <option value="8">8</option>
-            <option value="7">7</option>
-            <option value="6">6</option>
-            <option value="5" SELECTED>5 - Moderately difficult</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-            <option value="0">0 - Easy</option>
-        </select>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        Describe, in your own words, the rule you used to determine category membership.
-        </p>
-        <textarea id="rulestrategy" cols=50 rows=3 /></textarea>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        Did you use pencil, paper, or take notes on your computer in order perform the grouping task?<br>
-        <em>(Please respond honestly so we can analyze your data appropriately.  This will not effect your payment.)</em>
-        </p>
-        <select id="physicalaids" name="physicalaids">
-            <option value="no" SELECTED>No, include my data in the main analysis.</option>
-            <option value="yes">Yes, I used a memory aid.  Analyze my data separately.</option>
-        </select>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-            Do you have any other thoughts or suggestions about the task?
-        </p>
-        <textarea id="howtoimprove" cols=50 rows=3 /></textarea>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        What gender do you identify with?
-        </p>
-        <select id="gender" name="gender">
-            <option value="female">Female</option>
-            <option value="male">Male</option>
-            <option value="noresponse">I'd prefer not to respond</option>
-        </select>
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        How old are you in years? Enter '-1' if you would prefer not to respond.
-        </p>
-        <input id="age" name="age" type="number" min="-1" />
-    </div>
-    <div class="question">
-        <p class="questiontext">
-        How would you describe your level of educational attainment?
-        </p>
-        <select id="education" name="education">
-            <option value="somehs">Some high school (or less)</option>
-            <option value="highschool">High School diploma / GED / equivalent</option>
-            <option value="somecollege">Some college / 2-year degree</option>
-            <option value="bachelors">Bachelor's degree</option>
-            <option value="somegrad">Some graduate school</option>
-            <option value="masters">Master's degree</option>
-            <option value="doctor">Doctoral degree</option>
-            <option value="noresponse">I'd prefer not to respond</option>
-        </select>
-    </div>
     <form id="postquiz" action="debrief" method="post">
+        <table>
+            <tr class="question">
+                <td class="questiontext">
+                On a scale of 1-10 (where 10 is the most engaged), please rate how <b>ENGAGING</b> you found the learning task:
+                </td>
+                <td class="answer">
+                <select id="engagement" name="engagement">
+                    <option value="10">10 - Very engaging</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5" SELECTED>5 - Moderately</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                    <option value="0">0 - Not engaged</option>
+                </select>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                On a scale of 1-10 (where 10 is the most difficult), please rate how <b>DIFFICULT</b> you found the learning task:
+                </td>
+                <td class="answer">
+                <select id="difficulty" name="difficulty">
+                    <option value="10">10 - Very difficult</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5" SELECTED>5 - Moderately difficult</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1</option>
+                    <option value="0">0 - Easy</option>
+                </select>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                Describe, in your own words, the rule you used to determine category membership.
+                </td>
+                <td class="answer">
+                <textarea id="rulestrategy" cols=50 rows=3 /></textarea>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                Did you use pencil, paper, or take notes on your computer in order perform the grouping task?<br>
+                <em>(Please respond honestly so we can analyze your data appropriately.  This will not effect your payment.)</em>
+                </td>
+                <td class="answer">
+                <select id="physicalaids" name="physicalaids">
+                    <option value="no" SELECTED>No, include my data in the main analysis.</option>
+                    <option value="yes">Yes, I used a memory aid.  Analyze my data separately.</option>
+                </select>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                    Do you have any other thoughts or suggestions about the task?
+                </td>
+                <td class="answer">
+                <textarea id="howtoimprove" cols=50 rows=3 /></textarea>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                What gender do you identify with?
+                </td>
+                <td class="answer">
+                <select id="gender" name="gender">
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="noresponse" SELECT>I'd prefer not to respond</option>
+                </select>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                How old are you in years? Enter '-1' if you would prefer not to respond.
+                </td>
+                <td class="answer">
+                <input id="age" name="age" type="number" min="-1" />
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                How would you describe your level of educational attainment?
+                </td>
+                <td class="answer">
+                <select id="education" name="education">
+                    <option value="somehs">Some high school (or less)</option>
+                    <option value="highschool">High School diploma / GED / equivalent</option>
+                    <option value="somecollege">Some college / 2-year degree</option>
+                    <option value="bachelors">Bachelor's degree</option>
+                    <option value="somegrad">Some graduate school</option>
+                    <option value="masters">Master's degree</option>
+                    <option value="doctor">Doctoral degree</option>
+                    <option value="noresponse" SELECT>I'd prefer not to respond</option>
+                </select>
+                </td>
+            </tr>
+        </table>
         <input type="button" class="continue" id="continue" value="Continue"></input>
     </form>
 </div>

@@ -178,28 +178,41 @@ input {
 }
 #questionnaire .question {
     position: relative;
-    clear: both;
-    height: 150px;
     margin: 20px;
+    border-bottom: solid 1 #bbbbff;
 }
 #questionnaire .questiontext {
     float: left;
     width: 280px;
     color: #bbbbff;
-    margin: 0;
-    margin-right: 10px;
+    margin: 20px;
+    font-size: 1.2em;
 }
 .questiontext em {
     font-size: 70%;
 }
 #questionnaire textarea {
-    display: inline;
-    float: right;
     width: 320px;
     height: 130px;
 }
 #questionnaire form {
     text-align: right;
+}
+#questionnaire td {
+    margin: 20px;
+    padding-bottom: 10px;
+}
+#questionnaire hr {
+    border-bottom: 1px solid #bbbbff;
+}
+
+
+.questiontext {
+    text-align: right;
+}
+
+.answer {
+    text-align: left;
 }
 
 #debriefing {
