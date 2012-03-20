@@ -180,6 +180,7 @@ var ncards = 8,
 	"static/images/STIM14.PNG",
 	"static/images/STIM15.PNG"],
 	categorynames= [ "A", "B" ];
+var cardsshown = [ 0,1,2,3,4,5,6,7,  0,1,2,3,4,5,6,7 ];
 
 // Interface variables
 var cardh = 180, cardw = 140, upper = 0, left = 0, imgh = 100, imgw = 100;
@@ -301,7 +302,7 @@ getstim = function(theorystim) {
 var responsedata = [],
     currentblock = 1,
     currenttrial = 1,
-    totalhits = 0,
+    totalmisses = 0,
     datastring = "",
     lastperfect = false;
 
@@ -312,6 +313,7 @@ function recordinstructtrial (instructname, rt ) {
 	datastring = datastring.concat( trialvals, "\n" );
 }
 function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) { 
+	if (! hit) totalmisses += 1;
     trialvals = [subjid, condition.traintype, condition.rule,
               condition.dimorder, condition.dimvals, currentblock,
               currenttrial, "TEST", theorystim, actualstim, correct, resp, hit,
@@ -432,29 +434,14 @@ var TestPhase = function() {
 		$('#query').show();
 	};
 
-    function calculatebonus () {
-        var chances = currenttrial-1,
-            hits = totalhits;
-        if (condition.maxblocks > currentblock ) {
-            var skipped = (condition.maxblocks - currentblock) * testcardsleft.length;
-            hits += skipped;
-            chances += skipped;
-        }
-        proportionhits = hits / chances;
-        reward = 0;
-        for (i=0; i<10; i++) {
-            if ( Math.random() >= proportionhits ) reward+=0.25;
-        }
-        return reward;
-    }
 
-    function showbonus() {
+    var showbonus = function () {
         var bonus = calculatebonus();
         datastring = datastring.concat( "BONUS: " + bonus + "\n" );
         
         var timestamp = new Date().getTime();
         messagecode = '<h1>Task Complete</h1>\
-        <p>Congratulations, you had two perfect two perfect test phases in a row or\
+        <p>Congratulations, you had two perfect test phases in a row or\
         reached 10 blocks! </p>\
         <p> Your reward was calculated to be $' + bonus + '</p>\
         <form>\
@@ -467,7 +454,7 @@ var TestPhase = function() {
         $("#continue").click(function () {
             givequestionnaire();
         });
-    }
+    };
 	
 	catresponse = function (buttonid){
 		if (lock) { return false; }
@@ -546,7 +533,7 @@ var TestPhase = function() {
 	};
 	
 	//testcardpaper = Raphael(document.getElementById("testcanvas"), w, h);
-	testcardsleft = [ 0,1,2,3,4,5,6,7,  0,1,2,3,4,5,6,7 ];
+	testcardsleft = cardsshown.slice(0);
 	shuffle(testcardsleft);
 	$("#stim").attr("width", imgw);
 	$('#query').hide();
@@ -557,6 +544,16 @@ var TestPhase = function() {
 /*************
 * Finish up  *
 *************/
+var calculatebonus = function () {
+	var chances = condition.maxblocks * cardsshown.length;
+	console.warn("Chances: ", chances, " misses: ", totalmisses);
+	proportionmisses = (totalmisses / chances);
+	reward = 0;
+	for (i=0; i<10; i++) {
+		if ( Math.random() >= proportionmisses ) reward+=0.25;
+	}
+	return reward;
+}
 
 var givequestionnaire = function() {
 	var timestamp = new Date().getTime();
@@ -574,6 +571,9 @@ var submitquestionnaire = function() {
 		datastring = datastring.concat( "\n", this.id, ":",  this.value);
 	});
 	$('select').each( function(i, val) {
+		datastring = datastring.concat( "\n", this.id, ":",  this.value);
+	});
+	$('input').each( function(i, val) {
 		datastring = datastring.concat( "\n", this.id, ":",  this.value);
 	});
 	insert_hidden_into_form(0, "subjid", subjid );
