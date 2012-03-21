@@ -67,6 +67,27 @@ def get_people(conn, s):
 
 # <headingcell level=1>
 
+# Misc stuff
+
+# <codecell>
+
+def count_longest_run(values):
+    current_value = values[0]
+    runs = []
+    current_run = []
+    current_run.append(values[0])
+    for i in range(1,len(values)):
+        if current_value == values[i]:
+            current_run.append(values[i])
+        else:
+            current_value = values[i]
+            runs.append(current_run)
+            current_run = [current_value]
+    lens = [len(i) for i in runs]
+    return max(lens)
+
+# <headingcell level=1>
+
 # A "Participant" class.  Encapsulates all we know about a particular subject.
 
 # <markdowncell>
@@ -89,7 +110,7 @@ stimuliperblock = 16.
 # Participant - a class for manipulation subject data
 #-----------------------------------------------------
 class Participant():
-    def __init__(self, record):
+    def __init__(self, record, process=True):
         # process person here
         for field in record.keys():
             if field in ['subjid','cond','counterbalance','status']:
@@ -99,14 +120,16 @@ class Participant():
         self.datafileorig = self.datafile[:]
         self.format_datafile_as_list()
         self.format_datafile_as_dataframe()
-        self.blocks_to_criterion()
-        self.per_block_learning_curve()
-        self.medianRT()
-        self.maxRT()
-        self.meanOverallAcc()
-        self.percentLongRT()
+        if process==True:
+            self.blocks_to_criterion()
+            self.per_block_learning_curve()
+            self.medianRT()
+            self.maxRT()
+            self.meanOverallAcc()
+            self.percentLongRT()
+            self.get_questionaire()
         self.get_conditions()
-        self.get_questionaire()
+        
         
     def __getitem__(self,field):
         return vars(self)[field]
@@ -121,7 +144,10 @@ class Participant():
         self.datafile = replace(self.datafile, 'TEST', TEST)
         self.datafile = replace(self.datafile, 'TRAINING', TRAINING)
         self.datafile = replace(self.datafile, 'INSTRUCT', INSTRUCT)
-        self.datafileF = self.datafile.split('\r\n')
+        if self.datafile[-1:]=='\r\n':
+            self.datafileF = self.datafile.split('\r\n')
+        else:
+            self.datafileF = self.datafile.split('\n')
         
         res = []
         for line in self.datafileF:
@@ -143,6 +169,8 @@ class Participant():
                             newline.append(line[item])
                     self.datafileFTraining.append(newline)
                 elif line[7]==TEST:
+                    #for item in line:
+                    #    print int(item)
                     newline = map(int, line)
                     self.datafileFTest.append(newline)
             elif len(line)==8:
@@ -162,13 +190,13 @@ class Participant():
             tmp = line.split(',')
             res.append(tmp)
         for line in tmpstr:
-            if line[:5] in ['rules', 'howto', 'engag', 'diffi', 'physi'] or line[:1] in [":"]:
+            if line[:3] in ['rul', 'how', 'eng', 'dif', 'phy','edu','gen','age'] or line[:1] in [":"]:
                 qa = line.split(':')
                 #print self.subjid, line, qa
                 if line[:1] == ":":
                     #print self.subjid, line
                     vars(self)["physicalaids"]=line[1:]  
-                elif line[:5] in ['engag', 'diffi']:
+                elif line[:3] in ['eng', 'dif', 'age']:
                     vars(self)[qa[0]] = int(qa[1])
                 else:
                    vars(self)[qa[0]] = qa[1]
@@ -217,7 +245,10 @@ class Participant():
         self.meanOverallAcc = self.dfTest['hit'].mean()
     
     def per_block_learning_curve(self):
-        blocks = ones(15)*stimuliperblock
+        if self.codeversion == "4.2" or self.codeversion == "4.3":
+            blocks = ones(10)*stimuliperblock
+        else:
+            blocks = ones(15)*stimuliperblock
         for line in range(len(self.datafileFTest)):
             blocks[self.datafileFTest[line][5]-1] -= float(self.datafileFTest[line][12])
         self.learnCurve = 1.0-(blocks/stimuliperblock)
