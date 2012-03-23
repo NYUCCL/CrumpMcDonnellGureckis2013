@@ -30,8 +30,7 @@ function insert_hidden_into_form(findex, name, value ) {
 
 
 // Preload images (not currently in use)
-function imagepreload(src) 
-{
+function imagepreload(src) {
 	var heavyImage = new Image(); 
 	heavyImage.src = src;
 }
@@ -43,8 +42,7 @@ function imagepreload(src)
  * From Fotiman on this forum:
  * http://www.webmasterworld.com/javascript/3484761.htm
  */ 
-function substitute(str, arr) 
-{ 
+function substitute(str, arr) { 
 	var i, pattern, re, n = arr.length; 
 	for (i = 0; i < n; i++) { 
 		pattern = "\\{" + i + "\\}"; 
@@ -52,7 +50,7 @@ function substitute(str, arr)
 		str = str.replace(re, arr[i]); 
 	} 
 	return str; 
-} 
+}
 
 function randrange ( lower, upperbound ) {
 	// Finds a random integer from 'lower' to 'upperbound-1'
@@ -163,22 +161,22 @@ function submitdata() {
 // Stimulus info
 var ncards = 8,
     cardnames = [
-	"static/images/STIM00.PNG",
-	"static/images/STIM01.PNG",
-	"static/images/STIM02.PNG",
-	"static/images/STIM03.PNG",
-	"static/images/STIM04.PNG",
-	"static/images/STIM05.PNG",
-	"static/images/STIM06.PNG",
-	"static/images/STIM07.PNG",
-	"static/images/STIM08.PNG",
-	"static/images/STIM09.PNG",
-	"static/images/STIM10.PNG",
-	"static/images/STIM11.PNG",
-	"static/images/STIM12.PNG",
-	"static/images/STIM13.PNG",
-	"static/images/STIM14.PNG",
-	"static/images/STIM15.PNG"],
+	"static/images/STIM00.png",
+	"static/images/STIM01.png",
+	"static/images/STIM02.png",
+	"static/images/STIM03.png",
+	"static/images/STIM04.png",
+	"static/images/STIM05.png",
+	"static/images/STIM06.png",
+	"static/images/STIM07.png",
+	"static/images/STIM08.png",
+	"static/images/STIM09.png",
+	"static/images/STIM10.png",
+	"static/images/STIM11.png",
+	"static/images/STIM12.png",
+	"static/images/STIM13.png",
+	"static/images/STIM14.png",
+	"static/images/STIM15.png"],
 	categorynames= [ "A", "B" ];
 var cardsshown = [ 0,1,2,3,4,5,6,7,  0,1,2,3,4,5,6,7 ];
 
@@ -280,19 +278,20 @@ var catfun;
 
 // Stimulus counterbalancer
 getstim = function(theorystim) {
-	console.assert( theorystim < 8, "Stim >=8 ("+theorystim+")");
-	console.assert( theorystim >= 0, "Stim less than 0 ("+theorystim+")");
-	var flippedstim = theorystim^condition.dimvals;
+	assert( theorystim < 8, "Stim >=8 ("+theorystim+")");
+	assert( theorystim >= 0, "Stim less than 0 ("+theorystim+")");
+	var flippedstim = theorystim^condition.dimvals; // Here the stim identities are flipped
+	assert( flippedstim <8, "Agh" );
 	var bits = new Array();
-	for (var i=0; i<4; i++) {
+	for (var i=0; i<3; i++) {
 		bits.push( flippedstim&Math.pow(2,i) ? 1 : 0 );
 	}
 	
 	changeorder(bits, condition.dimorder);
 	
-	var multiples = [1, 2, 4, 8];
+	var multiples = [1, 2, 4];
 	var ret = 0;
-	for (i=0; i<=3; i++) {
+	for (i=0; i<3; i++) {
 		ret += multiples[i] * bits[i];
 	}
 	return ret;
@@ -336,14 +335,13 @@ var pagenames = [
 	"test",
 	"instruct1",
 	"instructCatExample",
-	"instructCatColor",
-	"instructCatStripe",
+	"instructCatSize",
+	"instructCatShape",
 	"instructTest",
 	"instructTest2",
-	"instructDimColor",
-	"instructDimBorder",
-	"instructDimDots",
-	"instructDimStripe",
+	"instructDimShape",
+	"instructDimSize",
+	"instructDimTexture",
 	"instructDimAll",
 	"instructFinal",
 	"instructFinal2"
@@ -360,14 +358,13 @@ var Instructions = function() {
 	var screens = [
 			"instruct1",
 			"instructCatExample",
-			"instructCatColor",
-			"instructCatStripe",
+            "instructCatSize",
+            "instructCatShape",
 			"instructTest",
 			"instructTest2",
-			"instructDimColor",
-			"instructDimBorder",
-			"instructDimDots",
-			"instructDimStripe",
+			"instructDimShape",
+			"instructDimSize",
+			"instructDimTexture",
 			"instructDimAll",
 			"instructFinal",
 			"instructFinal2" 
@@ -553,7 +550,7 @@ var calculatebonus = function () {
 		if ( Math.random() >= proportionmisses ) reward+=0.25;
 	}
 	return reward;
-}
+};
 
 var givequestionnaire = function() {
 	var timestamp = new Date().getTime();

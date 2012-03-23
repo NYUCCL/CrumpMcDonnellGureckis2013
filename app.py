@@ -11,12 +11,18 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-CODE_VERSION = '4.3'
+CODE_VERSION = '1.0'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
-TABLENAME = 'nosofskyrep'
+TABLENAME = 'nosofskynewstimsrep'
 NUMCONDS = 6
-NUMCOUNTERS = 24*16
+NUMDIMS = 3
+NDIMFLIPS = 1<<NUMDIMS  # 3 features each need 1 bit of entropy
+def factorial(x):
+    if x<=1: return x
+    else: return x * factorial(x-1)
+NDIMORDERS = factorial(NUMDIMS) # different orders the stims could be in
+NUMCOUNTERS = NDIMFLIPS * NDIMORDERS
 ALLOCATED = 1
 STARTED = 2
 COMPLETED = 3
@@ -56,8 +62,8 @@ app = Flask(__name__)
 #----------------------------------------------
 seed(500)  # use the same order each time the program is launched
 counterbalanceconds = []
-dimorders = range(24)
-dimvals = range(16)
+dimorders = range(NDIMORDERS)
+dimvals = range(NDIMFLIPS)
 shuffle(dimorders)
 shuffle(dimvals)
 for i in dimorders:
@@ -203,8 +209,9 @@ def get_random_counterbalance(conn):
     starttime = datetime.datetime.now() + datetime.timedelta(minutes=-30)
     s = select([participantsdb.c.counterbalance], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])    
     result = conn.execute(s)
-    counts = [0]*NUMCOUNTERS
-    assert len(counts) == NUMCOUNTERS, "WTF? len(counts)=%d while NUMCOUNTERS was %d." % (len(counts), NUMCOUNTERS)
+    counts = [0 for _ in range(NUMCOUNTERS)]
+    assert len(counts) == NUMCOUNTERS, "len(counts)=%d while NUMCOUNTERS was %d." % (len(counts), NUMCOUNTERS)
+    
     for row in result:
         counts[row[0]]+=1
     
