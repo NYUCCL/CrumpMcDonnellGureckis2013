@@ -32,7 +32,7 @@ paramdict = dict(
     title = "Paid volunteers needed for an online experiment in Psychology (bonus available)",
     description = "Learn to categorize a set of cards over a series of training trials.",
     keywords = "New York University, psychology experiment, category learning",
-    reward = 2,
+    reward = 1,
     duration = datetime.timedelta(hours=2),
     approval_delay = None,
     annotation = None,  # Do we need this? Not clear on what it is.
