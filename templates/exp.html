@@ -15,10 +15,10 @@
 		var subjid = {{ subj_num }};
 		var condition = {
 			traintype: {{ traintype }}, // 0=active, 1=passive 
-			rule: {{ rule }}, // type I-VI -> 0-5.
-			dimorder: {{ dimorder }}, // 0-23; which order to order the dimensions
-			dimvals: {{ dimvals }},  // 0-16 whether a '0' means 0 or 1 in terms of the stim.
-			maxblocks: {{ maxblocks }} // maximum number of blocks to run ( TODO: Nosofsky says 25 )
+			rule: {{ rule }}, // 0-5; type I-VI
+			dimorder: {{ dimorder }}, // 0-NDIMORDERS-1; which order to order the dimensions
+			dimvals: {{ dimvals }}, // 0-NFDIMFLIPS-1, whether a '0' means 0 or 1 in terms of the stim.
+			maxblocks: {{ maxblocks }} // maximum number of blocks to run
 		};
 		/*********************
 		* Get things started *
@@ -28,17 +28,17 @@
 		$(window).load( function(){
 			catfun = catfuns[condition.rule];
 			runfun = function() {
-			    {% if skipto %}
-    				{% if skipto=="questionnaire" %}
-    				givequestionnaire();
-    				{% elif skipto=="test" %}
-    				testobject = new TestPhase();
-    				{% elif skipto=="train" %}
-    				trainobject = new TrainingPhase();
-    				{% endif %}
-			    {% else %}
-    				instructobject = new Instructions();
-			    {% endif %}
+				{% if skipto %}
+					{% if skipto=="questionnaire" %}
+						givequestionnaire();
+					{% elif skipto=="test" %}
+						testobject = new TestPhase();
+					{% elif skipto=="train" %}
+						trainobject = new TrainingPhase();
+					{% endif %}
+				{% else %}
+						instructobject = new Instructions();
+				{% endif %}
 			}
 			
 			// Load resources then run the exp
@@ -96,21 +96,21 @@
 			href="http://support.google.com/bin/answer.py?hl=en&answer=23852">here</a><p>
 	</noscript>
 	<!-- Preloading the stimulus images.  -->
-	<img alt="" style="display:none;" src="static/images/STIM00.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM01.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM02.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM03.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM04.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM05.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM06.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM07.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM08.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM09.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM10.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM11.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM12.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM13.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM14.PNG">
-	<img alt="" style="display:none;" src="static/images/STIM15.PNG">
+	<img alt="" style="display:none;" src="static/images/STIM00.png">
+	<img alt="" style="display:none;" src="static/images/STIM01.png">
+	<img alt="" style="display:none;" src="static/images/STIM02.png">
+	<img alt="" style="display:none;" src="static/images/STIM03.png">
+	<img alt="" style="display:none;" src="static/images/STIM04.png">
+	<img alt="" style="display:none;" src="static/images/STIM05.png">
+	<img alt="" style="display:none;" src="static/images/STIM06.png">
+	<img alt="" style="display:none;" src="static/images/STIM07.png">
+	<img alt="" style="display:none;" src="static/images/STIM08.png">
+	<img alt="" style="display:none;" src="static/images/STIM09.png">
+	<img alt="" style="display:none;" src="static/images/STIM10.png">
+	<img alt="" style="display:none;" src="static/images/STIM11.png">
+	<img alt="" style="display:none;" src="static/images/STIM12.png">
+	<img alt="" style="display:none;" src="static/images/STIM13.png">
+	<img alt="" style="display:none;" src="static/images/STIM14.png">
+	<img alt="" style="display:none;" src="static/images/STIM15.png">
 </body>
 </html>
