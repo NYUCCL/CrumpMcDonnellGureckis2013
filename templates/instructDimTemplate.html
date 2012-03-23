@@ -1,0 +1,32 @@
+
+<div class="instruct" id="main">
+	<h1>Instructions</h1>
+        {% block upperInstruct %}{% endblock %}
+    
+	<table id="featuretable" cellspacing="20px">
+		<tr>
+			<td class="outerbox">
+                            <h3>{% block tableheader %}{% endblock %}</h3>
+				<hr>
+				<table class="innerbox">
+					<tr><td>
+                                                <img alt="" src={% block example1a %}{% endblock %}>
+						<img alt="" src={% block example1b %}{% endblock %}>
+                                                <h4>{% block subhead1 %}{% endblock %}</h4>
+						<hr>
+					</div></td></tr>
+					<tr><td>
+                                                <img alt="" src={% block example2a %}{% endblock %}>
+						<img alt="" src={% block example2b %}{% endblock %}>
+                                                <h4>{% block subhead2 %}{% endblock %}</h4>
+					</td></tr>
+				</tr></table>
+			</td>
+		</tr>
+	</table>
+        {% block lowerInstruct %}{% endblock %}
+	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
+
+	<input type="button" class="continue" id="Next" value="Next">
+</div>
+
