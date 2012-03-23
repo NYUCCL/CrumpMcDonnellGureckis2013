@@ -11,10 +11,10 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
-CODE_VERSION = '1.0'
+CODE_VERSION = '5.0'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
-TABLENAME = 'nosofskynewstimsrep'
+TABLENAME = 'nosofskyrep'
 NUMCONDS = 6
 NUMDIMS = 3
 NDIMFLIPS = 1<<NUMDIMS  # 3 features each need 1 bit of entropy
