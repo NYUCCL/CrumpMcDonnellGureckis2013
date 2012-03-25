@@ -10,7 +10,7 @@ from sqlalchemy import *
 from functools import wraps
 
 # constants
-DEPLOYMENT_ENV = 'sandbox'  # 'sandbox' or 'deploy' (the real thing)   # THIS ONE IS IMPORTANT TO SET
+DEPLOYMENT_ENV = 'deploy'  # 'sandbox' or 'deploy' (the real thing)
 CODE_VERSION = '5.0'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
@@ -187,6 +187,7 @@ def get_random_condition(conn):
     
     counts[0] = 1000
     counts[2] = 1000
+    counts[3] = 1000
     counts[4] = 1000
     counts[5] = 1000
     for row in result:
