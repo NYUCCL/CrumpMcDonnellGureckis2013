@@ -1,0 +1,95 @@
+<div class="questionnaire prequiz">
+    <h1>Got everything?</h1>
+	<p>Before we move on, we want to make sure you've understood everything
+	we've told you so far. Be careful when you answer, because you'll need
+	to get each of these questions right to continue.</p>
+    <form id="postquiz" action="debrief" method="post">
+        <table>
+            <tr class="question">
+                <td class="questiontext">
+                Is it possible to find a rule that will allow you to answer
+                correctly for every item?
+                </td>
+                <td class="answer">
+                    <ul>
+                    {% set ruleOptions = [
+                                ("ruleyes", "Yes."), 
+                                ("ruleno", "No.")
+                                ] %}
+                    {% for choice, text in ruleOptions %}
+                    <li><input type="radio" id="{{choice}}" name="rule" value="{{choice}}" >
+                    {{ text }}
+                    </input></li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                Will the correct rule change from block to block?
+                </td>
+                <td class="answer">
+                    <ul>
+                    {% set changeOptions = [
+                                ("changeyes", "Yes."), 
+                                ("changeno", "No.")
+                                ] %}
+                    {% for choice, text in changeOptions %}
+                    <li><input type="radio" id="{{choice}}" name="change" value="{{choice}}" >
+                    {{ text }}
+                    </input></li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                Which aspects of the items will be important for finding out the rule?
+                </td>
+                <td class="answer">
+                    <ul>
+                    {% set featoptions = [
+                                ("pattern", "Pattern (Striped vs. Plain)"), 
+                                ("fill", "Fill color"),
+                                ("borderstyle", "Border Style (Dashed vs. Solid)"), 
+                                ("bordercolor", "Border Color"),
+                                ("shape", "Shape (Triangle vs. Square)"),
+                                ("size", "Size")] %}
+                    {% for choice, text in featoptions %}
+                    <li><input type="checkbox" id="{{choice}}" name="features" value="{{choice}}">
+                    {{ text }}
+                    </input></li>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                    How many blocks do you need to finish perfectly to end the
+                    experiment early?
+                </td>
+                <td class="answer">
+                <input id="criterion" id="{{choice}}" name="criterion" type="number" min="0" />
+                </td>
+            </tr>
+            <tr class="question">
+                <td class="questiontext">
+                Should I be using pen and paper to help remember the labels for each item?
+                </td>
+                <td class="answer">
+                    <ul>
+                    {% set changeOptions = [
+                                ("aidsyes", "Yes."), 
+                                ("aidsno", "No.")
+                                ] %}
+                    {% for choice, text in changeOptions %}
+                    <li><input type="radio" id="{{choice}}" name="aids" value="{{choice}}" >
+                    {{ text }}
+                    </input></li>
+                    {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        <input type="button" class="continue" id="continue" value="Continue"></input>
+    </form>
+</div>
