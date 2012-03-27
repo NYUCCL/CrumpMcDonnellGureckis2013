@@ -6,6 +6,7 @@ body {
     text-align: center;
     font-family: Verdana, Helvetica, sans-serif;
     margin: 0 auto;
+    width: 800px;
 }
 
 a {
@@ -133,7 +134,7 @@ strong {
 
 /* Questionnaire style */
 
-#questionnaire p {
+.questionnaire p {
     font-size: 150%;
 }
 
@@ -173,19 +174,23 @@ input {
     font-size: 22pt;
 }
 
-#questionnaire {
+.prequiz input {
+	margin: 0;
+}
+
+.questionnaire {
     font-size: 70%;
     text-align: left;
 }
-#questionnaire h1 {
+.questionnaire h1 {
     text-align: center;
 }
-#questionnaire .question {
+.questionnaire .question {
     position: relative;
     margin: 20px;
     border-bottom: solid 1 #bbbbff;
 }
-#questionnaire .questiontext {
+.questionnaire .questiontext {
     float: left;
     width: 280px;
     color: #bbbbff;
@@ -195,19 +200,23 @@ input {
 .questiontext em {
     font-size: 70%;
 }
-#questionnaire textarea {
+.questionnaire textarea {
     width: 320px;
     height: 130px;
 }
-#questionnaire form {
+.questionnaire form {
     text-align: right;
 }
-#questionnaire td {
+.questionnaire td {
     margin: 20px;
     padding-bottom: 10px;
 }
-#questionnaire hr {
+.questionnaire hr {
     border-bottom: 1px solid #bbbbff;
+}
+
+.questionnaire ul {
+	list-style-type: none;
 }
 
 

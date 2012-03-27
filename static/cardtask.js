@@ -31,8 +31,8 @@ function insert_hidden_into_form(findex, name, value ) {
 
 // Preload images (not currently in use)
 function imagepreload(src) {
-	var heavyImage = new Image(); 
-	heavyImage.src = src;
+	var im = new Image(); 
+	im.src = src;
 }
 
 /** 
@@ -52,8 +52,8 @@ function substitute(str, arr) {
 	return str; 
 }
 
+// Finds a random integer from 'lower' to 'upperbound-1'
 function randrange ( lower, upperbound ) {
-	// Finds a random integer from 'lower' to 'upperbound-1'
 	return Math.floor( Math.random() * upperbound + lower );
 }
 
@@ -300,17 +300,24 @@ getstim = function(theorystim) {
 // Mutable global variables
 var responsedata = [],
     currentblock = 1,
+    instructround = 0,
     currenttrial = 1,
     totalmisses = 0,
     datastring = "",
     lastperfect = false;
 
 // Data handling functions
-// TODO: consider not recording the first five columns every trial. 
-function recordinstructtrial (instructname, rt ) {
-	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructname, rt];
+
+// Records RT for each instruction trial
+function recordinstructtrial (instructname, rt, resp ) {
+	if (typeof validated=="undefined") {
+		validated = "na"
+	}
+	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructround, instructname, validated, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 }
+
+// Records resp and RT for each instruction trial. 
 function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) { 
 	if (! hit) totalmisses += 1;
     trialvals = [subjid, condition.traintype, condition.rule,
@@ -319,6 +326,26 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
               rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
+}
+
+//  Writes the form ids and their responses to the datafile. 
+//  Returns the contents in an object. 
+function getFormFields () {
+    var fields = {};
+    
+    var extractfun = function(i, val) { 
+		var value;
+		if (this.id !== this.value) value = this.value; 
+		else value = this.checked;
+		fields[this.id] = value; 
+		datastring = datastring.concat( "\n", this.id, ":",  value);
+    };
+    
+	$('textarea').each( extractfun );
+	$('select').each( extractfun );
+	$('input').each( extractfun );
+    
+    return fields;
 }
 
 /********************
@@ -333,6 +360,7 @@ var showpage = function(pagename) {
 var pagenames = [
 	"postquestionnaire",
 	"test",
+	"prequiz",
 	"instruct1",
 	"instructCatExample",
 	"instructCatSize",
@@ -371,10 +399,15 @@ var Instructions = function() {
 		],
 		currentscreen = "",
 		timestamp;
-
+	instructround++;
+    
 	this.recordtrial = function() {
-		rt = (new Date().getTime()) - timestamp;
+		var rt = (new Date().getTime()) - timestamp;
 		recordinstructtrial( currentscreen, rt  );
+	};
+	this.recordtest = function() {
+		var rt = (new Date().getTime()) - timestamp;
+		recordinstructtrial( "", rt  );
 	};
 	
 	this.nextForm = function () {
@@ -384,18 +417,63 @@ var Instructions = function() {
 		timestamp = new Date().getTime();
 		if ( screens.length === 0 ) $('.continue').click(function() {
 			that.recordtrial();
-			that.startTest();
+			that.givePreQuiz();
 		});
 		else $('.continue').click( function() {
 			that.recordtrial();
 			that.nextForm();
 		});
 	};
+	
+	// validateformfields :: {fields} -> Bool
+	var validateformfields = function (fields) {
+		var validated = true;
+		// Blocks to criterion
+		if ( fields.criterion !== "2") validated = false;
+		// There is a rule? y/n
+		if ( ! fields.ruleyes ) validated = false;
+		// Rule changes? y/n
+		if ( ! fields.changeno ) validated = false;
+		// Aids? y/n
+		if ( ! fields.aidsno ) validated = false;
+		// Stimuli Features
+		// Target answers:
+		if ( ! fields.fill ) validated = false;
+		if ( ! fields.shape ) validated = false;
+		if ( ! fields.size ) validated = false;
+		// Lure answers:
+		if (   fields.pattern ) validated = false;
+		if (   fields.borderstyle ) validated = false;
+		if (   fields.bordercolor ) validated = false;
+		return validated;
+	};
+	
+	this.givePreQuiz = function() {
+		showpage( "prequiz" );
+		timestamp = new Date().getTime();
+		$("#continue").click(function () {
+			var rt = (new Date().getTime()) - timestamp;
+			var fields = getFormFields() // This both writes the fields to the file and returns them.
+			var passed = validateformfields( fields );
+			recordinstructtrial( "prequiz", (new Date().getTime())-timestamp, passed );
+			if ( passed ) {
+				// TODO: need to show a congrats page here.
+				that.startTest();
+			} else {
+				// TODO: need to give them a page that says they've made mistakes.
+				instructobject = new Instructions();
+				instructobject.start();
+			}
+		});
+	};
+	
 	this.startTest = function() {
-		startTask();
+		taskStartSetup();
 		testobject = new TestPhase();
 	};
-	this.nextForm();
+	
+	//  First thing that happens.
+	return { start: this.nextForm };
 };
 
 
@@ -563,22 +641,15 @@ var givequestionnaire = function() {
 	// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
 	// postback();
 };
+
 var submitquestionnaire = function() {
-	$('textarea').each( function(i, val) {
-		datastring = datastring.concat( "\n", this.id, ":",  this.value);
-	});
-	$('select').each( function(i, val) {
-		datastring = datastring.concat( "\n", this.id, ":",  this.value);
-	});
-	$('input').each( function(i, val) {
-		datastring = datastring.concat( "\n", this.id, ":",  this.value);
-	});
+    getFormFields();  // TODO Make sure this didn't break anything.
 	insert_hidden_into_form(0, "subjid", subjid );
 	insert_hidden_into_form(0, "data", datastring );
 	$('form').submit();
 };
 
-var startTask = function () {
+var taskStartSetup = function () {
 	$.ajax("inexp", {
 			type: "POST",
 			async: true,
@@ -596,7 +667,7 @@ var startTask = function () {
 	};
 };
 
-var finish = function () {
+var finishTeardown = function () {
 	window.onbeforeunload = function(){ };
 };
 
