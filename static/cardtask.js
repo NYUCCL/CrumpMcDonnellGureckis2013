@@ -402,17 +402,17 @@ var pagenames = [
 var Instructions = function() {
 	var that = this;
 	var screens = [
-//			"instruct1",
-//			"instructCatExample",
-//            "instructCatSize",
-//            "instructCatShape",
-//			"instructTest",
-//			"instructTest2",
-//			"instructDimShape",
-//			"instructDimSize",
-//			"instructDimTexture",
-//			"instructDimAll",
-//			"instructFinal",
+			"instruct1",
+			"instructCatExample",
+            "instructCatSize",
+            "instructCatShape",
+			"instructTest",
+			"instructTest2",
+			"instructDimShape",
+			"instructDimSize",
+			"instructDimTexture",
+			"instructDimAll",
+			"instructFinal",
 			"instructFinal2" 
 		],
 		currentscreen = "",
