@@ -178,6 +178,11 @@ input {
 	margin: 0;
 }
 
+.prequiz #warning {
+    color: red;
+    font-weight: bold;
+}
+
 .questionnaire {
     font-size: 70%;
     text-align: left;

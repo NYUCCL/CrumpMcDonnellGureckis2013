@@ -309,11 +309,11 @@ var responsedata = [],
 // Data handling functions
 
 // Records RT for each instruction trial
-function recordinstructtrial (instructname, rt, resp ) {
-	if (typeof validated=="undefined") {
-		validated = "na"
+function recordinstructtrial (instructname, rt, correct ) {
+	if (typeof correct=="undefined") {
+		correct = "na";
 	}
-	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructround, instructname, validated, rt];
+	trialvals = [subjid, condition.traintype, condition.rule, condition.dimorder, condition.dimvals, "INSTRUCT", instructround, instructname, correct, rt];
 	datastring = datastring.concat( trialvals, "\n" );
 }
 
@@ -329,7 +329,24 @@ function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) {
 }
 
 //  Writes the form ids and their responses to the datafile. 
-//  Returns the contents in an object. 
+function recordFormFields () {
+    var fields = {};
+    
+    var extractfun = function(i, val) { 
+		var value;
+		if (this.id !== this.value) value = this.value; 
+		else value = this.checked;
+		datastring = datastring.concat( "\n", this.id, ":",  value);
+    };
+    
+	$('textarea').each( extractfun );
+	$('select').each( extractfun );
+	$('input').each( extractfun );
+
+    return fields;
+}
+
+//  Returns the form contents as a mapping.
 function getFormFields () {
     var fields = {};
     
@@ -338,7 +355,6 @@ function getFormFields () {
 		if (this.id !== this.value) value = this.value; 
 		else value = this.checked;
 		fields[this.id] = value; 
-		datastring = datastring.concat( "\n", this.id, ":",  value);
     };
     
 	$('textarea').each( extractfun );
@@ -384,17 +400,17 @@ var pagenames = [
 var Instructions = function() {
 	var that = this;
 	var screens = [
-			"instruct1",
-			"instructCatExample",
-            "instructCatSize",
-            "instructCatShape",
-			"instructTest",
-			"instructTest2",
-			"instructDimShape",
-			"instructDimSize",
-			"instructDimTexture",
-			"instructDimAll",
-			"instructFinal",
+//			"instruct1",
+//			"instructCatExample",
+//            "instructCatSize",
+//            "instructCatShape",
+//			"instructTest",
+//			"instructTest2",
+//			"instructDimShape",
+//			"instructDimSize",
+//			"instructDimTexture",
+//			"instructDimAll",
+//			"instructFinal",
 			"instructFinal2" 
 		],
 		currentscreen = "",
@@ -425,37 +441,60 @@ var Instructions = function() {
 		});
 	};
 	
-	// validateformfields :: {fields} -> Bool
+    // Determine if the form has been filled out.
 	var validateformfields = function (fields) {
-		var validated = true;
+		var missing = [];
 		// Blocks to criterion
-		if ( fields.criterion !== "2") validated = false;
+		if ( ! fields.criterion ) missing.push("criterion");
+		if ( ! fields.ruleyes && ! fields.ruleno ) missing.push("rule");
+		if ( ! fields.changeyes && ! fields.changeno ) missing.push("change");
+		if ( ! fields.aidsno && ! fields.aidsyes ) missing.push("aids");
+		if ( ! fields.fill && 
+             ! fields.shape && 
+             ! fields.size && 
+             ! fields.pattern && 
+             ! fields.borderstyle && 
+             ! fields.bordercolor ) missing.push("features");
+		return missing;
+	};
+	
+	// checkformfields :: {fields} -> Bool
+	var checkformfields = function (fields) {
+		var correct = true;
+		// Blocks to criterion
+		if ( fields.criterion !== "2") correct = false;
 		// There is a rule? y/n
-		if ( ! fields.ruleyes ) validated = false;
+		if ( ! fields.ruleyes ) correct = false;
 		// Rule changes? y/n
-		if ( ! fields.changeno ) validated = false;
+		if ( ! fields.changeno ) correct = false;
 		// Aids? y/n
-		if ( ! fields.aidsno ) validated = false;
+		if ( ! fields.aidsno ) correct = false;
 		// Stimuli Features
 		// Target answers:
-		if ( ! fields.fill ) validated = false;
-		if ( ! fields.shape ) validated = false;
-		if ( ! fields.size ) validated = false;
+		if ( ! fields.fill ) correct = false;
+		if ( ! fields.shape ) correct = false;
+		if ( ! fields.size ) correct = false;
 		// Lure answers:
-		if (   fields.pattern ) validated = false;
-		if (   fields.borderstyle ) validated = false;
-		if (   fields.bordercolor ) validated = false;
-		return validated;
+		if (   fields.pattern ) correct = false;
+		if (   fields.borderstyle ) correct = false;
+		if (   fields.bordercolor ) correct = false;
+		return correct;
 	};
 	
 	this.givePreQuiz = function() {
 		showpage( "prequiz" );
 		timestamp = new Date().getTime();
 		$("#continue").click(function () {
+            if ( validateformfields( getFormFields() ).length > 0 ) {
+                $("#warning").text("Please fill out all the fields before continuing.");
+                return false;
+            }
+			var fields = getFormFields();
+            
 			var rt = (new Date().getTime()) - timestamp;
-			var fields = getFormFields() // This both writes the fields to the file and returns them.
-			var passed = validateformfields( fields );
+			var passed = checkformfields( fields );
 			recordinstructtrial( "prequiz", (new Date().getTime())-timestamp, passed );
+            recordFormFields();
 			if ( passed ) {
 				// TODO: need to show a congrats page here.
 				that.startTest();
@@ -464,6 +503,7 @@ var Instructions = function() {
 				instructobject = new Instructions();
 				instructobject.start();
 			}
+            return true;
 		});
 	};
 	
@@ -505,7 +545,7 @@ var TestPhase = function() {
 		$('#query').html( buttons );
 		$('input').click( function(){
 			catresponse(this.value);
-		} );
+		});
 		$('#query').show();
 	};
 
@@ -643,7 +683,7 @@ var givequestionnaire = function() {
 };
 
 var submitquestionnaire = function() {
-    getFormFields();  // TODO Make sure this didn't break anything.
+    recordFormFields();  // TODO Make sure this didn't break anything.
 	insert_hidden_into_form(0, "subjid", subjid );
 	insert_hidden_into_form(0, "data", datastring );
 	$('form').submit();
