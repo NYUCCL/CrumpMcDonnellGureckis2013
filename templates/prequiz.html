@@ -17,9 +17,9 @@
                                 ("ruleno", "No.")
                                 ] %}
                     {% for choice, text in ruleOptions %}
-                    <li><input type="radio" id="{{choice}}" name="rule" value="{{choice}}" >
+                    <li><input type="radio" id="{{choice}}" name="rule" value="{{choice}}" />
                     {{ text }}
-                    </input></li>
+                    </li>
                     {% endfor %}
                     </ul>
                 </td>
@@ -68,7 +68,7 @@
                     experiment early?
                 </td>
                 <td class="answer">
-                <input id="criterion" id="{{choice}}" name="criterion" type="number" min="0" />
+                <input class="criterion" id="{{choice}}" name="criterion" type="number" min="0" />
                 </td>
             </tr>
             <tr class="question">

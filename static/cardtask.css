@@ -35,6 +35,7 @@ strong {
 
 .continue  {
     width: auto;
+	margin-bottom: 20px;
 }
 
 .instruct p {
@@ -134,7 +135,7 @@ strong {
 
 /* Questionnaire style */
 
-.questionnaire p {
+.questionnaire p, li {
     font-size: 150%;
 }
 
@@ -168,14 +169,27 @@ strong {
 }
 
 input {
-    margin: 20px 50px;
     width: 100px;
     height: 50px;
     font-size: 22pt;
 }
 
+input[type="radio"], input[type="checkbox"] {
+	height: 1em;
+	width: 1em;
+}
+
+input[type="number"] {
+}
+
 .prequiz input {
 	margin: 0;
+	vertical-align: middle;
+}
+
+
+.prequiz .continue {
+	margin-bottom: 20px;
 }
 
 .prequiz #warning {
@@ -190,13 +204,43 @@ input {
 .questionnaire h1 {
     text-align: center;
 }
+.questionnaire table {
+    margin: 0 auto;
+	
+	/* Border stuff: */
+	table-layout: fixed;
+	border-collapse: separate;
+	border-spacing: 0.25em;
+	border: none;
+}
+.questionnaire tr {
+    display: block;
+    border-bottom: 2px dashed white;
+}
+.questionnaire tr:last-child { border: 0; }
+
+.questionnaire td {
+    padding-right: 0.25em;
+	vertical-align: middle;
+	border-width: 0 1px;
+	border: none
+    margin: 20px;
+    padding-bottom: 10px;
+}
+.questionnaire td:first-child, td + td {border-left: 0; }
+.questionnaire td:last-child { padding-right: 0; border-right: 0; }
+
+.answer {
+    text-align: left;
+	padding-left: 3em;
+}
+
 .questionnaire .question {
     position: relative;
     margin: 20px;
-    border-bottom: solid 1 #bbbbff;
 }
 .questionnaire .questiontext {
-    float: left;
+	vertical-align: top;
     width: 280px;
     color: #bbbbff;
     margin: 20px;
@@ -212,16 +256,14 @@ input {
 .questionnaire form {
     text-align: right;
 }
-.questionnaire td {
-    margin: 20px;
-    padding-bottom: 10px;
-}
 .questionnaire hr {
     border-bottom: 1px solid #bbbbff;
 }
 
 .questionnaire ul {
 	list-style-type: none;
+	margin: 0;
+	padding: 0;
 }
 
 
@@ -229,9 +271,6 @@ input {
     text-align: right;
 }
 
-.answer {
-    text-align: left;
-}
 
 #debriefing {
     width: 640px;
