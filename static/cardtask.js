@@ -388,7 +388,9 @@ var pagenames = [
 	"instructDimTexture",
 	"instructDimAll",
 	"instructFinal",
-	"instructFinal2"
+	"instructFinal2",
+	"starttask",
+	"redoinstruct"
 ];
 
 
@@ -496,12 +498,14 @@ var Instructions = function() {
 			recordinstructtrial( "prequiz", (new Date().getTime())-timestamp, passed );
             recordFormFields();
 			if ( passed ) {
-				// TODO: need to show a congrats page here.
-				that.startTest();
+				showpage("starttask");
+				$(".continue").click( that.startTest );
 			} else {
-				// TODO: need to give them a page that says they've made mistakes.
-				instructobject = new Instructions();
-				instructobject.start();
+				showpage("redoinstruct");
+				$(".continue").click( function() {
+					instructobject = new Instructions();
+					instructobject.start();
+				});
 			}
             return true;
 		});

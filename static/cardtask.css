@@ -43,8 +43,8 @@ strong {
 
 .instruct .continue {
     margin: 20px 20px;
-    width: 120px;
-    height: 40px;
+    width: 10em;
+    height: 2.5em;
     font-size: 13pt;
     float: right;
 }
