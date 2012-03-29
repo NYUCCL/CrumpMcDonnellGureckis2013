@@ -655,7 +655,7 @@ var givequestionnaire = function() {
 	showpage('postquestionnaire');
 	recordinstructtrial( "postquestionnaire", (new Date().getTime())-timestamp );
 	$("#continue").click(function () {
-		finish();
+		finishTeardown();
 		submitquestionnaire();
 	});
 	// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
