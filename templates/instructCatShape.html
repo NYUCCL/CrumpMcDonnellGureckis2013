@@ -1,59 +1,26 @@
+
+{% extends "instructCat.html" %}
+
+{% block style %}
 <style type="text/css">
-	#stimtable {
-		position: relative;
-		margin: 0 auto;
-		width: 280px;
+	.stim4, .stim2, .stim7 {
+		border: 4px dashed red;
 	}
-	#stimtable img {
-		width: 100px;
-	}
-	#stimtable table {
-	}
-	#stimtable td {
-		padding: 20px;
-	}
-	#leftrect {
-		position: absolute;
-		left: 152px; top: 10px;
-		height: 265px; width: 120px;
-		border: 3px solid orange;
-	}
-	#rightrect {
-		position: absolute;
-		left: 10px; top: 10px;
-		height: 265px; width: 120px;
-		border: 3px solid orange;
+	.stim0, .stim6, .stim3 {
+		border: 4px dashed blue;
 	}
 </style>
+{% endblock %}
 
-<div class="instruct" id="main">
-	<h1>Instructions</h1> 
-	<p>However, these same items might could also be grouped based on shape, as depicted here:</p>
-	<div id="stimtable">
-		<table>
-			<div id="leftrect"></div>
-			<div id="rightrect"></div>
-			<tr>
-				<td>
-					<img alt="" src="static/images/STIM00.png">
-				</td>
-				<td>
-					<img alt="" src="static/images/STIM02.png">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<img alt="" src="static/images/STIM04.png">
-				</td>
-				<td>
-					<img alt="" src="static/images/STIM06.png">
-				</td>
-			</tr>
-		</table>
-	</div>
-	<p>The group you will be learning about may be based on a more complex pattern than either of these two example patterns and will involve
-		more objects. You goal will be to learn the grouping pattern so that you can correctly name the group for each and every object.
-		You can use any strategy you want so that you can correctly name each object (e.g., come up with rule, memorize some or all of the items).</p>
-	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
-	<input type="button" class="continue" id="Next" value="Next">
-</div>
+{% block upperinstruct %}
+However, these same items might could also be grouped in a more complicated
+pattern, like the one depicted here:
+{% endblock %}
+
+{% block lowerinstruct %}
+You goal in this task will be to learn the grouping pattern so that you can
+correctly name the group for each and every object. You can use any strategy
+you want so that you can correctly name each object (e.g., come up with rule,
+memorize some or all of the items).
+{% endblock %}
+
