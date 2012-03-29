@@ -11,7 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'deploy'  # 'sandbox' or 'deploy' (the real thing)
-CODE_VERSION = '5.1'
+CODE_VERSION = '5.3'
 
 DATABASE = 'mysql://lab:2research@gureckislab.org:3306/active_learn_shj_turk'   # 'sqlite:///:memory:' - tests in memory
 TABLENAME = 'nosofskyrep'
