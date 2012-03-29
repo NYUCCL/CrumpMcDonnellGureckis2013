@@ -20,12 +20,12 @@ function assert(exp, message) {
 }
 
 function insert_hidden_into_form(findex, name, value ) {
-    var form = document.forms[findex];
-    var hiddenField = document.createElement('input');
-    hiddenField.setAttribute('type', 'hidden');
-    hiddenField.setAttribute('name', name);
-    hiddenField.setAttribute('value', value );
-    form.appendChild( hiddenField );
+	var form = document.forms[findex];
+	var hiddenField = document.createElement('input');
+	hiddenField.setAttribute('type', 'hidden');
+	hiddenField.setAttribute('name', name);
+	hiddenField.setAttribute('value', value );
+	form.appendChild( hiddenField );
 }
 
 
@@ -160,7 +160,7 @@ function submitdata() {
 
 // Stimulus info
 var ncards = 8,
-    cardnames = [
+	cardnames = [
 	"static/images/STIM00.png",
 	"static/images/STIM01.png",
 	"static/images/STIM02.png",
@@ -217,8 +217,8 @@ catfuns = [
 	function (num) {
 		// Shepard type III
 		//0  0 0 0 - 1
-		//1  0 0 1 - 0     E
-		//2  0 1 0 - 1     E
+		//1  0 0 1 - 0	 E
+		//2  0 1 0 - 1	 E
 		//3  0 1 1 - 0
 		//4  1 0 0 - 1
 		//5  1 0 1 - 1  E
@@ -231,12 +231,12 @@ catfuns = [
 	function (num) {
 		// Shepard type IV
 		//0  0 0 0 - 1
-		//1  0 0 1 - 1        E
-		//2  0 1 0 - 1    E
+		//1  0 0 1 - 1		E
+		//2  0 1 0 - 1	E
 		//3  0 1 1 - 0 E
 		//4  1 0 0 - 1 E
-		//5  1 0 1 - 0    E
-		//6  1 1 0 - 0       E
+		//5  1 0 1 - 0	E
+		//6  1 1 0 - 0	   E
 		//7  1 1 1 - 0
 
 		var score = 0; // prototypicality score
@@ -268,8 +268,8 @@ catfuns = [
 		//4  1 0 0 - 0
 		//5  1 0 1 - 1
 		//6  1 1 0 - 1
-		//7  1 1 1 - 0        
-        
+		//7  1 1 1 - 0		
+		
 		if (num & 1) { return (num&2)^((num&4)/2) ? 1:0; }
 		else { return (num&2)^((num&4)/2) ? 0:1; }
 	}
@@ -320,10 +320,10 @@ function recordinstructtrial (instructname, rt, correct ) {
 // Records resp and RT for each instruction trial. 
 function recordtesttrial (theorystim, actualstim, correct, resp, hit, rt ) { 
 	if (! hit) totalmisses += 1;
-    trialvals = [subjid, condition.traintype, condition.rule,
-              condition.dimorder, condition.dimvals, currentblock,
-              currenttrial, "TEST", theorystim, actualstim, correct, resp, hit,
-              rt];
+	trialvals = [subjid, condition.traintype, condition.rule,
+			  condition.dimorder, condition.dimvals, currentblock,
+			  currenttrial, "TEST", theorystim, actualstim, correct, resp, hit,
+			  rt];
 	datastring = datastring.concat( trialvals, "\n" );
 	currenttrial++;
 }
@@ -404,8 +404,8 @@ var Instructions = function() {
 	var screens = [
 			"instruct1",
 			"instructCatExample",
-            "instructCatSize",
-            "instructCatShape",
+			"instructCatSize",
+			"instructCatShape",
 			"instructTest",
 			"instructTest2",
 			"instructDimShape",
@@ -522,17 +522,17 @@ var Instructions = function() {
 
 
 /********************
-* CODE FOR TEST     *
+* CODE FOR TEST	 *
 ********************/
 
 var TestPhase = function() {
 	var i,
-	    that = this, // make 'this' accessble by privileged methods
-	    lock,
-	    stimimage,
-	    buttonson,
-	    prescard,
-	    testcardsleft = new Array();
+		that = this, // make 'this' accessble by privileged methods
+		lock,
+		stimimage,
+		buttonson,
+		prescard,
+		testcardsleft = new Array();
 	
 	this.hits = new Array();
 	
@@ -552,41 +552,19 @@ var TestPhase = function() {
 		});
 		$('#query').show();
 	};
-
-
-    var showbonus = function () {
-        var bonus = calculatebonus();
-        datastring = datastring.concat( "BONUS: " + bonus + "\n" );
-        
-        var timestamp = new Date().getTime();
-        messagecode = '<h1>Task Complete</h1>\
-        <p>Congratulations, you had two perfect test phases in a row or\
-        reached 10 blocks! </p>\
-        <p> Your reward was calculated to be $' + bonus + '</p>\
-        <form>\
-            <input type="button" class="continue" id="continue" value="Continue"></input>\
-        </form>';
-        $('body').html( messagecode );
-
-        
-        recordinstructtrial( "showbonus", (new Date().getTime())-timestamp );
-        $("#continue").click(function () {
-            givequestionnaire();
-        });
-    };
 	
 	catresponse = function (buttonid){
 		if (lock) { return false; }
 		var rt = new Date().getTime() - buttonson,
-		    washit,
-		    resp = categorynames.indexOf(buttonid), // should be "A" or "B"
-		    actual = catfun(prescard); // should be "A" or "B"
+			washit,
+			resp = categorynames.indexOf(buttonid), // should be "A" or "B"
+			actual = catfun(prescard); // should be "A" or "B"
 		washit = resp === actual;
 		lock = true;
 		var hitmessage = '<span style="color: #0F0;"><p style="font-size: 42px;">CORRECT.</p>';
 		var missmessage = '<span style="color: #F00;"><p style="font-size: 42px;">INCORRECT!</p>';
 		var respmessages = ['<p style="font-size: 24px">The correct answer was A.</p></span>',
-                            '<p style="font-size: 24px">The correct answer was B.</p></span>'];
+							'<p style="font-size: 24px">The correct answer was B.</p></span>'];
 		$('#query').html((washit ? hitmessage : missmessage) + respmessages[actual]);
 		setTimeout( function() {
 				$("#stim").hide();
@@ -611,7 +589,7 @@ var TestPhase = function() {
 			}
 			else lastperfect=false;
 		}
-		if (done) showbonus();
+		if (done) givequestionnaire();
 		else {
         	$.ajax("inexpsave", {
         			type: "POST",
@@ -619,11 +597,19 @@ var TestPhase = function() {
         			data: {subjId: subjid, dataString: datastring}
         	});
 
-			$('body').html('<h1>Round Complete</h1>\
-				<p>Round complete! <b>You have completed ' + (currentblock-1) + ' out of ' + condition.maxblocks + ' total test rounds</b>.\
-				 You got ' + boolpercent(that.hits) + '% correct.</p>' +
-				 ((boolpercent(that.hits)==100) ? '\r<p>Just one more round like that and you\'ll be done!' : '\r<p>If you can get two in a row at 100% you can stop early!') + 
-				 '<p>Press "Continue" to move on to the next block.</p>\
+			$('body').html('<h1>Testing Round Complete</h1>\
+				<p>Round complete! <b>You have completed ' + (currentblock-1) +
+				' out of ' + condition.maxblocks + ' total test rounds</b>.\
+				You got ' + boolpercent(that.hits) + '% correct.</p>' +
+				 ((boolpercent(that.hits)==100) ? '\r<p>Just one more round\
+				  like that and you\'ll be done!</p>' : '\r<p>If you can get\
+				  two in a row at 100% you can stop early!</p>') + 
+				 '<p><strong>Remember</strong>, there is a rule that will allow\
+				 you to answer correctly on every trial. It will not change:\
+				 all the cards will continue to have the same label. The\
+				 experiment will end as soon as you are able to answer\
+				 perfectly two rounds of test items in a row.</p><p>Press\
+				 "Continue" to move on to the next block.</p>\
 				  <input type="button" id="continue" value="Continue"></input>');
 			$('#continue').click( function(){ testobject = new TestPhase(); } );
 			$('#continue').attr('style', 'width: auto;');
@@ -663,16 +649,6 @@ var TestPhase = function() {
 /*************
 * Finish up  *
 *************/
-var calculatebonus = function () {
-	var chances = condition.maxblocks * cardsshown.length;
-	console.warn("Chances: ", chances, " misses: ", totalmisses);
-	proportionmisses = (totalmisses / chances);
-	reward = 0;
-	for (i=0; i<10; i++) {
-		if ( Math.random() >= proportionmisses ) reward+=0.25;
-	}
-	return reward;
-};
 
 var givequestionnaire = function() {
 	var timestamp = new Date().getTime();
@@ -701,11 +677,11 @@ var taskStartSetup = function () {
 	});
 	// Provide opt-out 
 	window.onbeforeunload = function(){
-    	$.ajax("quitter", {
-    			type: "POST",
-    			async: false,
-    			data: {subjId: subjid, dataString: datastring}
-    	});
+		$.ajax("quitter", {
+				type: "POST",
+				async: false,
+				data: {subjId: subjid, dataString: datastring}
+		});
 		alert( "By leaving this page, you opt out of the experiment. You are forfitting your payment. Please confirm that this is what you meant to do." );
 		return "Are you sure you want to leave the experiment?";
 	};
@@ -715,4 +691,4 @@ var finishTeardown = function () {
 	window.onbeforeunload = function(){ };
 };
 
-// vi: et! ts=4 sw=4
+// vi: noexpandtab tabstop=4 shiftwidth=4
