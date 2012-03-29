@@ -1,0 +1,52 @@
+
+<style type="text/css">
+	#stimtable {
+		position: relative;
+		margin: 0 auto;
+	}
+	#stimtable img {
+		width: 100px;
+		padding: 5px;
+	}
+	#stimtable table {
+		margin: 0 auto;
+	}
+	#stimtable td {
+		padding: 20px;
+	}
+</style>
+{% block style %}{% endblock %}
+
+<div class="instruct" id="main">
+	<h1>Instructions</h1> 
+	<p>{% block upperinstruct %}{% endblock %}</p>
+	<div id="stimtable">
+		<table>
+			<tr>
+				<td>
+					<img class="stim0" alt="" src="static/images/STIM00.png">
+				</td>
+				<td>
+					<img class="stim2" alt="" src="static/images/STIM02.png">
+				</td>
+				<td>
+					<img class="stim3" alt="" src="static/images/STIM03.png">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<img class="stim4" alt="" src="static/images/STIM04.png">
+				</td>
+				<td>
+					<img class="stim6" alt="" src="static/images/STIM06.png">
+				</td>
+				<td>
+					<img class="stim7" alt="" src="static/images/STIM07.png">
+				</td>
+			</tr>
+		</table>
+	</div>
+	<p>{% block lowerinstruct %}{% endblock %}</p>
+	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
+	<input type="button" class="continue" id="Next" value="Next">
+</div>

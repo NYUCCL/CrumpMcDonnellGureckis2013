@@ -487,16 +487,16 @@ var Instructions = function() {
 		showpage( "prequiz" );
 		timestamp = new Date().getTime();
 		$("#continue").click(function () {
-            if ( validateformfields( getFormFields() ).length > 0 ) {
-                $("#warning").text("Please fill out all the fields before continuing.");
-                return false;
-            }
+			if ( validateformfields( getFormFields() ).length > 0 ) {
+				$("#warning").text("Please fill out all the fields before continuing.");
+				return false;
+			}
 			var fields = getFormFields();
-            
+			
 			var rt = (new Date().getTime()) - timestamp;
 			var passed = checkformfields( fields );
 			recordinstructtrial( "prequiz", (new Date().getTime())-timestamp, passed );
-            recordFormFields();
+			recordFormFields();
 			if ( passed ) {
 				showpage("starttask");
 				$(".continue").click( that.startTest );
@@ -507,7 +507,7 @@ var Instructions = function() {
 					instructobject.start();
 				});
 			}
-            return true;
+			return true;
 		});
 	};
 	
@@ -591,11 +591,11 @@ var TestPhase = function() {
 		}
 		if (done) givequestionnaire();
 		else {
-        	$.ajax("inexpsave", {
-        			type: "POST",
-        			async: true,
-        			data: {subjId: subjid, dataString: datastring}
-        	});
+			$.ajax("inexpsave", {
+					type: "POST",
+					async: true,
+					data: {subjId: subjid, dataString: datastring}
+			});
 
 			$('body').html('<h1>Testing Round Complete</h1>\
 				<p>Round complete! <b>You have completed ' + (currentblock-1) +

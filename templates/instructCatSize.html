@@ -1,64 +1,19 @@
-<!doctype html>
+{% extends "instructCat.html" %}
 
-<link rel=stylesheet href="static/cardtask.css" type="text/css" media="screen">
-
+{% block style %}
 <style type="text/css">
-	#stimtable {
-		position: relative;
-		margin: 0 auto;
-		width: 280px;
+	.stim0, .stim2, .stim3 {
+		border: 4px dashed red;
 	}
-	#stimtable img {
-		width: 100px;
-	}
-	#stimtable table {
-	}
-	#stimtable td {
-		padding: 20px;
-	}
-	#toprect {
-		position: absolute;
-		top: 155px; left: 10px;
-		width: 260px;
-		height: 120px;
-		border: 3px solid orange;
-	}
-	#bottomrect {
-		position: absolute;
-		top: 10px; left: 10px;
-		width: 260px;
-		height: 120px;
-		border: 3px solid orange;
+	.stim4, .stim6, .stim7 {
+		border: 4px dashed blue;
 	}
 </style>
+{% endblock %}
 
+{% block upperinstruct %}
+For example, objects might be grouped by size, with large items in one group (say, <strong>A</strong>) and small objects in the other group (<strong>B</strong>):
+{% endblock %}
 
-<div class="instruct" id="main">
-	<h1>Instructions</h1>
-	<p>For example, objects might be grouped by size, with large items in one group (say, <strong>A</strong>) and small objects in the other group (<strong>B</strong>):</p>	
-	<div id="stimtable">
-		<table>
-			<div id="toprect"></div>
-			<div id="bottomrect"></div>
-			<tr>
-				<td>
-					<img alt="" src="static/images/STIM00.png">
-				</td>
-				<td>
-					<img alt="" src="static/images/STIM02.png">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<img alt="" src="static/images/STIM04.png">
-				</td>
-				<td>
-					<img alt="" src="static/images/STIM06.png">
-				</td>
-			</tr>
-		</table>
-	</div>
-	
-	<div class="instructions">When you're ready to continue, press <strong>Next</strong>.</div>
-	<input type="button" class="continue" id="Next" value="Next">
-</div>
+{% block lowerinstruct %}
+{% endblock %}
