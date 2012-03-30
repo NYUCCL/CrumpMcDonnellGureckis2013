@@ -11,7 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'deploy'  # 'sandbox' or 'deploy' (the real thing)
-DEBUG_MODE = DEPLOYMENT_ENV !+ 'deploy'
+DEBUG_MODE = not (DEPLOYMENT_ENV == 'deploy')
 CODE_VERSION = '5.3'
 
 DATABASE = 'mysql://released_data:shareit@gureckislab.org:3306/released_data'   # 'sqlite:///:memory:' - tests in memory
