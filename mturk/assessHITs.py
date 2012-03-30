@@ -43,11 +43,11 @@ for hit in mtc.get_all_hits():
     for assignment in mtc.get_assignments(hit.HITId):
         print "\t\tWorker ID:", assignment.WorkerId
         print "\t\tAssignment ID:", assignment.AssignmentId
-        print "\t\tSubmit URL:", "https://www.mturk.com/mturk/externalSubmit?assignmentId=%s&hitId=%s&workerId=%s" % (assignment.AssignmentId, hit.HITId, assignment.WorkerId)
-        import urllib2, urllib
-        values = {'assignmentId':assignment.AssignmentId, 'hitId':hit.HITId, 'workerId':assignment.WorkerId}
-        req = urllib2.Request("https://www.mturk.com/mturk/externalSubmit", urllib.urlencode( values ))
-        response = urllib2.urlopen(req)
-        result = response.read()
-        print result
+        #print "\t\tSubmit URL:", "https://www.mturk.com/mturk/externalSubmit?assignmentId=%s&hitId=%s&workerId=%s" % (assignment.AssignmentId, hit.HITId, assignment.WorkerId)
+        #import urllib2, urllib
+        #values = {'assignmentId':assignment.AssignmentId, 'hitId':hit.HITId, 'workerId':assignment.WorkerId}
+        #req = urllib2.Request("https://www.mturk.com/mturk/externalSubmit", urllib.urlencode( values ))
+        #response = urllib2.urlopen(req)
+        #result = response.read()
+        #print result
 

@@ -11,6 +11,7 @@ from functools import wraps
 
 # constants
 DEPLOYMENT_ENV = 'deploy'  # 'sandbox' or 'deploy' (the real thing)
+DEBUG_MODE = DEPLOYMENT_ENV !+ 'deploy'
 CODE_VERSION = '5.3'
 
 DATABASE = 'mysql://released_data:shareit@gureckislab.org:3306/released_data'   # 'sqlite:///:memory:' - tests in memory
@@ -183,13 +184,13 @@ def get_random_condition(conn):
     s = select([participantsdb.c.cond], and_(participantsdb.c.codeversion==CODE_VERSION, or_(participantsdb.c.endhit!=null, participantsdb.c.beginhit>starttime)), from_obj=[participantsdb])
     result = conn.execute(s)
     counts = [0]*NUMCONDS
-    # Excluding less interesting conditions:
     
+    # Excluding less interesting conditions:
     counts[0] = 1000
+    counts[1] = 1000
     counts[2] = 1000
     counts[3] = 1000
     counts[4] = 1000
-    counts[5] = 1000
     for row in result:
         counts[row[0]]+=1
     
@@ -515,5 +516,5 @@ if __name__ == '__main__':
             print "starting webserver"
             participantsdb = loaddatabase(engine, metadata)
             # by default just launch webserver
-            app.run(debug=True, host='0.0.0.0', port=5001)
+            app.run(debug=DEBUG_MODE, host='0.0.0.0', port=5001)
 
