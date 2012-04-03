@@ -28,11 +28,11 @@ paramdict = dict(
     hit_type = None,
     question = mturkQuestion,
     lifetime = datetime.timedelta(1),  # How long the HIT will be available
-    max_assignments = 20, # Total times it will be assigned, not max per turker
-    title = "Paid volunteers needed for an online experiment in Psychology (bonus available)",
+    max_assignments = 50, # Total times it will be assigned, not max per turker
+    title = "Paid volunteers needed for an online experiment in Psychology",
     description = "Learn to categorize a set of cards over a series of training trials.",
     keywords = "New York University, psychology experiment, category learning",
-    reward = 1,
+    reward = 0.75,
     duration = datetime.timedelta(hours=2),
     approval_delay = None,
     annotation = None,  # Do we need this? Not clear on what it is.
