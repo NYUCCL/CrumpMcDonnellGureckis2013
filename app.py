@@ -186,8 +186,8 @@ def get_random_condition(conn):
     counts = [0]*NUMCONDS
     
     # Excluding less interesting conditions:
-    counts[2] = 1000
-    counts[4] = 1000
+    counts[2] = 5000
+    counts[4] = 5000
     for row in result:
         counts[row[0]]+=1
     
