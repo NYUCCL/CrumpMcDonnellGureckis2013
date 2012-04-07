@@ -653,9 +653,9 @@ var TestPhase = function() {
 var givequestionnaire = function() {
 	var timestamp = new Date().getTime();
 	showpage('postquestionnaire');
-	recordinstructtrial( "postquestionnaire", (new Date().getTime())-timestamp );
 	$("#continue").click(function () {
 		finishTeardown();
+		recordinstructtrial( "postquestionnaire", (new Date().getTime())-timestamp );
 		submitquestionnaire();
 	});
 	// $('#continue').click( function(){ trainobject = new TrainingPhase(); } );
