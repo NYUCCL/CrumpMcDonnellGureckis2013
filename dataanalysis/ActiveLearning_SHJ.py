@@ -33,6 +33,8 @@ from sqlalchemy import *
 from pandas import *
 from string import replace
 from datetime import timedelta
+import rpy2.robjects as R
+
 
 # reload the utilities (if they have changed)
 %run -i ActiveLearning_SHJ_Utilities.py
@@ -72,11 +74,11 @@ def get_avg_learn_curve(people, version, training, rule):
     count=0
     for key in people.keys():
         p = people[key]
-        #print p.traintype, p.rule, p.physicalaids;#
-        if p.codeversion==version and p.physicalaids=='no' \
-           and p.traintype==training and p.rule==rule:
+        #print p.codeversion, p.traintype, p.rule, p.physicalaids
+        if (p.codeversion=='5.3' or p.codeversion=='5.32') and p.physicalaids=='no' \
+           and p.traintype==training and p.rule==rule: # and p.age<22:
             #print 
-            allTest += [p.learnCurve]
+            allTest += [p.learnCurve[:10]]
             count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
     return DataFrame(allTest).mean()
@@ -84,7 +86,123 @@ def get_avg_learn_curve(people, version, training, rule):
 # <codecell>
 
 
+fig=plt.figure(figsize=(9,6))
+
+ax=fig.add_subplot(121)
+t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
+t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008],'ro-',antialiased=True,markersize=3,linewidth=1)
+t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031],'co-',antialiased=True,markersize=3,linewidth=1)
+t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128],'go-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.32'
+t1p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 0)[:10],'y--',antialiased=True,markersize=3,linewidth=1)
+t2p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1)[:10],'r--',antialiased=True,markersize=3,linewidth=1)
+t4p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3)[:10],'c--',antialiased=True,markersize=3,linewidth=1)
+t6p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 5)[:10],'g--',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t2p[0], t4p[0],t6p[0], t1p2[0], t2p2[0], t4p2[0], t6p2[0]), ('Nosof. I', 'Nosof. II','Nosof. IV', 'Nosof. VI', 'Intr. I (N=50)','Intr. II (N=50)', 'Instr. IV (N=50)', 'Instr. VI (N=50)') )
+plt.axis([-1,10,0,0.7])
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+
+ax=fig.add_subplot(122)
+t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
+t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008],'ro-',antialiased=True,markersize=3,linewidth=1)
+t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031],'co-',antialiased=True,markersize=3,linewidth=1)
+t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128],'go-',antialiased=True,markersize=3,linewidth=1)
+
+t1p2=ax.plot([0.19, 0.045, .038, .02, .038, .000, .000, .000, .000, .000],'y--',antialiased=True,markersize=3,linewidth=1)
+t2p2=ax.plot([0.36, 0.195, .155, .12, .13, .100, .07, .045, .065, .04],'r--',antialiased=True,markersize=3,linewidth=1)
+t4p2=ax.plot([0.358, 0.21, .17, .13, .175, .12, .1, .09, .11, .08],'c--',antialiased=True,markersize=3,linewidth=1)
+t6p2=ax.plot([0.46, 0.27, .24, .2, .23, .21, .17, .14, .172, .15],'g--',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t2p[0], t4p[0],t6p[0], t1p2[0], t2p2[0], t4p2[0], t6p2[0]), ('Nosof. I', 'Nosof. II','Nosof. IV', 'Nosof. VI', 'Lewan. I','Lewan. II', 'Lewan. IV', 'Lewan. VI') )
+
+plt.axis([-1,10,0,0.7])
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+plt.show()
+
+
+fig=plt.figure(figsize=(9,13))
+
+ax=fig.add_subplot(221)
+t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t1p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 0),'y--',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t1p1=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 0)[:10],'#333333',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t1p1[0], t1p2[0]), ('Nosof. I', 'Exp. 1 - I (N=41)', 'Exp. 3 - I (N=50)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type I')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+
+
+ax=fig.add_subplot(222)
+t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008],'ro-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t2p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'r--',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t2p1=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1)[:10],'#333333',antialiased=True,markersize=3,linewidth=1)
+
+ax.legend( (t2p[0], t2p1[0], t2p2[0]), ('Nosof. II', 'Exp. 1 - II (N=38)', 'Exp. 3 - II (N=50)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type II')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+
+
+ax=fig.add_subplot(223)
+t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031],'co-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t4p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'c--',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t4p1=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3)[:10],'#333333',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t4p[0], t4p1[0], t4p2[0]), ('Nosof. IV', 'Exp. 1 - II (N=39)', 'Exp. 3 - II (N=50)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type IV')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+
+ax=fig.add_subplot(224)
+t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128],'go-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t6p2=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 5),'g--',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t6p1=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 5)[:10],'#333333',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t6p[0], t6p1[0], t6p2[0]), ('Nosof. VI', 'Exp. 1 - II (N=38)', 'Exp. 3 - II (N=50)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type VI')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+
+
+
+
+
+plt.show() 
+
+# <codecell>
+
+print "hi"
+
+# <codecell>
+
+
 fig=plt.figure(figsize=(22,6))
+
+
+#nosofsky comparison
+ax=fig.add_subplot(161)
+t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
+t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008, .000, .002, .005, .003, .002],'ro-',antialiased=True,markersize=3,linewidth=1)
+t3p=ax.plot([0.459, 0.286, .223, .145, .081, .078, .063, .033, .023, .016, .019, .009, .008, .013, .009],'bo-',antialiased=True,markersize=3,linewidth=1)
+t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031, .019, .025, .005, .000, .000],'co-',antialiased=True,markersize=3,linewidth=1)
+t5p=ax.plot([0.472, 0.331, .230, .139, .106, .081, .067, .078, .048, .045, .050, .036, .031, .027, .016],'mo-',antialiased=True,markersize=3,linewidth=1)
+t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128, .139, .117, .103, .098, .106],'go-',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
+ax.set_title('Nosofsky et al. (1994) (N=120)')
+plt.axis([-1,15,0,0.7])
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
 
 VERSION='4.0'
 ax=fig.add_subplot(162)
@@ -134,9 +252,9 @@ ax=fig.add_subplot(165)
 VERSION='4.2'
 t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'ro-',antialiased=True,markersize=3,linewidth=1)
 VERSION='4.0'
-t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'bo-',antialiased=True,markersize=3,linewidth=1)
+t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'co-',antialiased=True,markersize=3,linewidth=1)
 VERSION='4.3'
-t4p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'co-',antialiased=True,markersize=3,linewidth=1)
+t4p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'go-',antialiased=True,markersize=3,linewidth=1)
 ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('Low $ (N=21)','Medium $ (N=40)', 'High $ (N=21)') )
 ax.set_title('Type II')
 plt.axis([-1,16,0,0.7])
@@ -147,29 +265,56 @@ ax=fig.add_subplot(166)
 VERSION='4.2'
 t1p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'ro-',antialiased=True,markersize=3,linewidth=1)
 VERSION='4.0'
-t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'bo-',antialiased=True,markersize=3,linewidth=1)
+t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'co-',antialiased=True,markersize=3,linewidth=1)
 VERSION='4.3'
-t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'co-',antialiased=True,markersize=3,linewidth=1)
+t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'go-',antialiased=True,markersize=3,linewidth=1)
 ax.legend( (t1p[0], t2p[0], t3p[0]), ('Low $ (N=20)','Medium $ (N=40)', 'High $ (N=20)') )
 ax.set_title('Type IV')
 plt.axis([-1,16,0,0.7])
 plt.ylabel('Probability of Error')
 plt.xlabel('Training Blocks')
 
-#nosofsky comparison
-ax=fig.add_subplot(161)
-t1p=ax.plot([0.211, 0.025, .003, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000, .000],'yo-',antialiased=True,markersize=3,linewidth=1)
-t2p=ax.plot([0.378, 0.156, .083, .056, .031, .027, .028, .016, .016, .008, .000, .002, .005, .003, .002],'ro-',antialiased=True,markersize=3,linewidth=1)
-t3p=ax.plot([0.459, 0.286, .223, .145, .081, .078, .063, .033, .023, .016, .019, .009, .008, .013, .009],'bo-',antialiased=True,markersize=3,linewidth=1)
-t4p=ax.plot([0.422, 0.295, .222, .172, .148, .109, .089, .063, .025, .031, .019, .025, .005, .000, .000],'co-',antialiased=True,markersize=3,linewidth=1)
-t5p=ax.plot([0.472, 0.331, .230, .139, .106, .081, .067, .078, .048, .045, .050, .036, .031, .027, .016],'mo-',antialiased=True,markersize=3,linewidth=1)
-t6p=ax.plot([0.498, 0.341, .284, .245, .217, .192, .192, .177, .172, .128, .139, .117, .103, .098, .106],'go-',antialiased=True,markersize=3,linewidth=1)
-ax.legend( (t1p[0], t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('I','II', 'III', 'IV', 'V', 'VI') )
-ax.set_title('Nosofsky et al. (1994) (N=120)')
-plt.axis([-1,15,0,0.7])
+
+
+plt.show()
+
+
+
+
+
+fig=plt.figure(figsize=(8,6))
+
+ax=fig.add_subplot(121)
+VERSION='4.2'
+t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'ro-',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'bo-',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.3'
+t4p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'co-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.0'
+t5p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'go-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t6p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 1),'yo-',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t2p[0], t3p[0], t4p[0], t5p[0], t6p[0]), ('Low $ (N=21)','Medium $ (N=40)', 'High $ (N=21)', 'New Stims, Med $ (N=18)', 'Instr') )
+ax.set_title('Type II')
+plt.axis([-1,16,0,0.7])
 plt.ylabel('Probability of Error')
 plt.xlabel('Training Blocks')
 
+ax=fig.add_subplot(122)
+VERSION='4.2'
+t1p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'ro-',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.0'
+t2p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'bo-',antialiased=True,markersize=3,linewidth=1)
+VERSION='4.3'
+t3p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'co-',antialiased=True,markersize=3,linewidth=1)
+VERSION='5.3'
+t6p=ax.plot(get_avg_learn_curve(participants, VERSION, 1, 3),'yo-',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p[0], t2p[0], t3p[0], t6p[0]), ('Low $ (N=20)','Medium $ (N=40)', 'High $ (N=20)', 'Instr') )
+ax.set_title('Type IV')
+plt.axis([-1,16,0,0.7])
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
 plt.show()
 
 # <headingcell level=1>
@@ -178,23 +323,78 @@ plt.show()
 
 # <codecell>
 
-# a function to gather up the block-to-criterion for different subsets of subjects and averages them
 def get_overall_acc(people, version, training, rule, hitid=None):
+    allTest = get_overall_acc_raw(people, version, training, rule, hitid)
+    return mean(allTest), std(allTest)/sqrt(len(allTest))
+
+# a function to gather up the block-to-criterion for different subsets of subjects and averages them
+def get_overall_acc_raw(people, version, training, rule, hitid=None):
     allTest = []
     count=0
+    nblocks = 10
     for key in people.keys():
         p = people[key]
         #print p.traintype, p.rule, p.physicalaids
         if hitid!=None:
             if p.codeversion==version and p.hitid==hitid and p.physicalaids=='no' and p.traintype==training and p.rule==rule:
-                allTest += [1.0-mean(p.dfTest['hit'][:10*16])]
+                overallacc = (sum(p.dfTest['hit'][:nblocks*16]) + (nblocks*16 - len(p.dfTest[:nblocks*16]))) / (nblocks*16.)
+                allTest += [overallacc]
                 count += 1
         else:
             if p.codeversion==version and p.physicalaids=='no' and p.traintype==training and p.rule==rule:
-                allTest += [1.0-mean(p.dfTest['hit'][:10*16])]
+                overallacc = (sum(p.dfTest['hit'][:nblocks*16]) + (nblocks*16 - len(p.dfTest[:nblocks*16]))) / (nblocks*16.)
+                allTest += [overallacc]
                 count += 1
     print "Condition ", training, ":", rule, " has ", count, " participants."
-    return mean(allTest), std(allTest)/sqrt(count)
+    return allTest
+
+# <codecell>
+
+# plot parameters
+ind = arange(6)
+width=0.2
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+
+
+VERSION = '4.2'
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind, passiveMs, width, color='#90B4CC', yerr=passiveSEs)
+
+
+VERSION = '4.0'
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind+width, passiveMs, width, color='#005490', yerr=passiveSEs)
+
+
+VERSION = '4.3'
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind+width*2, passiveMs, width, color='#6C6C6C', yerr=passiveSEs)
+
+VERSION = '5.3'
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in range(6)]).T
+passv = ax.bar(ind+width*3, passiveMs, width, color='#6C6C6C', yerr=passiveSEs)
+
+passiveMs = array([0.86,  .67, 0.0, .65, 0.0, .59 ])
+errs = array([0.021, 0.021, 0.0, 0.013, 0.0, 0.015 ])
+passv = ax.bar(ind+width*4, passiveMs, width, color='#F5B81D', yerr=errs)
+
+
+#passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
+#passv = ax.bar(ind+width, passiveMs, width, color='y')
+ax.set_ylabel('Overall Accuracy')
+ax.set_title('Overall Accuracy')
+ax.set_xticks(ind+width*2)
+ax.set_xticklabels(('I','II','III','IV','V','VI'))
+ax.legend( ('\"Low\" (\$1 + \$10 lottery)','\"Medium\" ($0.75)', '\"High\" ($2 + perf. bonus)','Love (2002)') , 'upper center')
+plt.axis([-0.25,6,0,1.4])
+
+plt.show()
+
+print passiveSEs
+print errs
 
 # <codecell>
 
@@ -207,13 +407,15 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 
+VERSION = '4.2'
+passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in [1,3]]).T
+passv = ax.bar(ind+width, passiveMs, width, color='#90B4CC', yerr=passiveSEs)
+
+
 VERSION = '4.0'
 passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in [1,3]]).T
 passv = ax.bar(ind, passiveMs, width, color='#005490', yerr=passiveSEs)
 
-VERSION = '4.2'
-passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in [1,3]]).T
-passv = ax.bar(ind+width, passiveMs, width, color='#90B4CC', yerr=passiveSEs)
 
 VERSION = '4.3'
 passiveMs, passiveSEs = array([get_overall_acc(participants, VERSION, 1, i) for i in [1,3]]).T
@@ -230,13 +432,47 @@ ax.set_ylabel('Overall Accuracy')
 ax.set_title('Overall Accuracy')
 ax.set_xticks(ind+width*2)
 ax.set_xticklabels(('II','IV'))
-ax.legend( ('\"Medium Incentive\" (\$1 + \$10 lottery)','\"Low\" Incentive ($0.75)', '\"High\" Incentive ($2 + performance bonus)','Love (2002)') , 'upper center')
+ax.legend( ('\"Low\" (\$1 + \$10 lottery)','\"Medium\" ($0.75)', '\"High\" ($2 + perf. bonus)','Love (2002)') , 'upper center')
 plt.axis([-0.25,2,0,1.3])
 
 plt.show()
 
 print passiveSEs
 print errs
+
+# <codecell>
+
+# build up anova - like table
+typeII, typeIV = array([get_overall_acc_raw(participants, VERSION, 1, i) for i in [1,3]])
+
+anovatable = []
+for vers in ['4.0', '4.2', '4.3']:
+    for shjtype in [1, 3]:
+        tmpd = get_overall_acc_raw(participants, vers, 1, shjtype)
+        for score in tmpd:
+            anovatable.append([vers, shjtype, score])
+
+print anovatable
+
+# <codecell>
+
+VERSION = '4.0'
+typeII, typeIV = array([get_overall_acc_raw(participants, VERSION, 1, i) for i in [1,3]])
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, groupb=typeIV)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, nullh=0.67)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeIV, nullh=0.65)[0]
+
+VERSION = '4.2'
+typeII, typeIV = array([get_overall_acc_raw(participants, VERSION, 1, i) for i in [1,3]])
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, groupb=typeIV)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, nullh=0.67)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeIV, nullh=0.65)[0]
+
+VERSION = '4.3'
+typeII, typeIV = array([get_overall_acc_raw(participants, VERSION, 1, i) for i in [1,3]])
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, groupb=typeIV)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeII, nullh=0.67)[0]
+print meandifferencetest(pair=False, alt='two.sided', groupa=typeIV, nullh=0.65)[0]
 
 # <headingcell level=1>
 
@@ -261,7 +497,7 @@ def get_avg_blocks_to_criterion(people, version, training, rule):
 
 # <codecell>
 
-VERSION = '4.0'
+VERSION = '5.3'
 
 # plot parameters
 ind = arange(6)
@@ -308,6 +544,10 @@ print get_blocks_to_criterion_ind(participants, VERSION, 1, 2)
 print get_blocks_to_criterion_ind(participants, VERSION, 1, 3)
 print get_blocks_to_criterion_ind(participants, VERSION, 1, 4)
 print get_blocks_to_criterion_ind(participants, VERSION, 1, 5)
+
+VERSION='5.3'
+print get_blocks_to_criterion_ind(participants, VERSION, 1, 1)
+print mean(get_blocks_to_criterion_ind(participants, VERSION, 1, 1))
 
 # <codecell>
 
@@ -370,8 +610,8 @@ def get_proportion_reaching_criterion(people, version, training, rule, totalbloc
                     allTest += [1]
                 else:
                     # check if got criterion on last block
-                    checkdata = p.dfTest['hit'][:16*totalblocks]
-                    if sum(checkdata[-16:])==16:
+                    checkdata = p.dfTest['hit'][:32*totalblocks]
+                    if sum(checkdata[-32:])==32:
                         allTest += [1]
                     else:
                         allTest += [0]
@@ -382,8 +622,8 @@ def get_proportion_reaching_criterion(people, version, training, rule, totalbloc
                     allTest += [1]
                 else:
                     # check if got criterion on last block
-                    checkdata = p.dfTest['hit'][:16*totalblocks]
-                    if sum(checkdata[-16:])==16:
+                    checkdata = p.dfTest['hit'][:32*totalblocks]
+                    if sum(checkdata[-32:])==32:
                         allTest += [1]
                     else:
                         allTest += [0]
@@ -391,6 +631,14 @@ def get_proportion_reaching_criterion(people, version, training, rule, totalbloc
             
     print "Condition ", training, ":", rule, " has ", count, " participants."
     return mean(allTest)
+
+# <codecell>
+
+VERSION = "5.3"
+print get_proportion_reaching_criterion(participants, VERSION, 1, 0, 10)
+print get_proportion_reaching_criterion(participants, VERSION, 1, 1, 10)
+print get_proportion_reaching_criterion(participants, VERSION, 1, 3, 10)
+print get_proportion_reaching_criterion(participants, VERSION, 1, 5, 10)
 
 # <codecell>
 
@@ -444,7 +692,7 @@ def get_proportion_reaching_criterion(people, version, training, rule):
                 allTest += [1]
             else:
                 # check if got criterion on last block
-                if sum(p.dfTest['hit'][-16:])==16:
+                if sum(p.dfTest['hit'][-32:])==32:
                     allTest += [1]
                 else:
                     allTest += [0]
@@ -617,9 +865,56 @@ def get_education(people, version, training, rule):
     print "Condition ", training, ":", rule, " has ", count, " participants."
     return allTest
 
+
+# a function to gather up the learning curves for different subsets of subjects and averages them
+def get_avg_learn_curve_by_education(people, version, edu, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.codeversion, p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' \
+           and p.traintype==training and p.rule==rule and p.education==edu:
+            #print 
+            allTest += [p.learnCurve]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return DataFrame(allTest).mean()
+
+
+def get_avg_learn_curve_by_age(people, version, minage, maxage, training, rule):
+    allTest = []
+    count=0
+    for key in people.keys():
+        p = people[key]
+        #print p.codeversion, p.traintype, p.rule, p.physicalaids
+        if p.codeversion==version and p.physicalaids=='no' \
+           and p.traintype==training and p.rule==rule and (p.age>=minage and p.age<maxage):
+            #print 
+            allTest += [p.learnCurve]
+            count += 1
+    print "Condition ", training, ":", rule, " has ", count, " participants."
+    return DataFrame(allTest).mean()
+
 # <codecell>
 
-genders=get_gender(participants, "4.3", 1, 1)+get_gender(participants, "4.3", 1, 3)
+fig = plt.figure(figsize=(6,6))
+ax = fig.add_subplot(111)
+VERSION='5.3'
+VERSION2='5.32'
+TYPE = 5
+a,b= [get_overall_acc_raw(participants, VERSION, 1, TYPE)+get_overall_acc_raw(participants, VERSION2, 1, TYPE), get_age(participants, VERSION, 1, TYPE)+get_age(participants, VERSION2, 1, TYPE)]
+
+#ax.scatter(b,a,s=20);
+m,c = polyfit(b,a, 1) 
+print m,c
+ax.plot(b, a, 'yo',b,m*array(b)+c,'--k')
+
+plt.show()
+
+# <codecell>
+
+genders=get_gender(participants, "5.3", 1, 0)+get_gender(participants, "5.3", 1, 1)+get_gender(participants, "5.3", 1, 3)+get_gender(participants, "5.3", 1, 5)
 print "percent female = ", sum(genders)/float(len(genders))
 
 # plot parameters
@@ -641,10 +936,9 @@ ax.set_xticklabels(('Female','Male'))
 plt.axis([-0.25,1.5,0,1])
 plt.show()
 
-
 # <codecell>
 
-education=get_education(participants, "4.3", 1, 1)+get_education(participants, "4.3", 1, 3)
+education=get_education(participants, "5.3", 1, 0)+get_education(participants, "5.3", 1, 1)+get_education(participants, "5.3", 1, 3)+get_education(participants, "5.3", 1, 5)+get_education(participants, "5.32", 1, 0)+get_education(participants, "5.32", 1, 1)+get_education(participants, "5.32", 1, 3)+get_education(participants, "5.32", 1, 5)
 education
 
 
@@ -677,7 +971,27 @@ plt.show()
 
 # <codecell>
 
-ages=get_age(participants, "4.3", 1, 1)+get_age(participants, "4.3", 1, 3)
+fig = plt.figure(figsize=(8,6))
+ax=fig.add_subplot(111)
+VERSION='5.3'
+TYPE = 3
+t1p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "somehs", 1, TYPE),'r--',antialiased=True,markersize=3,linewidth=1)
+t2p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "highschool", 1, TYPE),'g--',antialiased=True,markersize=3,linewidth=1)
+t3p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "somecollege", 1, TYPE),'b--',antialiased=True,markersize=3,linewidth=1)
+t4p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "bachelors", 1, TYPE),'p--',antialiased=True,markersize=3,linewidth=1)
+t5p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "somegrad", 1, TYPE),'y--',antialiased=True,markersize=3,linewidth=1)
+t6p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "masters", 1, TYPE),'k--',antialiased=True,markersize=3,linewidth=1)
+t7p2=ax.plot(get_avg_learn_curve_by_education(participants, VERSION, "doctor", 1, TYPE),'o--',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p2[0], t2p2[0], t3p2[0], t4p2[0], t5p2[0], t6p2[0], t7p2[0]), ('<H.S. (N=1)','H.S. (N=4)','<B.A. (N=16)','B.A (N=15)','<M.A. (N=6)','M.A. (N=8)','DR (N=0)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type II')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
+plt.show()
+
+# <codecell>
+
+ages=get_age(participants, "5.3", 1, 0)+get_age(participants, "5.3", 1, 1)+get_age(participants, "5.3", 1, 3)+get_age(participants, "5.3", 1, 5)+get_age(participants, "5.32", 1, 0)+get_age(participants, "5.32", 1, 1)+get_age(participants, "5.32", 1, 3)+get_age(participants, "5.32", 1, 5)
 
 print "mean age is ", mean(ages)
 
@@ -705,6 +1019,26 @@ ax.set_xticks(ind+width/2)
 ax.set_xticklabels(('<18','18-24', '25-34', '35-44', '45-54', '55-64', '65+'))
 #labels = pylab.getp(pylab.gca(),'xticklabels')
 plt.axis([-0.25,7.5,0,0.5])
+plt.show()
+
+# <codecell>
+
+fig = plt.figure(figsize=(8,6))
+ax=fig.add_subplot(111)
+VERSION='5.32'
+TYPE=1
+t1p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, -2, 18, 1, TYPE),'ro-',antialiased=True,markersize=3,linewidth=1)
+t2p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 18, 24, 1, TYPE),'go-',antialiased=True,markersize=3,linewidth=1)
+t3p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 24, 34, 1, TYPE),'bo-',antialiased=True,markersize=3,linewidth=1)
+t4p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 35, 44, 1, TYPE),'mo-',antialiased=True,markersize=3,linewidth=1)
+t5p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 45, 54, 1, TYPE),'yo-',antialiased=True,markersize=3,linewidth=1)
+t6p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 55, 64, 1, TYPE),'ko-',antialiased=True,markersize=3,linewidth=1)
+t7p2=ax.plot(get_avg_learn_curve_by_age(participants, VERSION, 65, 100, 1, TYPE),'co-',antialiased=True,markersize=3,linewidth=1)
+ax.legend( (t1p2[0], t2p2[0], t3p2[0], t4p2[0], t5p2[0], t6p2[0], t7p2[0]), ('<18 (N=0)','18-24 (N=17)','25-34 (N=16)','35-44 (N=15)','45-54 (N=6)','55-64 (N=8)','65+ (N=0)') )
+plt.axis([-1,10,0,0.7])
+plt.title('Type II')
+plt.ylabel('Probability of Error')
+plt.xlabel('Training Blocks')
 plt.show()
 
 # <headingcell level=1>
@@ -750,7 +1084,7 @@ plt.show()
 # connect to database and load relevant information
 db, conn = connect_to_database(DATABASE, TABLENAME)
 s = db.select()
-s = s.where(and_(db.c.beginexp!=None, db.c.codeversion=="4.0", db.c.datafile!=None))
+s = s.where(and_(db.c.beginexp!=None, db.c.codeversion=="5.3", db.c.datafile!=None))
 records = get_people(conn, s)
 
 # <codecell>
@@ -762,6 +1096,10 @@ for i in range(len(records)):
     participants[p.subjid] = p
 nsubj = len(participants.keys())
 print "Number of subjects is ", nsubj
+
+# <codecell>
+
+(47+55)-(41+41)
 
 # <codecell>
 
@@ -789,7 +1127,7 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 
-dropouts = [get_dropouts(participants, '4.0', 1, i)[0] for i in range(6)]
+dropouts = [get_dropouts(participants, '4.2', 1, i)[0] for i in range(6)]
 passv = ax.bar(ind, dropouts, width, color='c')
 print dropouts
 #passiveMs = array([44.0, 85.4, 121.6, 127.0, 133.8, 189.2])/16.
