@@ -67,6 +67,22 @@ def get_people(conn, s):
 
 # <headingcell level=1>
 
+# Stats Functions
+
+# <codecell>
+
+def meandifferencetest(pair, alt, groupa, groupb=None, nullh=0.0):
+    ttest = R.r['t.test']
+    if groupb!=None:
+        result = ttest(R.FloatVector(groupa), R.FloatVector(groupb), alternative=alt, paired=pair, mu=nullh)
+    else:
+        result = ttest(R.FloatVector(groupa), alternative=alt, paired=pair, mu=nullh)
+    result = dict(result.iteritems())
+    pretty = "t(" + str(result['parameter'][0]) + ") = " + str(result['statistic'][0]) + ", p = " + str(result['p.value'][0])
+    return [pretty, result]
+
+# <headingcell level=1>
+
 # Misc stuff
 
 # <codecell>
@@ -102,8 +118,8 @@ def count_longest_run(values):
 TEST = '1'
 TRAINING = '2'
 INSTRUCT = '3'
-TRUE = '0'
-FALSE = '1'
+TRUE = '1'
+FALSE = '0'
 stimuliperblock = 16.
 
 #-----------------------------------------------------
@@ -144,6 +160,7 @@ class Participant():
         self.datafile = replace(self.datafile, 'TEST', TEST)
         self.datafile = replace(self.datafile, 'TRAINING', TRAINING)
         self.datafile = replace(self.datafile, 'INSTRUCT', INSTRUCT)
+        self.datafile = replace(self.datafile, 'continue:Continue', '')
         if self.datafile[-1:]=='\r\n':
             self.datafileF = self.datafile.split('\r\n')
         else:
@@ -151,15 +168,23 @@ class Participant():
         
         res = []
         for line in self.datafileF:
-            tmp = line.split(',')
-            res.append(tmp)
+            if len(line) > 0:
+                tmp = line.split(',')
+                res.append(tmp)
         self.datafileF = res
         self.datafileFInstruct = []
         self.datafileFTraining = []
         self.datafileFTest = []
         
+        
+        if float(self.codeversion) >= 5.3:
+            INSTRLEN = 10
+        else:
+            INSTRLEN = 8
+        
         for line in self.datafileF:
-            if len(line)>8:
+            # print len(line), line
+            if len(line)>INSTRLEN:
                 if line[7]==TRAINING:
                     newline = []
                     for item in range(len(line)):
@@ -173,7 +198,7 @@ class Participant():
                     #    print int(item)
                     newline = map(int, line)
                     self.datafileFTest.append(newline)
-            elif len(line)==8:
+            elif len(line)==INSTRLEN:
                 if line[5]==INSTRUCT:
                     newline = line[:]
                     self.datafileFInstruct.append(newline)
@@ -207,7 +232,12 @@ class Participant():
             #print "run format_datafile_as_list first!"
             pass
         else:
-            self.dfInstruct = DataFrame(self.datafileFInstruct, columns=['subjid', 'traintype', 'rule', \
+            if float(self.codeversion) >= 5.3:
+                self.dfInstruct = DataFrame(self.datafileFInstruct, columns=['subjid', 'traintype', 'rule', \
+                                                                        'dimorder', 'dimvals', 'type', 'file', 'times', 'nothing', \
+                                                                        'rt'])
+            else:
+                self.dfInstruct = DataFrame(self.datafileFInstruct, columns=['subjid', 'traintype', 'rule', \
                                                                         'dimorder', 'dimvals', 'type', 'file', \
                                                                         'rt'])
         
@@ -245,12 +275,16 @@ class Participant():
         self.meanOverallAcc = self.dfTest['hit'].mean()
     
     def per_block_learning_curve(self):
-        if self.codeversion == "4.2" or self.codeversion == "4.3":
+        if self.codeversion == "4.2" or self.codeversion == "4.3" or self.codeversion == "5.0" or self.codeversion == "5.3":
             blocks = ones(10)*stimuliperblock
         else:
             blocks = ones(15)*stimuliperblock
         for line in range(len(self.datafileFTest)):
-            blocks[self.datafileFTest[line][5]-1] -= float(self.datafileFTest[line][12])
+            if float(self.datafileFTest[line][12]) == 1:
+                red = 0.0
+            else:
+                red = 1.0
+            blocks[self.datafileFTest[line][5]-1] -= float(red)
         self.learnCurve = 1.0-(blocks/stimuliperblock)
 
 # <codecell>
